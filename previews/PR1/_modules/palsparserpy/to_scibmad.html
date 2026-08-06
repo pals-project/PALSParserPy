@@ -1,0 +1,917 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="../../">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
+
+    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+        <title>palsparserpy.to_scibmad - PALSParserPy</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/furo-extensions.css?v=8dab3a3b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=47a6a259" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="../../index.html"><div class="brand">PALSParserPy</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon no-toc" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="../../index.html">
+  
+  <span class="sidebar-brand-text">PALSParserPy</span>
+  
+</a><form class="sidebar-search-container" method="get" action="../../search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <p class="caption" role="heading"><span class="caption-text">User Guide</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/parsing.html">Parsing and writing YAML</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/lattices.html">Reading and expanding lattices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/expressions.html">Evaluating expressions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../guide/translation.html">Translating to SciBmad, Bmad and MAD-X</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">API Reference</a></li>
+</ul>
+
+</div><div class="sidebar-tree">
+  <ul>
+    <li class="toctree-l1">
+      <a class="reference external"
+         href="https://github.com/pals-project/PALSParserPy">GitHub ↗</a>
+    </li>
+  </ul>
+</div></div>
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon no-toc" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <h1>Source code for palsparserpy.to_scibmad</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Translation of a PALS lattice into a SciBmad lattice file.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span><span class="p">,</span> <span class="n">field</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">._common</span><span class="w"> </span><span class="kn">import</span> <span class="n">ctrl_variables</span><span class="p">,</span> <span class="n">facility_entry</span><span class="p">,</span> <span class="n">facility_props</span><span class="p">,</span> <span class="n">fmt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">YAMLNode</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;SciBmadEle&quot;</span><span class="p">,</span> <span class="s2">&quot;SciBmadBeamline&quot;</span><span class="p">,</span> <span class="s2">&quot;SciBmadLatticeList&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;SciBmadController&quot;</span><span class="p">,</span> <span class="s2">&quot;SciBmadLattice&quot;</span><span class="p">,</span> <span class="s2">&quot;pals_to_scibmad&quot;</span><span class="p">,</span>
+           <span class="s2">&quot;write_scibmad_file&quot;</span><span class="p">]</span>
+
+<span class="n">_NAME_RE</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^[A-Za-z_][A-Za-z0-9_]*$&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SciBmadEle">
+<a class="viewcode-back" href="../../api.html#palsparserpy.SciBmadEle">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SciBmadEle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A single SciBmad ``LineElement``: its ``name`` and the already-translated</span>
+<span class="sd">    keyword-argument fragments (``attrs``, each a ``&quot;keyword = value&quot;``</span>
+<span class="sd">    string).&quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">attrs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SciBmadBeamline">
+<a class="viewcode-back" href="../../api.html#palsparserpy.SciBmadBeamline">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SciBmadBeamline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A SciBmad ``Beamline``: its ``name``, the ordered member element</span>
+<span class="sd">    ``members`` (by name), and the reference-parameter fragments ``ref`` taken</span>
+<span class="sd">    from the line&#39;s first entry.&quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">members</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">ref</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SciBmadLatticeList">
+<a class="viewcode-back" href="../../api.html#palsparserpy.SciBmadLatticeList">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SciBmadLatticeList</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A SciBmad lattice list: its ``name`` and the ordered branch/beamline</span>
+<span class="sd">    ``branches`` (by name).&quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">branches</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SciBmadController">
+<a class="viewcode-back" href="../../api.html#palsparserpy.SciBmadController">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SciBmadController</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A SciBmad ``Controller``: what a PALS ``Controller`` becomes.</span>
+
+<span class="sd">    - ``name``: the controller name.</span>
+<span class="sd">    - ``slaves``: the controlled properties, each a</span>
+<span class="sd">      ``&quot;(ele, :prop) =&gt; (ele; vars...) -&gt; expr&quot;`` pair-and-function string.</span>
+<span class="sd">    - ``vars``: the variables&#39; initial values, each a ``&quot;name = value&quot;`` string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">slaves</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="nb">vars</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="SciBmadLattice">
+<a class="viewcode-back" href="../../api.html#palsparserpy.SciBmadLattice">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">SciBmadLattice</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;An in-memory model of a SciBmad lattice.</span>
+
+<span class="sd">    Produced by :func:`pals_to_scibmad` and serialized to a file by</span>
+<span class="sd">    :func:`write_scibmad_file`:</span>
+
+<span class="sd">    - ``particle``: ``BeginningEle`` particle-coordinate lines (including the</span>
+<span class="sd">      ``v = [...]`` vector).</span>
+<span class="sd">    - ``elements``: ``LineElement`` definitions (:class:`SciBmadEle`).</span>
+<span class="sd">    - ``controllers``: ``Controller`` definitions (:class:`SciBmadController`).</span>
+<span class="sd">    - ``beamlines``: ``Beamline`` definitions (:class:`SciBmadBeamline`).</span>
+<span class="sd">    - ``lattices``: lattice lists (:class:`SciBmadLatticeList`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">particle</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">elements</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SciBmadEle</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">controllers</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SciBmadController</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">beamlines</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SciBmadBeamline</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">lattices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">SciBmadLatticeList</span><span class="p">]</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="pals_to_scibmad">
+<a class="viewcode-back" href="../../api.html#palsparserpy.pals_to_scibmad">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pals_to_scibmad</span><span class="p">(</span><span class="n">yaml</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SciBmadLattice</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate a parsed PALS lattice ``yaml`` (as returned by</span>
+<span class="sd">    :func:`~palsparserpy.parse_file`) into a :class:`SciBmadLattice`.</span>
+
+<span class="sd">    The returned structure is an in-memory model of the *SciBmad* lattice</span>
+<span class="sd">    (elements, beamlines, lattice lists), not the input PALS tree. Translation is</span>
+<span class="sd">    a three-step process: parse the PALS file with ``parse_file``, build the</span>
+<span class="sd">    target model with ``pals_to_scibmad``, then emit the SciBmad lattice file with</span>
+<span class="sd">    :func:`write_scibmad_file`::</span>
+
+<span class="sd">        yaml = parse_file(file_dir)</span>
+<span class="sd">        write_scibmad_file(pals_to_scibmad(yaml), filename)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">facility</span> <span class="o">=</span> <span class="n">yaml</span><span class="p">[</span><span class="s2">&quot;PALS&quot;</span><span class="p">][</span><span class="s2">&quot;facility&quot;</span><span class="p">]</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">SciBmadLattice</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">facility</span><span class="p">:</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="n">ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;kind&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">kind</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;BeginningEle&quot;</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">particle</span> <span class="o">=</span> <span class="n">_ele_to_scibmad_str</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span>
+            <span class="n">lat</span><span class="o">.</span><span class="n">particle</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">particle</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;Lattice&quot;</span><span class="p">:</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">()</span>
+            <span class="n">branches</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">bl</span> <span class="ow">in</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;branches&quot;</span><span class="p">]:</span>
+                <span class="c1"># A branch is either the bare name of a beamline or that name</span>
+                <span class="c1"># carrying the branch&#39;s own settings, which SciBmad takes from the</span>
+                <span class="c1"># beamline rather than the lattice list.</span>
+                <span class="n">branches</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bl</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">node_key</span><span class="p">()</span> <span class="k">if</span> <span class="n">bl</span><span class="o">.</span><span class="n">is_map</span><span class="p">()</span> <span class="k">else</span> <span class="n">bl</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+            <span class="n">lat</span><span class="o">.</span><span class="n">lattices</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">SciBmadLatticeList</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">branches</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;BeamLine&quot;</span><span class="p">:</span>
+            <span class="n">lat</span><span class="o">.</span><span class="n">beamlines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_make_scibmad_beamline</span><span class="p">(</span><span class="n">ele</span><span class="p">,</span> <span class="n">facility</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">kind</span> <span class="o">==</span> <span class="s2">&quot;Controller&quot;</span><span class="p">:</span>
+            <span class="n">lat</span><span class="o">.</span><span class="n">controllers</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_make_scibmad_controller</span><span class="p">(</span><span class="n">ele</span><span class="p">,</span> <span class="n">facility</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">kind</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="s2">&quot;variable&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">()</span><span class="si">}</span><span class="s2">: `</span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2">` definitions are not &quot;</span>
+                             <span class="s2">&quot;yet translated to SciBmad&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lat</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_make_scibmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">lat</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<div class="viewcode-block" id="write_scibmad_file">
+<a class="viewcode-back" href="../../api.html#palsparserpy.write_scibmad_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">write_scibmad_file</span><span class="p">(</span><span class="n">lat</span><span class="p">:</span> <span class="n">SciBmadLattice</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Serialize the :class:`SciBmadLattice` ``lat`` to ``filename`` as a SciBmad</span>
+<span class="sd">    lattice file.</span>
+
+<span class="sd">    Write the particle-start block, the ``@elements`` block of ``LineElement``s,</span>
+<span class="sd">    the ``Controller`` definitions, the ``Beamline`` definitions, and the lattice</span>
+<span class="sd">    lists.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">lat</span><span class="o">.</span><span class="n">particle</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">particle</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;@elements begin</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">lat</span><span class="o">.</span><span class="n">elements</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_format_scibmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;end</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ctrl</span> <span class="ow">in</span> <span class="n">lat</span><span class="o">.</span><span class="n">controllers</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_format_scibmad_controller</span><span class="p">(</span><span class="n">ctrl</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">lat</span><span class="o">.</span><span class="n">controllers</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">bl</span> <span class="ow">in</span> <span class="n">lat</span><span class="o">.</span><span class="n">beamlines</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_format_scibmad_beamline</span><span class="p">(</span><span class="n">bl</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">latt</span> <span class="ow">in</span> <span class="n">lat</span><span class="o">.</span><span class="n">lattices</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">_format_scibmad_lattice</span><span class="p">(</span><span class="n">latt</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_scibmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">SciBmadEle</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a :class:`SciBmadEle` as a ``name = LineElement(...)`` definition.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ele</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> = LineElement(</span><span class="si">{</span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ele</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_scibmad_controller</span><span class="p">(</span><span class="n">ctrl</span><span class="p">:</span> <span class="n">SciBmadController</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a :class:`SciBmadController` as a</span>
+<span class="sd">    ``name = Controller(slaves...; vars = (; ...))`` definition.&quot;&quot;&quot;</span>
+    <span class="n">slaves</span> <span class="o">=</span> <span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ctrl</span><span class="o">.</span><span class="n">slaves</span><span class="p">)</span>
+    <span class="n">variables</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">ctrl</span><span class="o">.</span><span class="n">vars</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">ctrl</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> = Controller(</span><span class="se">\n</span><span class="s2">  </span><span class="si">{</span><span class="n">slaves</span><span class="si">}</span><span class="s2">;</span><span class="se">\n</span><span class="s2">  vars = (; </span><span class="si">{</span><span class="n">variables</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">)&quot;</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_scibmad_beamline</span><span class="p">(</span><span class="n">bl</span><span class="p">:</span> <span class="n">SciBmadBeamline</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a :class:`SciBmadBeamline` as a ``name = Beamline([members],</span>
+<span class="sd">    ref...)`` definition.&quot;&quot;&quot;</span>
+    <span class="n">members</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">bl</span><span class="o">.</span><span class="n">members</span><span class="p">)</span>
+    <span class="n">ref</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">r</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">bl</span><span class="o">.</span><span class="n">ref</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bl</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> = Beamline([</span><span class="si">{</span><span class="n">members</span><span class="si">}</span><span class="s2">], </span><span class="si">{</span><span class="n">ref</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_format_scibmad_lattice</span><span class="p">(</span><span class="n">latt</span><span class="p">:</span> <span class="n">SciBmadLatticeList</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Render a :class:`SciBmadLatticeList` as a ``name = [branches]`` list.&quot;&quot;&quot;</span>
+    <span class="n">inner</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="s2">&quot;,&quot;</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">latt</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">latt</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> = [</span><span class="si">{</span><span class="n">inner</span><span class="si">}</span><span class="s2">]&quot;</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_ele_to_scibmad_str</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate a ``BeginningEle`` element into SciBmad reference and particle</span>
+<span class="sd">    fragments.</span>
+
+<span class="sd">    Returns ``(ref, particle)`` where ``ref`` holds the reference-parameter</span>
+<span class="sd">    fragments from the element&#39;s ``ReferenceP`` (species and energy) and</span>
+<span class="sd">    ``particle`` holds the coordinate lines from its ``ParticleP`` (followed by</span>
+<span class="sd">    the ``v = [...]`` phase-space vector).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">ref</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">particle</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">props</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;TwissP&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TwissP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ReferenceP&quot;</span><span class="p">:</span>
+            <span class="n">referenceP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;ReferenceP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">referenceP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;species_ref&quot;</span><span class="p">:</span>
+                    <span class="n">ref</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;species_ref = </span><span class="si">{</span><span class="n">referenceP</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;pc_ref&quot;</span><span class="p">:</span>
+                    <span class="n">ref</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;pc_ref = </span><span class="si">{</span><span class="n">referenceP</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="o">==</span> <span class="s2">&quot;E_tot_ref&quot;</span><span class="p">:</span>
+                    <span class="n">ref</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;E_ref = </span><span class="si">{</span><span class="n">referenceP</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;time_ref&quot;</span><span class="p">,</span> <span class="s2">&quot;location&quot;</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> not supported yet&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ParticleP&quot;</span><span class="p">:</span>
+            <span class="n">particleP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;ParticleP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">particleP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">particleP</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="s2">&quot;px&quot;</span><span class="p">,</span> <span class="s2">&quot;py&quot;</span><span class="p">,</span> <span class="s2">&quot;pz&quot;</span><span class="p">):</span>
+                    <span class="n">particle</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;spin_x&quot;</span><span class="p">,</span> <span class="s2">&quot;spin_y&quot;</span><span class="p">,</span> <span class="s2">&quot;spin_z&quot;</span><span class="p">):</span>
+                    <span class="c1"># SciBmad carries spin as a quaternion, not as its components.</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> not yet supported&quot;</span><span class="p">)</span>
+            <span class="n">particle</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;v = [ x px y py z pz ]&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ref</span><span class="p">,</span> <span class="n">particle</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_scibmad_beamline</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span> <span class="n">facility</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SciBmadBeamline</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate a ``BeamLine`` element into a :class:`SciBmadBeamline`.</span>
+
+<span class="sd">    Collect the member element names (dropping the leading reference entry,</span>
+<span class="sd">    ``line[0]``) and the reference parameters read from that first entry. A line</span>
+<span class="sd">    may also name its beginning element instead of spelling it out, in which case</span>
+<span class="sd">    the reference parameters are on that element&#39;s ``facility`` definition.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">()</span>
+    <span class="n">line</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;line&quot;</span><span class="p">]</span>
+    <span class="n">beginning</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">beginning</span><span class="o">.</span><span class="n">is_map</span><span class="p">():</span>
+        <span class="n">beginning</span> <span class="o">=</span> <span class="n">facility_entry</span><span class="p">(</span><span class="n">facility</span><span class="p">,</span> <span class="n">beginning</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">beginning</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;BeamLine </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: its first element is not defined &quot;</span>
+                             <span class="s2">&quot;in the facility&quot;</span><span class="p">)</span>
+    <span class="n">ref</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_ele_to_scibmad_str</span><span class="p">(</span><span class="n">beginning</span><span class="p">)</span>
+    <span class="n">members</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">line</span><span class="p">)):</span>
+        <span class="n">line_ele</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line_ele</span><span class="o">.</span><span class="n">is_scalar</span><span class="p">():</span>
+            <span class="n">members</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_ele</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">line_ele</span><span class="o">.</span><span class="n">is_map</span><span class="p">():</span>
+            <span class="n">members</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">node_key</span><span class="p">())</span>
+    <span class="k">return</span> <span class="n">SciBmadBeamline</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">members</span><span class="p">,</span> <span class="n">ref</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_scibmad_control_target</span><span class="p">(</span><span class="n">cname</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">param</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+                            <span class="n">facility</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate a controller&#39;s ``parameter`` target into a SciBmad</span>
+<span class="sd">    ``(element, :property)`` pair.</span>
+
+<span class="sd">    Returns ``(element, property)``. SciBmad keeps the PALS parameter names, so a</span>
+<span class="sd">    group-qualified target such as ``q&gt;MagneticMultipoleP.Kn1`` needs only its</span>
+<span class="sd">    group prefix dropped.</span>
+
+<span class="sd">    A target may name its element by kind as well as by name, as</span>
+<span class="sd">    ``{kind}::{name}``; the qualifier is checked against the element found and</span>
+<span class="sd">    then dropped, SciBmad naming each element once.</span>
+
+<span class="sd">    Targets SciBmad cannot express -- a pattern matching several elements, or a</span>
+<span class="sd">    ``&gt;&gt;`` or ``&gt;&gt;&gt;`` qualifier naming the BeamLine or Lattice an element is</span>
+<span class="sd">    reached through -- raise an error.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="s2">&quot;&gt;&gt;&quot;</span> <span class="ow">in</span> <span class="n">param</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;controller </span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: `</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">` reaches its element &quot;</span>
+                         <span class="s2">&quot;through a BeamLine or Lattice qualifier, which has no &quot;</span>
+                         <span class="s2">&quot;SciBmad equivalent&quot;</span><span class="p">)</span>
+
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">param</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;&gt;&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">parts</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;controller </span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: control parameter `</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">` is not &quot;</span>
+                         <span class="s2">&quot;of the form `element&gt;parameter`&quot;</span><span class="p">)</span>
+    <span class="n">slave</span><span class="p">,</span> <span class="n">path</span> <span class="o">=</span> <span class="n">parts</span>
+
+    <span class="c1"># An element may be named by its kind as well as by its name.</span>
+    <span class="k">if</span> <span class="s2">&quot;::&quot;</span> <span class="ow">in</span> <span class="n">slave</span><span class="p">:</span>
+        <span class="n">qualifier</span> <span class="o">=</span> <span class="n">slave</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;::&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">qualifier</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;controller </span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: `</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">` does not name a &quot;</span>
+                             <span class="s2">&quot;single element kind&quot;</span><span class="p">)</span>
+        <span class="n">kind_wanted</span><span class="p">,</span> <span class="n">slave</span> <span class="o">=</span> <span class="n">qualifier</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="n">facility_props</span><span class="p">(</span><span class="n">facility</span><span class="p">,</span> <span class="n">slave</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">props</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;controller </span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: `</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">` names no element of &quot;</span>
+                             <span class="s2">&quot;the facility&quot;</span><span class="p">)</span>
+        <span class="n">ele_kind</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="s2">&quot;kind&quot;</span> <span class="ow">in</span> <span class="n">props</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">kind_wanted</span> <span class="o">!=</span> <span class="n">ele_kind</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;controller </span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: `</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">` asks for a &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kind_wanted</span><span class="si">}</span><span class="s2"> but </span><span class="si">{</span><span class="n">slave</span><span class="si">}</span><span class="s2"> is a </span><span class="si">{</span><span class="n">ele_kind</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_NAME_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">slave</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;controller </span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: `</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">` selects slaves by &quot;</span>
+                         <span class="s2">&quot;pattern, which a SciBmad Controller cannot express&quot;</span><span class="p">)</span>
+
+    <span class="c1"># `length` is the one PALS element parameter that is not in a group, and the</span>
+    <span class="c1"># one whose SciBmad name differs.</span>
+    <span class="k">if</span> <span class="n">path</span> <span class="o">==</span> <span class="s2">&quot;length&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">slave</span><span class="p">,</span> <span class="s2">&quot;L&quot;</span>
+
+    <span class="n">prop</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_NAME_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">prop</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;controller </span><span class="si">{</span><span class="n">cname</span><span class="si">}</span><span class="s2">: `</span><span class="si">{</span><span class="n">param</span><span class="si">}</span><span class="s2">` does not name a single &quot;</span>
+                         <span class="s2">&quot;parameter&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">slave</span><span class="p">,</span> <span class="n">prop</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_scibmad_controller</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span>
+                             <span class="n">facility</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SciBmadController</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate a ``Controller`` element into a :class:`SciBmadController`.</span>
+
+<span class="sd">    Each control becomes a function of the controller&#39;s variables, which SciBmad</span>
+<span class="sd">    passes as keyword arguments. ``control_type: RELATIVE`` adds its expression to</span>
+<span class="sd">    the value the element already carries -- that is what makes it relative --</span>
+<span class="sd">    while ``ABSOLUTE`` replaces it.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">()</span>
+
+    <span class="n">control_type</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;control_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="s2">&quot;control_type&quot;</span> <span class="ow">in</span> <span class="n">props</span> \
+        <span class="k">else</span> <span class="s2">&quot;ABSOLUTE&quot;</span>
+    <span class="k">if</span> <span class="n">control_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;ABSOLUTE&quot;</span><span class="p">,</span> <span class="s2">&quot;RELATIVE&quot;</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: control_type must be ABSOLUTE or RELATIVE, not &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">control_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">var_names</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">var</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">ctrl_variables</span><span class="p">(</span><span class="n">props</span><span class="p">):</span>
+        <span class="n">var_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+        <span class="n">variables</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">var</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="c1"># SciBmad calls every control function with all of the controller&#39;s variables.</span>
+    <span class="n">signature</span> <span class="o">=</span> <span class="s2">&quot;(ele; &quot;</span> <span class="o">+</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">var_names</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;)&quot;</span>
+
+    <span class="n">slaves</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="s2">&quot;controls&quot;</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;controls&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s2">&quot;parameter&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">control</span> <span class="ow">or</span> <span class="s2">&quot;expression&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">control</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: a controls entry needs both a &quot;</span>
+                                 <span class="s2">&quot;`parameter` and an `expression`&quot;</span><span class="p">)</span>
+            <span class="n">slave</span><span class="p">,</span> <span class="n">prop</span> <span class="o">=</span> <span class="n">_scibmad_control_target</span><span class="p">(</span>
+                <span class="n">name</span><span class="p">,</span> <span class="n">control</span><span class="p">[</span><span class="s2">&quot;parameter&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">facility</span><span class="p">)</span>
+            <span class="n">expression</span> <span class="o">=</span> <span class="n">control</span><span class="p">[</span><span class="s2">&quot;expression&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">if</span> <span class="n">control_type</span> <span class="o">==</span> <span class="s2">&quot;RELATIVE&quot;</span><span class="p">:</span>
+                <span class="n">expression</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;ele.</span><span class="si">{</span><span class="n">prop</span><span class="si">}</span><span class="s2"> + (</span><span class="si">{</span><span class="n">expression</span><span class="si">}</span><span class="s2">)&quot;</span>
+            <span class="n">slaves</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">slave</span><span class="si">}</span><span class="s2">, :</span><span class="si">{</span><span class="n">prop</span><span class="si">}</span><span class="s2">) =&gt; </span><span class="si">{</span><span class="n">signature</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">expression</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">SciBmadController</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">slaves</span><span class="p">,</span> <span class="n">variables</span><span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_scibmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SciBmadEle</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Translate a single PALS element into a :class:`SciBmadEle`.</span>
+
+<span class="sd">    Dispatch on the element&#39;s parameter groups (aperture, bend, body shift,</span>
+<span class="sd">    multipoles, patch, RF, solenoid, tracking, reference change, ...) to build the</span>
+<span class="sd">    keyword-argument fragments of a ``LineElement``. Unsupported parameters emit a</span>
+<span class="sd">    message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">props</span> <span class="o">=</span> <span class="n">ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">attrs</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">props</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;kind&quot;</span><span class="p">:</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kind = </span><span class="si">{</span><span class="n">props</span><span class="p">[</span><span class="s1">&#39;kind&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;length&quot;</span><span class="p">:</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;L = </span><span class="si">{</span><span class="n">props</span><span class="p">[</span><span class="s1">&#39;length&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ACKickerP&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ACKickerP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ApertureP&quot;</span><span class="p">:</span>
+            <span class="n">apertureP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;ApertureP&quot;</span><span class="p">]</span>
+            <span class="n">has_xmin</span> <span class="o">=</span> <span class="s2">&quot;x_min&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+            <span class="n">has_xmax</span> <span class="o">=</span> <span class="s2">&quot;x_max&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+            <span class="n">has_xwidth</span> <span class="o">=</span> <span class="s2">&quot;x_width&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+            <span class="n">has_xcen</span> <span class="o">=</span> <span class="s2">&quot;x_center&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+            <span class="n">has_ymin</span> <span class="o">=</span> <span class="s2">&quot;y_min&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+            <span class="n">has_ymax</span> <span class="o">=</span> <span class="s2">&quot;y_max&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+            <span class="n">has_ywidth</span> <span class="o">=</span> <span class="s2">&quot;y_width&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+            <span class="n">has_ycen</span> <span class="o">=</span> <span class="s2">&quot;y_center&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span>
+
+            <span class="c1"># Shape and location describe an aperture; they do not put one there.</span>
+            <span class="c1"># A group that sets no limit bounds nothing, so writing them out would</span>
+            <span class="c1"># give the element an aperture the PALS lattice does not have. A</span>
+            <span class="c1"># `vertices` aperture is bounded by its vertex list.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">has_xmin</span> <span class="ow">or</span> <span class="n">has_xmax</span> <span class="ow">or</span> <span class="n">has_xwidth</span> <span class="ow">or</span> <span class="n">has_xcen</span> <span class="ow">or</span>
+                    <span class="n">has_ymin</span> <span class="ow">or</span> <span class="n">has_ymax</span> <span class="ow">or</span> <span class="n">has_ywidth</span> <span class="ow">or</span> <span class="n">has_ycen</span> <span class="ow">or</span>
+                    <span class="s2">&quot;vertices&quot;</span> <span class="ow">in</span> <span class="n">apertureP</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">has_xmin</span> <span class="ow">or</span> <span class="n">has_xmax</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">has_xwidth</span> <span class="ow">or</span> <span class="n">has_xcen</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either min and max should be defined or width and center, &quot;</span>
+                      <span class="s2">&quot;not both.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">has_xmin</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_xmax</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">has_xmax</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_xmin</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Both min and max need to be defined.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">has_xmin</span> <span class="ow">and</span> <span class="n">has_xmax</span><span class="p">:</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x1_limit = </span><span class="si">{</span><span class="n">apertureP</span><span class="p">[</span><span class="s1">&#39;x_min&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x2_limit = </span><span class="si">{</span><span class="n">apertureP</span><span class="p">[</span><span class="s1">&#39;x_max&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">has_xwidth</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_xcen</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">has_xcen</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_xwidth</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Both width and center need to be defined.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">has_xwidth</span> <span class="ow">and</span> <span class="n">has_xcen</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;x_width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
+                <span class="n">center</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;x_center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x1_limit = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">center</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;x2_limit = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">center</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">has_ymin</span> <span class="ow">or</span> <span class="n">has_ymax</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">has_ywidth</span> <span class="ow">or</span> <span class="n">has_ycen</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Either min and max should be defined or width and center, &quot;</span>
+                      <span class="s2">&quot;not both.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">has_ymin</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_ymax</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">has_ymax</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_ymin</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Both min and max need to be defined.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">has_ymin</span> <span class="ow">and</span> <span class="n">has_ymax</span><span class="p">:</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y1_limit = </span><span class="si">{</span><span class="n">apertureP</span><span class="p">[</span><span class="s1">&#39;y_min&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y2_limit = </span><span class="si">{</span><span class="n">apertureP</span><span class="p">[</span><span class="s1">&#39;y_max&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="n">has_ywidth</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_ycen</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">has_ycen</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">has_ywidth</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Both width and center need to be defined.&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">has_ywidth</span> <span class="ow">and</span> <span class="n">has_ycen</span><span class="p">:</span>
+                <span class="n">width</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;y_width&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
+                <span class="n">center</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;y_center&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y1_limit = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">center</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;y2_limit = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">center</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">width</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">akey</span> <span class="ow">in</span> <span class="n">apertureP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">akey</span> <span class="o">==</span> <span class="s2">&quot;shape&quot;</span><span class="p">:</span>
+                    <span class="n">shape</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;shape&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                    <span class="k">if</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">&quot;ELLIPTICAL&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;aperture_shape = ApertureShape.Elliptical&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">shape</span> <span class="o">==</span> <span class="s2">&quot;RECTANGULAR&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;aperture_shape = ApertureShape.Rectangular&quot;</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;shape </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2"> is not supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">akey</span> <span class="o">==</span> <span class="s2">&quot;location&quot;</span><span class="p">:</span>
+                    <span class="n">location</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;location&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                    <span class="k">if</span> <span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;ENTRANCE_END&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;aperture_at = ApertureAt.Entrance&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;EXIT_END&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;aperture_at = ApertureAt.Exit&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;BOTH_ENDS&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;aperture_at = ApertureAt.BothEnds&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">location</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;EVERYWHERE&quot;</span><span class="p">,</span> <span class="s2">&quot;CENTER&quot;</span><span class="p">):</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;aperture_at = ApertureAt.BothEnds&quot;</span><span class="p">)</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;location </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2"> not supported, set to BothEnds&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">location</span> <span class="o">==</span> <span class="s2">&quot;NOWHERE&quot;</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;location </span><span class="si">{</span><span class="n">location</span><span class="si">}</span><span class="s2"> not supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">akey</span> <span class="o">==</span> <span class="s2">&quot;aperture_shifts_with_body&quot;</span><span class="p">:</span>
+                    <span class="n">shifts</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;aperture_shifts_with_body&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;aperture_shifts_with_body = &quot;</span>
+                                 <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">shifts</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">akey</span> <span class="o">==</span> <span class="s2">&quot;aperture_active&quot;</span><span class="p">:</span>
+                    <span class="n">active</span> <span class="o">=</span> <span class="n">apertureP</span><span class="p">[</span><span class="s2">&quot;aperture_active&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;aperture_active = </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">active</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s1">&#39;true&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">akey</span> <span class="o">==</span> <span class="s2">&quot;vertices&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;vertices not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">akey</span> <span class="o">==</span> <span class="s2">&quot;material&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;material not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">akey</span> <span class="o">==</span> <span class="s2">&quot;thickness&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;thickness not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;BeamBeamP&quot;</span><span class="p">:</span>
+            <span class="n">bbP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;BeamBeamP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">bbkey</span> <span class="ow">in</span> <span class="n">bbP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">bbkey</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;sigma_x&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_y&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma_z&quot;</span><span class="p">,</span> <span class="s2">&quot;alpha_x&quot;</span><span class="p">,</span> <span class="s2">&quot;beta_x&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;alpha_y&quot;</span><span class="p">,</span> <span class="s2">&quot;beta_y&quot;</span><span class="p">,</span> <span class="s2">&quot;charge&quot;</span><span class="p">,</span> <span class="s2">&quot;energy&quot;</span><span class="p">,</span> <span class="s2">&quot;N_particle&quot;</span><span class="p">):</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bbkey</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">bbP</span><span class="p">[</span><span class="n">bbkey</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;BendP&quot;</span><span class="p">:</span>
+            <span class="n">bendP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;BendP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">bkey</span> <span class="ow">in</span> <span class="n">bendP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;radius_ref&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;radius_ref not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;Bn0_ref&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bn0_ref not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;e1&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;e1 = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">&#39;e1&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;e2&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;e2 = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">&#39;e2&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;e1_rect&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;e1_rect not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;e2_rect&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;e2_rect not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;edge1_int&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;edge1_int = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">&#39;edge1_int&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;edge2_int&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;edge2_int = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">&#39;edge2_int&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;g_ref&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;g_ref = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">&#39;g_ref&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;h1&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;h1 not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;h2&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;h2 not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;L_chord&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;L_chord not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;L_sagitta&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;L_sagitta not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">&quot;tilt_ref&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tilt_ref = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">&#39;tilt_ref&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;BodyShiftP&quot;</span><span class="p">:</span>
+            <span class="n">bodyshiftP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;BodyShiftP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">bskey</span> <span class="ow">in</span> <span class="n">bodyshiftP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">bskey</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;x_offset&quot;</span><span class="p">,</span> <span class="s2">&quot;y_offset&quot;</span><span class="p">,</span> <span class="s2">&quot;z_offset&quot;</span><span class="p">,</span> <span class="s2">&quot;x_rot&quot;</span><span class="p">,</span> <span class="s2">&quot;y_rot&quot;</span><span class="p">):</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">bskey</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">bodyshiftP</span><span class="p">[</span><span class="n">bskey</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">bskey</span> <span class="o">==</span> <span class="s2">&quot;z_rot&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tilt = </span><span class="si">{</span><span class="n">bodyshiftP</span><span class="p">[</span><span class="s1">&#39;z_rot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ElectricMultipoleP&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ElectricMultipoleP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;FloorP&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FloorP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;FloorShiftP&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FloorShiftP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ForkP&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ForkP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;GirderP&quot;</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GirderP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;MagneticMultipoleP&quot;</span><span class="p">:</span>
+            <span class="n">mmP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;MagneticMultipoleP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">mmkey</span> <span class="ow">in</span> <span class="n">mmP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mmkey</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">mmP</span><span class="p">[</span><span class="n">mmkey</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;MetaP&quot;</span><span class="p">:</span>
+            <span class="n">metaP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;MetaP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">mkey</span> <span class="ow">in</span> <span class="n">metaP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">mkey</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">&quot;alias&quot;</span><span class="p">,</span> <span class="s2">&quot;label&quot;</span><span class="p">,</span> <span class="s2">&quot;description&quot;</span><span class="p">):</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">mkey</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">metaP</span><span class="p">[</span><span class="n">mkey</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MetaP not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;PatchP&quot;</span><span class="p">:</span>
+            <span class="n">patchP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;PatchP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">pkey</span> <span class="ow">in</span> <span class="n">patchP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;x_offset&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dx = </span><span class="si">{</span><span class="n">patchP</span><span class="p">[</span><span class="s1">&#39;x_offset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;y_offset&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dy = </span><span class="si">{</span><span class="n">patchP</span><span class="p">[</span><span class="s1">&#39;y_offset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;z_offset&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dz = </span><span class="si">{</span><span class="n">patchP</span><span class="p">[</span><span class="s1">&#39;z_offset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;t_offset&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dt = </span><span class="si">{</span><span class="n">patchP</span><span class="p">[</span><span class="s1">&#39;t_offset&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;x_rot&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dx_rot = </span><span class="si">{</span><span class="n">patchP</span><span class="p">[</span><span class="s1">&#39;x_rot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;y_rot&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dy_rot = </span><span class="si">{</span><span class="n">patchP</span><span class="p">[</span><span class="s1">&#39;y_rot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;z_rot&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dz_rot = </span><span class="si">{</span><span class="n">patchP</span><span class="p">[</span><span class="s1">&#39;z_rot&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;flexible&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;flexible not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;ref_coords&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;ref_coords not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">pkey</span> <span class="o">==</span> <span class="s2">&quot;user_sets_length&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;user_sets_length not yet supported&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;RFP&quot;</span><span class="p">:</span>
+            <span class="n">rfP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;RFP&quot;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;kind&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;CrabCavity&quot;</span><span class="p">:</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;is_crabcavity = true&quot;</span><span class="p">)</span>
+            <span class="n">num_cells</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">l_active</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">for</span> <span class="n">rfkey</span> <span class="ow">in</span> <span class="n">rfP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;frequency&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rate = </span><span class="si">{</span><span class="n">rfP</span><span class="p">[</span><span class="s1">&#39;frequency&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rate_meaning = false&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;harmon&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;rate = </span><span class="si">{</span><span class="n">rfP</span><span class="p">[</span><span class="s1">&#39;harmon&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rate_meaning = true&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;voltage&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;voltage = </span><span class="si">{</span><span class="n">rfP</span><span class="p">[</span><span class="s1">&#39;voltage&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;gradient&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;gradient not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;phi0 = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="mi">2</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">math</span><span class="o">.</span><span class="n">pi</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">rfP</span><span class="p">[</span><span class="s1">&#39;phase&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;multipass_phase&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;multipass_phase not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;cavity_type&quot;</span><span class="p">:</span>
+                    <span class="n">traveling</span> <span class="o">=</span> <span class="n">rfP</span><span class="p">[</span><span class="s2">&quot;cavity_type&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;TRAVELING_WAVE&quot;</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;traveling_wave = </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">traveling</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;num_cells&quot;</span><span class="p">:</span>
+                    <span class="n">num_cells</span> <span class="o">=</span> <span class="n">rfP</span><span class="p">[</span><span class="s2">&quot;num_cells&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_int</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;L_active&quot;</span><span class="p">:</span>
+                    <span class="n">l_active</span> <span class="o">=</span> <span class="n">rfP</span><span class="p">[</span><span class="s2">&quot;L_active&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">&quot;zero_phase&quot;</span><span class="p">:</span>
+                    <span class="n">zp</span> <span class="o">=</span> <span class="n">rfP</span><span class="p">[</span><span class="s2">&quot;zero_phase&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                    <span class="k">if</span> <span class="n">zp</span> <span class="o">==</span> <span class="s2">&quot;ACCELERATING&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;zero_phase = Accelerating&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">zp</span> <span class="o">==</span> <span class="s2">&quot;BELOW_TRANSITION&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;zero_phase = BelowTransition&quot;</span><span class="p">)</span>
+                    <span class="k">elif</span> <span class="n">zp</span> <span class="o">==</span> <span class="s2">&quot;ABOVE_TRANSITION&quot;</span><span class="p">:</span>
+                        <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;zero_phase = AboveTransition&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;frequency&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rfP</span> <span class="ow">and</span> <span class="s2">&quot;harmon&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rfP</span><span class="p">:</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;rate_meaning = -1&quot;</span><span class="p">)</span>
+            <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;tracking_method = SaganCavity(num_cells = </span><span class="si">{</span><span class="n">num_cells</span><span class="si">}</span><span class="s2">, &quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;L_active = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">l_active</span><span class="p">)</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;SolenoidP&quot;</span><span class="p">:</span>
+            <span class="n">solP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;SolenoidP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">skey</span> <span class="ow">in</span> <span class="n">solP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">skey</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">solP</span><span class="p">[</span><span class="n">skey</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;TrackingP&quot;</span><span class="p">:</span>
+            <span class="n">trackingP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;TrackingP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">tkey</span> <span class="ow">in</span> <span class="n">trackingP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">tkey</span> <span class="o">==</span> <span class="s2">&quot;SciBmad&quot;</span><span class="p">:</span>
+                    <span class="n">sbm</span> <span class="o">=</span> <span class="n">trackingP</span><span class="p">[</span><span class="s2">&quot;SciBmad&quot;</span><span class="p">]</span>
+                    <span class="k">for</span> <span class="n">sbkey</span> <span class="ow">in</span> <span class="n">sbm</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                        <span class="k">if</span> <span class="n">sbkey</span> <span class="o">==</span> <span class="s2">&quot;tracking_method&quot;</span><span class="p">:</span>
+                            <span class="k">if</span> <span class="n">sbm</span><span class="p">[</span><span class="s2">&quot;tracking_method&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">==</span> <span class="s2">&quot;scibmad_standard&quot;</span><span class="p">:</span>
+                                <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;tracking_method = SciBmadStandard()&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">&quot;ReferenceChangeP&quot;</span><span class="p">:</span>
+            <span class="n">refchangeP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">&quot;ReferenceChangeP&quot;</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">rkey</span> <span class="ow">in</span> <span class="n">refchangeP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">rkey</span> <span class="o">==</span> <span class="s2">&quot;extra_dtime_ref&quot;</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;extra_dtime_ref not yet supported&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rkey</span> <span class="o">==</span> <span class="s2">&quot;dE_ref&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;dE_ref = </span><span class="si">{</span><span class="n">refchangeP</span><span class="p">[</span><span class="s1">&#39;dE_ref&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rkey</span> <span class="o">==</span> <span class="s2">&quot;E_tot_ref&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;E_ref = </span><span class="si">{</span><span class="n">refchangeP</span><span class="p">[</span><span class="s1">&#39;E_tot_ref&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">rkey</span> <span class="o">==</span> <span class="s2">&quot;species_ref&quot;</span><span class="p">:</span>
+                    <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;species_ref = </span><span class="si">{</span><span class="n">refchangeP</span><span class="p">[</span><span class="s1">&#39;species_ref&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">SciBmadEle</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">(),</span> <span class="n">attrs</span><span class="p">)</span>
+</pre></div>
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, PALSParserPy Contributors
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer no-toc">
+      
+      
+      
+    </aside>
+  </div>
+</div><script src="../../_static/documentation_options.js?v=8a448e45"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
