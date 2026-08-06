@@ -1,0 +1,75 @@
+name: Python Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Python ${{ matrix.python-version }} - ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ['3.9', '3.12']
+        os: [macos-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout PALSParserPy repository
+        uses: actions/checkout@v5
+        with:
+          path: PALSParserPy
+
+      - name: Checkout PALSParserCpp repository
+        uses: actions/checkout@v5
+        with:
+          repository: pals-project/PALSParserCpp
+          path: PALSParserCpp
+
+      - name: Setup Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # PALSParserCpp fetches rapidyaml (and the rest) itself via CMake FetchContent,
+      # so a compiler and CMake are all that is needed. Both runners ship CMake
+      # preinstalled; only Linux needs a compiler pulled in explicitly.
+      - name: Install system dependencies (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential
+
+      - name: Build C++ library
+        run: |
+          cd PALSParserCpp
+          mkdir -p build
+          cd build
+          cmake ..
+          make -j$(nproc 2>/dev/null || echo 2)
+          ls -lah
+        shell: bash
+
+      # PALSParserPy finds ../PALSParserCpp/build/ by itself, which is the layout
+      # the two checkouts above make. pytest puts the checkout on sys.path, so the
+      # package needs no install; pytest itself does.
+      - name: Run tests
+        run: |
+          cd $GITHUB_WORKSPACE/PALSParserPy
+          python -m pip install --upgrade pip
+          python -m pip install pytest
+          python -m pytest -v
+        shell: bash
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}-python-${{ matrix.python-version }}
+          path: |
+            PALSParserPy/*.log
+            PALSParserPy/lattice_files/*_out.*
+          if-no-files-found: ignore

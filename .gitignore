@@ -216,3 +216,10 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# Built documentation site
+gh-pages/
+
+# Translator output written by the examples
+lattice_files/*.pals_out.*
+lattice_files/expand.pals.yaml

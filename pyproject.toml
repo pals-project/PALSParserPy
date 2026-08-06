@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "palsparserpy"
+version = "0.1.0"
+description = "Python interface for Particle Accelerator Language Standard (PALS) files"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "David Sagan", email = "david.sagan@gmail.com" },
+]
+keywords = ["PALS", "accelerator", "lattice", "Bmad", "MAD-X", "YAML"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Physics",
+]
+# The C library PALSParserPy binds is built by PALSParserCpp and found at run
+# time; there is nothing to install from PyPI.
+dependencies = []
+
+[project.optional-dependencies]
+test = ["pytest"]
+docs = ["sphinx", "myst-parser", "sphinx-book-theme"]
+
+[project.urls]
+Homepage = "https://github.com/pals-project/PALSParserPy"
+"PALS standard" = "https://github.com/campa-consortium/pals"
+"C library" = "https://github.com/pals-project/PALSParserCpp"
+
+[tool.setuptools]
+packages = ["palsparserpy"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
