@@ -189,8 +189,13 @@ def pals_to_madx(yaml: YAMLNode) -> MadxLattice:
         if key in pals:
             lat.constants.extend(_madx_constants(pals[key]))
 
+    if "girders" in pals and len(pals["girders"]) > 0:
+        raise ValueError("MAD-X has no girders: the `PALS: girders` cannot be "
+                         "translated")
+
     n_lattices = 0
     controllers: List[YAMLNode] = []
+    placeholders = set()
     for ele in facility:
         props = ele.child(0)
         # The compact `constants:`/`variables:` list is a facility entry in its
@@ -221,6 +226,10 @@ def pals_to_madx(yaml: YAMLNode) -> MadxLattice:
             controllers.append(ele)
         elif pals_kind in ("constant", "variable"):
             lat.constants.append(_madx_constant(props, pals_kind))
+        elif pals_kind == "Placeholder":
+            # A Placeholder holds a place while a PALS lattice is built and is
+            # gone once it is.
+            placeholders.add(props.node_key())
         else:
             definition, align = _make_madx_ele(ele)
             lat.elements.append(definition)
@@ -228,6 +237,9 @@ def pals_to_madx(yaml: YAMLNode) -> MadxLattice:
                 lat.alignments.append(align)
             if any(_MADX_RIGIDITY in a for a in definition.attrs):
                 lat.rigidity = True
+
+    for bl in lat.beamlines:
+        bl.members[:] = [m for m in bl.members if m not in placeholders]
 
     # A PALS controller owns its variables and MAD-X has no such scope, so what
     # each one is called in the file has to be settled before any of them is
@@ -862,7 +874,7 @@ def _madx_kind(ele_kind: str) -> str:
         "Taylor": "matrix",
         # Bookkeeping Elements
         "BeginningEle": "marker", "Marker": "marker",
-        "Placeholder": "placeholder", "Patch": "changeref"}
+        "Patch": "changeref"}
     if ele_kind in known:
         return known[ele_kind]
 
@@ -1641,8 +1653,10 @@ def _make_madx_ele(ele: YAMLNode) -> Tuple[MadxEleDef, MadxAlignment]:
                                          "become the voltage MAD-X states")
                     tmp = (f"volt = {_madx_scale(rfP['gradient'].value, 1e-6)} * "
                            f"{length},")
+                # MAD-X counts the phase in turns where PALS counts it in radians.
                 elif rfkey == "phase":
-                    tmp = f"lag = {_madx_shift(rfP['phase'].value, lag_offset)},"
+                    turns = _madx_scale(rfP['phase'].value, 1 / (2 * math.pi))
+                    tmp = f"lag = {_madx_shift(turns, lag_offset)},"
                 elif rfkey == "cavity_type":
                     if rfP["cavity_type"].value == "TRAVELING_WAVE":
                         print(f"{name}: a traveling wave cavity is MAD-X's "

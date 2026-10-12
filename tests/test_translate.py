@@ -559,6 +559,85 @@ BEAMLINE_QUALIFIED_FIXTURE = CONTROLLER_FIXTURE.replace("parameter: q1>",
                                                         "parameter: ring>>q1>")
 
 
+# A FloorShift, a Fiducial and two girders, one supporting the other, plus a
+# Placeholder that Bmad never sees and an RF phase in radians.
+PLACEMENT_FIXTURE = dedent("""
+    PALS:
+      facility:
+        - beg:
+            kind: BeginningEle
+            ReferenceP:
+              species_ref: electron
+              pc_ref: 3E9
+        - q1:
+            kind: Quadrupole
+            length: 0.5
+        - q2:
+            kind: Quadrupole
+            length: 0.5
+        - fs:
+            kind: FloorShift
+            CoordinateSetP:
+              origin_ele: PREVIOUS_ELEMENT
+              x_offset: 0.5
+              x_rot: 0.01
+        - fid:
+            kind: Fiducial
+            CoordinateSetP:
+              origin_ele: q1
+              origin_ele_ref_pt: ENTRANCE_END
+              y_offset: 1
+            BodyShiftP:
+              z_rot: 0.2
+        - fs_global:
+            kind: FloorShift
+            BodyShiftP:
+              z_offset: 10
+        - ph:
+            kind: Placeholder
+        - rf1:
+            kind: RFCavity
+            length: 1.3
+            RFP:
+              voltage: 1E6
+              harmon: 10
+              phase: pi/2
+              multipass_phase: 0.5
+              zero_phase: BELOW_TRANSITION
+        - ring:
+            kind: BeamLine
+            line:
+              - beg
+              - q1
+              - ph
+              - q2
+              - fs
+              - fid
+              - fs_global
+              - rf1
+        - lat:
+            kind: Lattice
+            branches:
+              - ring
+      girders:
+        inner:
+          kind: Girder
+          GirderP:
+            elements: q1:q2
+          BodyShiftP:
+            x_offset: 0.001
+        outer:
+          kind: Girder
+          GirderP:
+            elements: inner, fid
+          CoordinateSetP:
+            origin_ele: q2
+            z_offset: 0.25
+          BodyShiftP:
+            x_rot: 0.003
+    """)
+
+
 def _parsed(tmp_path, text):
     """Write ``text`` to a file in ``tmp_path`` and return the parsed tree."""
     path = tmp_path / "fixture.pals.yaml"
@@ -1059,11 +1138,11 @@ def test_a_bodyshiftp_becomes_a_madx_ealign_and_rf_takes_madx_units(tmp_path):
     # expanded.
     assert out.index("use, period = ring;") < out.index("ealign,")
 
-    # MAD-X states a frequency in MHz and a voltage in MV where PALS states Hz and
-    # volts, and its zero lag is half a period from the stable point above
-    # transition.
+    # MAD-X states a frequency in MHz, a voltage in MV and a phase in turns where
+    # PALS states Hz, volts and radians, and its zero lag is half a period from
+    # the stable point above transition.
     assert ("rf1: rfcavity,\n\tl = 1.3,\n\tfreq = 500.0,\n\tvolt = 1.0,"
-            "\n\tlag = -0.4;") in out
+            "\n\tlag = -0.48408450569081046;") in out
 
     # A branch that closes on itself is not something MAD-X states in the lattice.
     assert "use, period = ring;\t! closed" in out
@@ -1156,3 +1235,49 @@ def test_a_periodic_branch_becomes_bmads_closed_geometry(tmp_path):
     out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, MADX_CLASH_FIXTURE)))
     assert "parameter[geometry] = closed" in out
     assert "parameter[geometry] = open" not in out
+
+
+def test_floorshift_fiducial_and_girders_become_their_bmad_counterparts(tmp_path):
+    out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, PLACEMENT_FIXTURE)))
+
+    # Bmad's floor_shift defaults to the previous element; its pitch about x turns
+    # the other way from PALS's x_rot.
+    assert "fs: Floor_Shift,\n\tx_offset = 0.5,\n\ty_pitch = -0.01\n" in out
+    # A fiducial's CoordinateSetP and BodyShiftP shifts are one Bmad origin shift.
+    assert ("fid: Fiducial,\n\torigin_ele = q1,\n\torigin_ele_ref_pt = entrance_end,"
+            "\n\tdy_origin = 1,\n\tdpsi_origin = 0.2\n") in out
+    # A floor_shift placed from the global origin starts from Bmad's beginning
+    # element.
+    assert ("fs_global: Floor_Shift,\n\torigin_ele = beginning,"
+            "\n\torigin_ele_ref_pt = exit_end,\n\tz_offset = 10\n") in out
+
+    # The supported girder comes first, as Bmad needs.
+    assert ("inner: girder = {q1:q2},\n\torigin_ele = global_coordinates,"
+            "\n\tx_offset = 0.001\n") in out
+    assert ("outer: girder = {inner, fid},\n\torigin_ele = q2,"
+            "\n\torigin_ele_ref_pt = exit_end,\n\tdz_origin = 0.25,"
+            "\n\ty_pitch = -0.003\n") in out
+    assert out.index("inner: girder") < out.index("outer: girder")
+
+    # The Placeholder is gone from the line, and the RF phases are in turns.
+    assert "ring: line = (q1, q2, fs, fid, fs_global, rf1)" in out
+    assert "ph:" not in out
+    assert "phi0 = (pi/2) / twopi" in out
+    assert "phi0_multipass = 0.07957747154594767" in out
+
+
+def test_the_rf_phase_is_carried_over_in_each_formats_own_units(tmp_path):
+    yaml = _parsed(tmp_path, PLACEMENT_FIXTURE.split("girders:")[0])
+    # SciBmad, like PALS, states the phase in radians.
+    assert "phi0 = pi/2" in _scibmad_text(tmp_path, pals_to_scibmad(yaml))
+    with pytest.raises(ValueError, match="No FloorShift elements in MAD-X"):
+        pals_to_madx(yaml)
+
+
+def test_girders_madx_and_bmad_cannot_express_are_reported(tmp_path):
+    with pytest.raises(ValueError, match="MAD-X has no girders"):
+        pals_to_madx(_parsed(tmp_path, PLACEMENT_FIXTURE))
+    pattern = _parsed(tmp_path, PLACEMENT_FIXTURE.replace("elements: q1:q2",
+                                                          "elements: q.*"))
+    with pytest.raises(ValueError, match="neither a list of names nor a single range"):
+        pals_to_bmad(pattern)
