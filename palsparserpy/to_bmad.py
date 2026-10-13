@@ -11,7 +11,7 @@ from typing import Dict, List, Optional, Tuple
 
 from ._common import (ABRepresentation, FullRepresentation, approx,
                       ctrl_variables, facility_props, fill_multipoles, fmt,
-                      name_value_pairs, tilt_rotation, value_text)
+                      name_value_pairs, tilt_rotation, try_float, value_text)
 from .node import YAMLNode
 
 __all__ = ["BmadEleDef", "BmadBeamline", "BmadController", "BmadLattice",
@@ -119,6 +119,20 @@ def pals_to_bmad(yaml: YAMLNode) -> BmadLattice:
         if key in pals:
             lat.constants.extend(_bmad_constants(pals[key]))
 
+    # A FloorShift placed from the global origin is placed, in Bmad, from the
+    # beginning element, which is the same thing only while the lattice leaves
+    # that element at the origin.
+    beginning_at_origin = True
+    for ele in facility:
+        props = ele.child(0)
+        if ("kind" in props and props["kind"].value == "BeginningEle"
+                and "FloorP" in props):
+            floorP = props["FloorP"]
+            if any(k in floorP and floorP[k].as_float() != 0.0
+                   for k in ("x", "y", "z", "theta", "phi", "psi")):
+                beginning_at_origin = False
+
+    placeholders = set()
     n_lattices = 0
     for ele in facility:
         props = ele.child(0)
@@ -150,8 +164,17 @@ def pals_to_bmad(yaml: YAMLNode) -> BmadLattice:
             lat.controllers.append(_make_bmad_controller(ele, facility))
         elif pals_kind in ("constant", "variable"):
             lat.constants.append(_bmad_constant(props, pals_kind))
+        elif pals_kind == "Placeholder":
+            # A Placeholder holds a place while a PALS lattice is built and is
+            # gone once it is.
+            placeholders.add(props.node_key())
         else:
-            lat.elements.append(_make_bmad_ele(ele))
+            lat.elements.append(
+                _make_bmad_ele(ele, beginning_at_origin=beginning_at_origin))
+    for bl in lat.beamlines:
+        bl.members[:] = [m for m in bl.members if m not in placeholders]
+    if "girders" in pals:
+        lat.elements.extend(_make_bmad_girders(pals["girders"]))
     return lat
 
 
@@ -589,7 +612,7 @@ def _bmad_kind(ele_kind: str) -> str:
                "CrabCavity": "Crab_Cavity", "Multipole": "AB_Multipole",
                # Bookkeeping Elements
                "BeginningEle": "Beginning_Ele", "FloorShift": "Floor_Shift",
-               "Placeholder": "Marker", "ReferenceChange": "Patch"}
+               "ReferenceChange": "Patch"}
     unchanged = {
         # Magnets and RF Cavities
         "Drift", "Kicker", "Octupole", "Quadrupole", "RFCavity", "Sextupole",
@@ -603,9 +626,7 @@ def _bmad_kind(ele_kind: str) -> str:
         # Map Elements
         "Match", "Taylor",
         # Bookkeeping Elements
-        "Fiducial", "Fork", "Marker", "Patch",
-        # Structural and Grouping Elements
-        "Girder"}
+        "Fiducial", "Fork", "Marker", "Patch"}
 
     if ele_kind in renamed:
         return renamed[ele_kind]
@@ -614,6 +635,9 @@ def _bmad_kind(ele_kind: str) -> str:
     if ele_kind == "EGun":
         return "E_Gun"
     # Structural and Grouping Elements
+    if ele_kind == "Girder":
+        raise ValueError("A Girder is defined under `PALS: girders`, not among "
+                         "the lattice elements")
     if ele_kind == "UnionEle":
         raise ValueError("No UnionEle in Bmad")
     # External Circuits
@@ -828,13 +852,19 @@ def _bmad_quote(text: str) -> Optional[str]:
 
 
 # ---------------------------------------------------------------------------
-def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
+def _make_bmad_ele(ele: YAMLNode, beginning_at_origin: bool = True) -> BmadEleDef:
     """Translate a single PALS element into a :class:`BmadEleDef`.
 
     Dispatch on the element ``kind`` and its parameter groups (aperture, bend,
     body shift, multipoles, patch, RF, solenoid, reference change, ...) to build
     the Bmad element type and its attribute fragments. Unsupported parameter
     groups emit a message or raise an error.
+
+    A ``FloorShift`` or ``Fiducial`` is placed by its ``CoordinateSetP`` and
+    ``BodyShiftP`` together (see :func:`_bmad_placement`);
+    ``beginning_at_origin`` says whether the lattice leaves its beginning element
+    at the global origin, which is what a FloorShift placed from the global
+    origin is placed from in Bmad.
     """
     props = ele.child(0)
     name = props.node_key()
@@ -842,6 +872,9 @@ def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
     ele_kind_bmad = _bmad_kind(ele_kind)
 
     attrs: List[str] = []
+    places = ele_kind in ("FloorShift", "Fiducial")
+    if places:
+        attrs.extend(_bmad_placement(props, ele_kind, name, beginning_at_origin))
 
     # Strip a trailing comma (and surrounding whitespace) from a fragment before
     # storing it.
@@ -998,7 +1031,7 @@ def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
                 elif bkey == "tilt_ref":
                     tmp += f"ref_tilt = {bendP['tilt_ref'].value},"
                 push_attr(tmp)
-        elif key == "BodyShiftP":
+        elif key == "BodyShiftP" and not places:
             bodyshiftP = props["BodyShiftP"]
             for bskey in bodyshiftP.keys():
                 tmp = ""
@@ -1009,7 +1042,7 @@ def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
                 elif bskey == "z_offset":
                     tmp = f"z_offset = {bodyshiftP['z_offset'].value},"
                 elif bskey == "x_rot":
-                    tmp = f"y_pitch = {fmt(-bodyshiftP['x_rot'].as_float())},"
+                    tmp = f"y_pitch = {_bmad_negate(bodyshiftP['x_rot'].value)},"
                 elif bskey == "y_rot":
                     tmp = f"x_pitch = {bodyshiftP['y_rot'].value},"
                 elif bskey == "z_rot":
@@ -1019,12 +1052,8 @@ def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
             raise ValueError("ElectricMultipoleP not yet supported")
         elif key == "FloorP":
             raise ValueError("FloorP not yet supported")
-        elif key == "FloorShiftP":
-            raise ValueError("FloorShiftP not yet supported")
         elif key == "ForkP":
             raise ValueError("ForkP not yet supported")
-        elif key == "GirderP":
-            raise ValueError("GirderP not yet supported")
         elif key == "MagneticMultipoleP":
             mmP = props["MagneticMultipoleP"]
 
@@ -1105,7 +1134,7 @@ def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
                 elif pkey == "t_offset":
                     tmp = f"t_offset = {patchP['t_offset'].value},"
                 elif pkey == "x_rot":
-                    tmp = f"y_pitch = {fmt(-patchP['x_rot'].as_float())},"
+                    tmp = f"y_pitch = {_bmad_negate(patchP['x_rot'].value)},"
                 elif pkey == "y_rot":
                     tmp = f"x_pitch = {patchP['y_rot'].value},"
                 elif pkey == "z_rot":
@@ -1152,11 +1181,12 @@ def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
                             f"{name}: `gradient` not yet supported & `length` is "
                             "undefined => voltage is undefined")
 
+                # PALS states RF phases in radians, Bmad in turns.
                 elif rfkey == "phase":
-                    tmp += f"phi0 = {rfP['phase'].value},"
+                    tmp += f"phi0 = {_bmad_turns(rfP['phase'].value)},"
 
                 elif rfkey == "multipass_phase":
-                    tmp += f"phi0_multipass = {rfP['multipass_phase'].value},"
+                    tmp += f"phi0_multipass = {_bmad_turns(rfP['multipass_phase'].value)},"
 
                 elif rfkey == "cavity_type":
                     tmp += f"cavity_type = {rfP['cavity_type'].value},"
@@ -1234,3 +1264,263 @@ def _make_bmad_ele(ele: YAMLNode) -> BmadEleDef:
                                      "not supported by Bmad")
 
     return BmadEleDef(name, ele_kind_bmad, attrs)
+
+
+# ---------------------------------------------------------------------------
+def _bmad_negate(text: str) -> str:
+    """The negative of the value ``text``: a number comes out a number, an
+    expression comes out an expression."""
+    value = try_float(text)
+    return f"-({text})" if value is None else fmt(-value)
+
+
+# ---------------------------------------------------------------------------
+def _bmad_turns(text: str) -> str:
+    """The angle ``text``, in radians, in turns: a number comes out a number, an
+    expression comes out an expression divided by Bmad's ``twopi``."""
+    value = try_float(text)
+    return f"({text}) / twopi" if value is None else fmt(value / (2 * math.pi))
+
+
+# ---------------------------------------------------------------------------
+_SHIFT_KEYS = ("x_offset", "y_offset", "z_offset", "x_rot", "y_rot", "z_rot")
+
+
+def _rot_y(a):
+    return [[math.cos(a), 0, math.sin(a)], [0, 1, 0], [-math.sin(a), 0, math.cos(a)]]
+
+
+def _rot_x(a):
+    return [[1, 0, 0], [0, math.cos(a), -math.sin(a)], [0, math.sin(a), math.cos(a)]]
+
+
+def _rot_z(a):
+    return [[math.cos(a), -math.sin(a), 0], [math.sin(a), math.cos(a), 0], [0, 0, 1]]
+
+
+def _matmul(a, b):
+    return [[sum(a[i][k] * b[k][j] for k in range(3)) for j in range(3)]
+            for i in range(3)]
+
+
+def _matvec(a, v):
+    return [sum(a[i][k] * v[k] for k in range(3)) for i in range(3)]
+
+
+def _combined_shift(props: YAMLNode, name: str) -> Dict[str, str]:
+    """The shift a ``FloorShift`` or ``Fiducial`` is placed by, as a component
+    name to value-text map.
+
+    The placement is the ``CoordinateSetP`` shift followed by the ``BodyShiftP``
+    one. Bmad has a single shift for it, so when both groups give one the two are
+    composed: ``L = L_c + S_c L_b``, ``S = S_c S_b``, with
+    ``S = R_y(y_rot) R_x(x_rot) R_z(z_rot)``. With no rotation in the
+    ``CoordinateSetP`` shift the offsets simply add; otherwise the composition
+    needs numbers, so an expression in either group is then an error.
+    """
+    def part(group):
+        if group not in props:
+            return {}
+        g = props[group]
+        return {k: g[k].value for k in _SHIFT_KEYS if k in g}
+
+    cs, bs = part("CoordinateSetP"), part("BodyShiftP")
+    if not bs:
+        return cs
+    if not cs:
+        return bs
+
+    if not any(k in cs for k in ("x_rot", "y_rot", "z_rot")):
+        out = dict(bs)
+        for k in ("x_offset", "y_offset", "z_offset"):
+            if k not in cs:
+                continue
+            if k not in bs:
+                out[k] = cs[k]
+                continue
+            a, b = try_float(cs[k]), try_float(bs[k])
+            out[k] = fmt(a + b) if a is not None and b is not None \
+                else f"{cs[k]} + {bs[k]}"
+        return out
+
+    def num(d, k):
+        if k not in d:
+            return 0.0
+        v = try_float(d[k])
+        if v is None:
+            raise ValueError(f"{name}: CoordinateSetP and BodyShiftP both shift the "
+                             "placement, and composing the two into Bmad's one shift "
+                             f"needs numbers, not `{d[k]}`")
+        return v
+
+    def rot(d):
+        return _matmul(_rot_y(num(d, "y_rot")),
+                       _matmul(_rot_x(num(d, "x_rot")), _rot_z(num(d, "z_rot"))))
+
+    def off(d):
+        return [num(d, "x_offset"), num(d, "y_offset"), num(d, "z_offset")]
+
+    S = _matmul(rot(cs), rot(bs))
+    Lb = _matvec(rot(cs), off(bs))
+    L = [c + b for c, b in zip(off(cs), Lb)]
+    # S = R_y(a) R_x(b) R_z(c): S[0][2] = sin a cos b, S[2][2] = cos a cos b,
+    # S[1][2] = -sin b, S[1][0] = cos b sin c, S[1][1] = cos b cos c.
+    a = math.atan2(S[0][2], S[2][2])
+    b = math.atan2(-S[1][2], math.hypot(S[0][2], S[2][2]))
+    c = math.atan2(S[1][0], S[1][1])
+    return {"x_offset": fmt(L[0]), "y_offset": fmt(L[1]), "z_offset": fmt(L[2]),
+            "x_rot": fmt(b), "y_rot": fmt(a), "z_rot": fmt(c)}
+
+
+# ---------------------------------------------------------------------------
+_PLAIN_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _bmad_origin(props: YAMLNode, name: str, bmad_kind: str,
+                 beginning_at_origin: bool) -> List[str]:
+    """Translate the origin a ``CoordinateSetP`` places a ``floor_shift``,
+    ``fiducial`` or ``girder`` from into Bmad ``origin_ele`` attributes.
+
+    PALS defaults to the global origin and to the exit end of a named origin
+    element; Bmad's defaults differ by kind (the previous element for a
+    ``floor_shift``, the global origin for a ``fiducial``, the middle of the
+    supported elements for a ``girder``, and the centre of a named element), so
+    the origin is always written out. A ``floor_shift`` has no global-origin
+    setting, and is placed from Bmad's beginning element instead, which only
+    works while the lattice leaves that element at the origin.
+    ``PREVIOUS_ELEMENT`` is a ``floor_shift``'s own default and means nothing to
+    the other two.
+    """
+    cs = props["CoordinateSetP"] if "CoordinateSetP" in props else None
+    origin = cs["origin_ele"].value if cs is not None and "origin_ele" in cs \
+        else "GLOBAL_ORIGIN"
+    ref_pt = cs["origin_ele_ref_pt"].value \
+        if cs is not None and "origin_ele_ref_pt" in cs else "EXIT_END"
+
+    if origin == "PREVIOUS_ELEMENT":
+        if bmad_kind == "floor_shift":
+            return []
+        raise ValueError(f"{name}: a Bmad {bmad_kind} cannot be placed from the "
+                         "previous element")
+    if origin == "GLOBAL_ORIGIN":
+        if bmad_kind == "girder":
+            return ["origin_ele = global_coordinates"]
+        if bmad_kind == "fiducial":
+            return []
+        if not beginning_at_origin:
+            raise ValueError(f"{name}: a Bmad floor_shift cannot be placed from the "
+                             "global origin when the beginning element is not at it")
+        return ["origin_ele = beginning", "origin_ele_ref_pt = exit_end"]
+    if not _PLAIN_NAME.match(origin):
+        raise ValueError(f"{name}: origin_ele `{origin}` is not a single element "
+                         "name, which Bmad needs")
+    return [f"origin_ele = {origin}", f"origin_ele_ref_pt = {ref_pt.lower()}"]
+
+
+# ---------------------------------------------------------------------------
+_PLACEMENT_NAMES = {
+    "floor_shift": {"x_offset": "x_offset", "y_offset": "y_offset",
+                    "z_offset": "z_offset", "y_rot": "x_pitch", "x_rot": "y_pitch",
+                    "z_rot": "tilt"},
+    "origin": {"x_offset": "dx_origin", "y_offset": "dy_origin",
+               "z_offset": "dz_origin", "y_rot": "dtheta_origin",
+               "x_rot": "dphi_origin", "z_rot": "dpsi_origin"},
+}
+
+
+def _shift_attrs(shift: Dict[str, str], names: Dict[str, str]) -> List[str]:
+    """The Bmad attributes of a shift; both Bmad conventions rotate by
+    ``R_y R_{-x} R_z``, so the pitch about x changes sign."""
+    out = []
+    for k in _SHIFT_KEYS:
+        if k in shift:
+            val = _bmad_negate(shift[k]) if k == "x_rot" else shift[k]
+            out.append(f"{names[k]} = {val}")
+    return out
+
+
+def _bmad_placement(props: YAMLNode, ele_kind: str, name: str,
+                    beginning_at_origin: bool) -> List[str]:
+    """Translate the placement of a ``FloorShift`` or ``Fiducial`` -- its
+    ``CoordinateSetP`` origin and shift, then its ``BodyShiftP`` -- into Bmad
+    ``floor_shift`` or ``fiducial`` attributes. A ``floor_shift`` states its
+    shift with the patch attributes and a ``fiducial`` with the ``d*_origin``
+    ones."""
+    bmad_kind = "floor_shift" if ele_kind == "FloorShift" else "fiducial"
+    attrs = _bmad_origin(props, name, bmad_kind, beginning_at_origin)
+    names = _PLACEMENT_NAMES["floor_shift" if bmad_kind == "floor_shift" else "origin"]
+    return attrs + _shift_attrs(_combined_shift(props, name), names)
+
+
+# ---------------------------------------------------------------------------
+def _bmad_girder_slaves(spec: str, name: str) -> str:
+    """Translate a ``GirderP.elements`` element set into a Bmad girder slave
+    list. Bmad takes either a list of element names or a single ``start:end``
+    range, so the PALS set has to be one of those two."""
+    terms = [t.strip() for t in spec.split(",")]
+    if len(terms) == 1 and terms[0].count(":") == 1:
+        a, b = (x.strip() for x in terms[0].split(":"))
+        if _PLAIN_NAME.match(a) and _PLAIN_NAME.match(b):
+            return f"{{{a}:{b}}}"
+    elif all(_PLAIN_NAME.match(t) for t in terms):
+        return "{" + ", ".join(terms) + "}"
+    raise ValueError(f"Girder {name}: GirderP.elements `{spec}` is neither a list "
+                     "of names nor a single range, which is all a Bmad girder takes")
+
+
+def _make_bmad_girders(girders: YAMLNode) -> List[BmadEleDef]:
+    """Translate the ``PALS: girders`` dict into Bmad ``girder`` elements.
+
+    Bmad needs a girder defined after any girder it supports, so a supported
+    girder is written before the one supporting it. The girder's origin and
+    offset come from its ``CoordinateSetP`` (see :func:`_bmad_origin`) and its
+    misalignment from its ``BodyShiftP``.
+    """
+    defs = {k: girders[k] for k in girders.keys()}
+    order: List[str] = []
+    state: Dict[str, int] = {}
+
+    def visit(gname):
+        if state.get(gname) == 2:
+            return
+        if state.get(gname) == 1:
+            raise ValueError(f"Girder {gname} is part of a circular chain of support")
+        state[gname] = 1
+        props = defs[gname]
+        if "GirderP" in props and "elements" in props["GirderP"]:
+            for t in re.split(r"[,:]", props["GirderP"]["elements"].value):
+                if t.strip() in defs:
+                    visit(t.strip())
+        state[gname] = 2
+        order.append(gname)
+
+    for gname in sorted(defs):
+        visit(gname)
+
+    out = []
+    for gname in order:
+        props = defs[gname]
+        if not ("GirderP" in props and "elements" in props["GirderP"]):
+            raise ValueError(f"Girder {gname}: GirderP.elements names nothing to "
+                             "support")
+        slaves = _bmad_girder_slaves(props["GirderP"]["elements"].value, gname)
+        attrs = _bmad_origin(props, gname, "girder", True)
+        if "CoordinateSetP" in props:
+            cs = props["CoordinateSetP"]
+            attrs += _shift_attrs({k: cs[k].value for k in _SHIFT_KEYS if k in cs},
+                                  _PLACEMENT_NAMES["origin"])
+        if "BodyShiftP" in props:
+            bs = props["BodyShiftP"]
+            attrs += _shift_attrs({k: bs[k].value for k in _SHIFT_KEYS if k in bs},
+                                  _PLACEMENT_NAMES["floor_shift"])
+        if "MetaP" in props:
+            metaP = props["MetaP"]
+            for mkey, bkey in (("alias", "alias"), ("label", "type"),
+                               ("description", "descrip")):
+                if mkey in metaP and not (metaP[mkey].is_map()
+                                          or metaP[mkey].is_sequence()):
+                    text = _bmad_quote(metaP[mkey].value)
+                    if text is not None:
+                        attrs.append(f"{bkey} = {text}")
+        out.append(BmadEleDef(gname, f"girder = {slaves}", attrs))
+    return out

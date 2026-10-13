@@ -4,7 +4,6 @@ Translation of a PALS lattice into a SciBmad lattice file.
 
 from __future__ import annotations
 
-import math
 import re
 from dataclasses import dataclass, field
 from typing import List, Tuple
@@ -97,6 +96,7 @@ def pals_to_scibmad(yaml: YAMLNode) -> SciBmadLattice:
     """
     facility = yaml["PALS"]["facility"]
     lat = SciBmadLattice()
+    placeholders = set()
     for ele in facility:
         props = ele.child(0)
         if "kind" not in props:
@@ -121,8 +121,16 @@ def pals_to_scibmad(yaml: YAMLNode) -> SciBmadLattice:
         elif kind in ("constant", "variable"):
             raise ValueError(f"{props.node_key()}: `{kind}` definitions are not "
                              "yet translated to SciBmad")
+        elif kind == "Placeholder":
+            # A Placeholder holds a place while a PALS lattice is built and is
+            # gone once it is.
+            placeholders.add(props.node_key())
         else:
             lat.elements.append(_make_scibmad_ele(ele))
+    for bl in lat.beamlines:
+        bl.members[:] = [m for m in bl.members if m not in placeholders]
+    if "girders" in yaml["PALS"] and len(yaml["PALS"]["girders"]) > 0:
+        print("SciBmad has no girders: the `PALS: girders` are not translated")
     return lat
 
 
@@ -510,8 +518,6 @@ def _make_scibmad_ele(ele: YAMLNode) -> SciBmadEle:
             print("ElectricMultipoleP not yet supported")
         elif key == "FloorP":
             print("FloorP not yet supported")
-        elif key == "FloorShiftP":
-            print("FloorShiftP not yet supported")
         elif key == "ForkP":
             print("ForkP not yet supported")
         elif key == "GirderP":
@@ -567,7 +573,7 @@ def _make_scibmad_ele(ele: YAMLNode) -> SciBmadEle:
                 elif rfkey == "gradient":
                     print("gradient not yet supported")
                 elif rfkey == "phase":
-                    attrs.append(f"phi0 = {fmt(2 * math.pi * rfP['phase'].as_float())}")
+                    attrs.append(f"phi0 = {rfP['phase'].value}")
                 elif rfkey == "multipass_phase":
                     print("multipass_phase not yet supported")
                 elif rfkey == "cavity_type":
