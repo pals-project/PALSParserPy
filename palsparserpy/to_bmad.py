@@ -13,6 +13,7 @@ from ._common import (ABRepresentation, FullRepresentation, approx,
                       ctrl_variables, facility_props, fill_multipoles, fmt,
                       name_value_pairs, tilt_rotation, try_float, value_text)
 from .node import YAMLNode
+from .to_madx import _madx_fold, _madx_times
 
 __all__ = ["BmadEleDef", "BmadBeamline", "BmadController", "BmadLattice",
            "pals_to_bmad", "write_bmad_file"]
@@ -986,25 +987,17 @@ def _make_bmad_ele(ele: YAMLNode, beginning_at_origin: bool = True) -> BmadEleDe
             raise ValueError(f"{name}: BeamBeamP not translated yet")
         elif key == "BendP":
             bendP = props["BendP"]
-            has_e1 = "e1" in bendP
-            has_e1_rect = "e1_rect" in bendP
-            has_e2 = "e2" in bendP
-            has_e2_rect = "e2_rect" in bendP
-            if (has_e1 or has_e2) and (has_e1_rect or has_e2_rect):
-                raise ValueError(f"{name}: should not have both e1 and e1_rect, "
-                                 "nor both e2 and e2_rect")
-
             for bkey in bendP.keys():
                 tmp = ""
-                if bkey == "radius_ref":
+                if bkey == "angle_ref":
+                    tmp += f"angle = {bendP['angle_ref'].value},"
+                elif bkey == "radius_ref":
                     tmp += f"rho = {bendP['radius_ref'].value},"
                 elif bkey == "Bn0_ref":
                     tmp += f"B_field = {bendP['Bn0_ref'].value},"
 
-                elif bkey in ("e1", "e1_rect"):
-                    tmp += f"e1 = {bendP['e1'].value},"
-                elif bkey in ("e2", "e2_rect"):
-                    tmp += f"e2 = {bendP['e2'].value},"
+                elif bkey in ("e1", "e1_rect", "e2", "e2_rect"):
+                    tmp += _bmad_bend_face(props, bkey, name) + ","
 
                 elif bkey == "edge1_int":
                     val = bendP["edge1_int"].as_float()
@@ -1169,17 +1162,17 @@ def _make_bmad_ele(ele: YAMLNode, beginning_at_origin: bool = True) -> BmadEleDe
                 elif rfkey == "voltage":
                     tmp += f"voltage = {rfP['voltage'].value},"
 
+                # Bmad's `gradient` is a dependent attribute, so the voltage is
+                # stated instead.
                 elif rfkey == "gradient":
-                    if "L" in props and props["L"].as_float() != 0:
-                        length = props["L"].as_float()
-                        grad = rfP["gradient"].as_float()
-                        tmp += f"voltage = {fmt(grad * length)},"
-                        print(f"{name}: gradient not yet supported, replacing "
-                              "with voltage = gradient * length")
+                    if "L_active" in rfP:
+                        length = rfP["L_active"].value
+                    elif "length" in props:
+                        length = props["length"].value
                     else:
-                        raise ValueError(
-                            f"{name}: `gradient` not yet supported & `length` is "
-                            "undefined => voltage is undefined")
+                        raise ValueError(f"{name}: `gradient` needs a length to become "
+                                         "the voltage Bmad states")
+                    tmp += f"voltage = {_madx_times(rfP['gradient'].value, length)},"
 
                 # PALS states RF phases in radians, Bmad in turns.
                 elif rfkey == "phase":
@@ -1524,3 +1517,80 @@ def _make_bmad_girders(girders: YAMLNode) -> List[BmadEleDef]:
                         attrs.append(f"{bkey} = {text}")
         out.append(BmadEleDef(gname, f"girder = {slaves}", attrs))
     return out
+
+
+# ---------------------------------------------------------------------------
+def _bmad_bend_angle(props: YAMLNode, name: str) -> Optional[str]:
+    """The reference bend angle of a ``Bend`` as Bmad text, or ``None`` if the
+    element states too little to work it out.
+
+    PALS states the bend geometry with any two of a curvature (``g_ref``,
+    ``radius_ref``), a length (``length``, ``L_chord``, ``L_rectangle``) and the
+    angle (``angle_ref``). A curvature given as the field ``Bn0_ref`` needs the
+    reference rigidity and is not used here.
+    """
+    bendP = props["BendP"]
+    if "angle_ref" in bendP:
+        return bendP["angle_ref"].value
+    if "g_ref" in bendP:
+        g = bendP["g_ref"].value
+    elif "radius_ref" in bendP:
+        r = bendP["radius_ref"].value
+        g = _madx_fold(f"1 / ({r})", lambda x: 1 / x, r)
+    else:
+        return None
+    if "length" in props:
+        return _madx_times(g, props["length"].value)
+    if "L_chord" in bendP:
+        length = bendP["L_chord"].value
+        return _madx_fold(f"2 * asin(({g}) * ({length}) / 2)",
+                          lambda a, b: 2 * math.asin(a * b / 2), g, length)
+    if "L_rectangle" in bendP:
+        length = bendP["L_rectangle"].value
+        return _madx_fold(f"asin(({g}) * ({length}))",
+                          lambda a, b: math.asin(a * b), g, length)
+    return None
+
+
+# ---------------------------------------------------------------------------
+def _bmad_bend_face(props: YAMLNode, key: str, name: str) -> str:
+    """The Bmad ``e1``/``e2`` fragment for the PALS pole-face parameter ``key``
+    of a ``Bend``.
+
+    A Bmad ``sbend`` measures its face angles against the sector geometry, as
+    PALS' own ``e1`` and ``e2`` are, so those come straight across. PALS'
+    ``e1_rect`` and ``e2_rect`` are measured against fiducial lines parallel to
+    each other, and the bend angle separates the two pairs by a share that
+    depends on ``ref_geometry`` (bend.md)::
+
+        ARC, CHORD        e1 = e1_rect + angle/2,   e2 = e2_rect + angle/2
+        ENTRANCE_COORDS   e1 = e1_rect,             e2 = e2_rect + angle
+        EXIT_COORDS       e1 = e1_rect + angle,     e2 = e2_rect
+
+    A face given both ways is contradictory, and one given the rectangular way on
+    a bend whose angle cannot be worked out cannot be converted; both raise an
+    error.
+    """
+    bendP = props["BendP"]
+    face = key[:2]
+    if face in bendP and face + "_rect" in bendP:
+        raise ValueError(f"{name}: should not have both {face} and {face}_rect")
+    if not key.endswith("_rect"):
+        return f"{face} = {bendP[key].value}"
+
+    geometry = bendP["ref_geometry"].value if "ref_geometry" in bendP else "ARC"
+    if geometry == "ENTRANCE_COORDS":
+        share = 0.0 if face == "e1" else 1.0
+    elif geometry == "EXIT_COORDS":
+        share = 1.0 if face == "e1" else 0.0
+    else:
+        share = 0.5
+    rect = bendP[key].value
+    if share == 0:
+        return f"{face} = {rect}"
+    angle = _bmad_bend_angle(props, name)
+    if angle is None:
+        raise ValueError(f"{name}: {key} is measured against the bend angle, which "
+                         "is not given")
+    return f"{face} = " + _madx_fold(f"{rect} + {share} * ({angle})",
+                                     lambda r, a: r + share * a, rect, angle)
