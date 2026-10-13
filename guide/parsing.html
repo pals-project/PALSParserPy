@@ -262,7 +262,7 @@ hand.</p>
 brings the whole API into scope:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">palsparserpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 
-<span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="s2">&quot;config.pals.yaml&quot;</span><span class="p">)</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="s2">"config.pals.yaml"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Every tree operation is also a method on the node itself, so <code class="docutils literal notranslate"><span class="pre">pp.is_map(node)</span></code>
@@ -296,16 +296,16 @@ tree root:</p>
 </tbody>
 </table>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="s2">&quot;config.pals.yaml&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="s2">"config.pals.yaml"</span><span class="p">)</span>
 <span class="c1"># or</span>
-<span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_string</span><span class="p">(</span><span class="s2">"""</span>
 <span class="s2">server:</span>
 <span class="s2">  host: localhost</span>
 <span class="s2">  port: 8080</span>
 <span class="s2">features:</span>
 <span class="s2">  - auth</span>
 <span class="s2">  - logging</span>
-<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="s2">"""</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>A malformed document raises <code class="docutils literal notranslate"><span class="pre">PALSParseError</span></code>, whose message carries the offending
@@ -391,17 +391,17 @@ None of them modify the document.</p>
 </tbody>
 </table>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">&quot;features&quot;</span> <span class="ow">in</span> <span class="n">root</span>                <span class="c1"># True</span>
-<span class="nb">len</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">])</span>             <span class="c1"># 2</span>
-<span class="n">root</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>             <span class="c1"># [&#39;host&#39;, &#39;port&#39;]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="s2">"features"</span> <span class="ow">in</span> <span class="n">root</span>                <span class="c1"># True</span>
+<span class="nb">len</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="s2">"features"</span><span class="p">])</span>             <span class="c1"># 2</span>
+<span class="n">root</span><span class="p">[</span><span class="s2">"server"</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>             <span class="c1"># ['host', 'port']</span>
 
-<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">root</span><span class="p">[</span><span class="s2">&quot;features&quot;</span><span class="p">]:</span>
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">root</span><span class="p">[</span><span class="s2">"features"</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">item</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>             <span class="c1"># auth, logging</span>
 
-<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">root</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s2">&quot;=&gt;&quot;</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>       <span class="c1"># host =&gt; localhost, port =&gt; 8080</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">root</span><span class="p">[</span><span class="s2">"server"</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="s2">"=&gt;"</span><span class="p">,</span> <span class="n">v</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>       <span class="c1"># host =&gt; localhost, port =&gt; 8080</span>
 
-<span class="n">parent</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">get_parent</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">])</span>   <span class="c1"># back up to the root</span>
+<span class="n">parent</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">get_parent</span><span class="p">(</span><span class="n">root</span><span class="p">[</span><span class="s2">"server"</span><span class="p">])</span>   <span class="c1"># back up to the root</span>
 </pre></div>
 </div>
 <p>Indexing is <strong>0-based</strong>, matching Python and the underlying C API. (The Julia
@@ -434,8 +434,8 @@ PALSParserJ script needs one subtracted.)</p>
 </tbody>
 </table>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">host</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">][</span><span class="s2">&quot;host&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>       <span class="c1"># &#39;localhost&#39;</span>
-<span class="n">port</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s2">&quot;server&quot;</span><span class="p">][</span><span class="s2">&quot;port&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">as_int</span><span class="p">()</span>    <span class="c1"># 8080</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">host</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s2">"server"</span><span class="p">][</span><span class="s2">"host"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>       <span class="c1"># 'localhost'</span>
+<span class="n">port</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s2">"server"</span><span class="p">][</span><span class="s2">"port"</span><span class="p">]</span><span class="o">.</span><span class="n">as_int</span><span class="p">()</span>    <span class="c1"># 8080</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">int(node)</span></code> and <code class="docutils literal notranslate"><span class="pre">float(node)</span></code> work as well. There is deliberately no
@@ -493,13 +493,13 @@ the 0-based position among the existing children; it defaults to <code class="do
 appends at the end, so you usually leave it out.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">create_empty_tree</span><span class="p">()</span>
 
-<span class="n">server</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">add_map</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;server&quot;</span><span class="p">)</span>
-<span class="n">server</span><span class="p">[</span><span class="s2">&quot;host&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;localhost&quot;</span>
-<span class="n">server</span><span class="p">[</span><span class="s2">&quot;port&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;8080&quot;</span>
+<span class="n">server</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">add_map</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">"server"</span><span class="p">)</span>
+<span class="n">server</span><span class="p">[</span><span class="s2">"host"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"localhost"</span>
+<span class="n">server</span><span class="p">[</span><span class="s2">"port"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"8080"</span>
 
-<span class="n">features</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">add_sequence</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;features&quot;</span><span class="p">)</span>
-<span class="n">features</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;auth&quot;</span><span class="p">)</span>
-<span class="n">features</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">&quot;logging&quot;</span><span class="p">)</span>
+<span class="n">features</span> <span class="o">=</span> <span class="n">root</span><span class="o">.</span><span class="n">add_sequence</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">"features"</span><span class="p">)</span>
+<span class="n">features</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">"auth"</span><span class="p">)</span>
+<span class="n">features</span><span class="o">.</span><span class="n">add_scalar</span><span class="p">(</span><span class="s2">"logging"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">deep_copy_node</span></code> / <code class="docutils literal notranslate"><span class="pre">deep_copy_children</span></code> pair works across different trees,
@@ -526,16 +526,16 @@ so you can graft one subtree onto another.</p>
 </table>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">text</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>      <span class="c1"># YAML as a str -- print(root) does the same</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">write_yaml</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;out.pals.yaml&quot;</span><span class="p">)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">write_yaml</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"out.pals.yaml"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Both take an <code class="docutils literal notranslate"><span class="pre">exclude</span></code> argument naming keys to leave out, which is handy for
 printing or saving a large lattice without the bulky subtrees. Every MAP entry
 with a matching key is dropped, at any depth, together with its subtree; the tree
 in memory is not modified.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;FloorP&quot;</span><span class="p">,</span> <span class="s2">&quot;ReferenceP&quot;</span><span class="p">]))</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="s2">&quot;FloorP&quot;</span><span class="p">))</span>   <span class="c1"># a single key needs no list</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">write_yaml</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">&quot;out.pals.yaml&quot;</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;FloorP&quot;</span><span class="p">,</span> <span class="s2">&quot;ReferenceP&quot;</span><span class="p">])</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"FloorP"</span><span class="p">,</span> <span class="s2">"ReferenceP"</span><span class="p">]))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="s2">"FloorP"</span><span class="p">))</span>   <span class="c1"># a single key needs no list</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">write_yaml</span><span class="p">(</span><span class="n">root</span><span class="p">,</span> <span class="s2">"out.pals.yaml"</span><span class="p">,</span> <span class="n">exclude</span><span class="o">=</span><span class="p">[</span><span class="s2">"FloorP"</span><span class="p">,</span> <span class="s2">"ReferenceP"</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>See the <a class="reference internal" href="../api.html"><span class="std std-doc">API Reference</span></a> for the full list of functions and their

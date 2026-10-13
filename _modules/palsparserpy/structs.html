@@ -239,10 +239,10 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for palsparserpy.structs</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">The values :func:`palsparserpy.parse_and_expand_pals` hands back: the problems</span>
 <span class="sd">found while expanding a lattice, and the five views of the lattice itself.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -253,17 +253,17 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">YAMLNode</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;ProblemSeverity&quot;</span><span class="p">,</span> <span class="s2">&quot;ProblemOrigin&quot;</span><span class="p">,</span> <span class="s2">&quot;Problem&quot;</span><span class="p">,</span> <span class="s2">&quot;Lattices&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;NodeCorrespondence&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PROBLEM_ERROR&quot;</span><span class="p">,</span> <span class="s2">&quot;PROBLEM_WARNING&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PROBLEM_INPUT&quot;</span><span class="p">,</span> <span class="s2">&quot;PROBLEM_UNSUPPORTED&quot;</span><span class="p">,</span> <span class="s2">&quot;PROBLEM_UNSPECIFIED&quot;</span><span class="p">,</span>
+    <span class="s2">"ProblemSeverity"</span><span class="p">,</span> <span class="s2">"ProblemOrigin"</span><span class="p">,</span> <span class="s2">"Problem"</span><span class="p">,</span> <span class="s2">"Lattices"</span><span class="p">,</span>
+    <span class="s2">"NodeCorrespondence"</span><span class="p">,</span>
+    <span class="s2">"PROBLEM_ERROR"</span><span class="p">,</span> <span class="s2">"PROBLEM_WARNING"</span><span class="p">,</span>
+    <span class="s2">"PROBLEM_INPUT"</span><span class="p">,</span> <span class="s2">"PROBLEM_UNSUPPORTED"</span><span class="p">,</span> <span class="s2">"PROBLEM_UNSPECIFIED"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="ProblemSeverity">
 <a class="viewcode-back" href="../../api.html#palsparserpy.ProblemSeverity">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ProblemSeverity</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Whether a problem leaves the expanded trees trustworthy.</span>
+<span class="w">    </span><span class="sd">"""Whether a problem leaves the expanded trees trustworthy.</span>
 
 <span class="sd">    - ``ERROR`` -- the document is wrong here and expansion could not work</span>
 <span class="sd">      around it. Do not trust the affected part of the trees.</span>
@@ -271,7 +271,7 @@
 <span class="sd">      or skipped, but the trees are still sound.</span>
 
 <span class="sd">    Mirrors ``enum problem_severity`` in PALSParserCpp.h.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">ERROR</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">WARNING</span> <span class="o">=</span> <span class="mi">1</span></div>
 
@@ -280,7 +280,7 @@
 <div class="viewcode-block" id="ProblemOrigin">
 <a class="viewcode-back" href="../../api.html#palsparserpy.ProblemOrigin">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ProblemOrigin</span><span class="p">(</span><span class="n">IntEnum</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Who has to act on a problem.</span>
+<span class="w">    </span><span class="sd">"""Who has to act on a problem.</span>
 
 <span class="sd">    - ``INPUT`` -- the document is wrong; the lattice author can fix it.</span>
 <span class="sd">    - ``UNSUPPORTED`` -- valid PALS that PALSParserCpp does not implement yet.</span>
@@ -289,7 +289,7 @@
 <span class="sd">      was invented. Neither the author nor the library is in the wrong.</span>
 
 <span class="sd">    Mirrors ``enum problem_origin`` in PALSParserCpp.h.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">INPUT</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">UNSUPPORTED</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="n">UNSPECIFIED</span> <span class="o">=</span> <span class="mi">2</span></div>
@@ -309,11 +309,11 @@
 <a class="viewcode-back" href="../../api.html#palsparserpy.Problem">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Problem</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;One problem found while reading or expanding a document.</span>
+<span class="w">    </span><span class="sd">"""One problem found while reading or expanding a document.</span>
 
 <span class="sd">    - ``message`` -- human-readable description, always present.</span>
 <span class="sd">    - ``path`` -- the logical spot it was found at, such as</span>
-<span class="sd">      ``&quot;q1&gt;ApertureP.shape&quot;``. Empty when the problem is not tied to one place.</span>
+<span class="sd">      ``"q1&gt;ApertureP.shape"``. Empty when the problem is not tied to one place.</span>
 <span class="sd">      This is a location within the document, not a file name or a line number;</span>
 <span class="sd">      ``message`` already names the file where the file is the point.</span>
 <span class="sd">    - ``severity`` -- a :class:`ProblemSeverity`: can the trees still be trusted?</span>
@@ -322,21 +322,21 @@
 <span class="sd">    Only a ``PROBLEM_INPUT`` can be cleared by editing the lattice, which is what</span>
 <span class="sd">    makes the last field worth reading: a tool that fails on any problem at all</span>
 <span class="sd">    will fail on lattices whose author has nothing left to fix.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">path</span><span class="p">:</span> <span class="nb">str</span>
     <span class="n">severity</span><span class="p">:</span> <span class="n">ProblemSeverity</span>
     <span class="n">origin</span><span class="p">:</span> <span class="n">ProblemOrigin</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="n">out</span> <span class="o">=</span> <span class="s2">&quot;ERROR&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">severity</span> <span class="ow">is</span> <span class="n">ProblemSeverity</span><span class="o">.</span><span class="n">ERROR</span> <span class="k">else</span> <span class="s2">&quot;WARNING&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="s2">"ERROR"</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">severity</span> <span class="ow">is</span> <span class="n">ProblemSeverity</span><span class="o">.</span><span class="n">ERROR</span> <span class="k">else</span> <span class="s2">"WARNING"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="ow">is</span> <span class="n">ProblemOrigin</span><span class="o">.</span><span class="n">UNSUPPORTED</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; (unsupported)&quot;</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s2">" (unsupported)"</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">origin</span> <span class="ow">is</span> <span class="n">ProblemOrigin</span><span class="o">.</span><span class="n">UNSPECIFIED</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">+=</span> <span class="s2">&quot; (unspecified by PALS)&quot;</span>
+            <span class="n">out</span> <span class="o">+=</span> <span class="s2">" (unspecified by PALS)"</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">:</span>
-            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span></div>
+            <span class="n">out</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">" at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">out</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span></div>
 
 
 
@@ -344,7 +344,7 @@
 <a class="viewcode-back" href="../../api.html#palsparserpy.Lattices">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Lattices</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Five representations of a lattice, each as a root :class:`YAMLNode`, plus</span>
+<span class="w">    </span><span class="sd">"""Five representations of a lattice, each as a root :class:`YAMLNode`, plus</span>
 <span class="sd">    the list of problems found while expanding it.</span>
 
 <span class="sd">    ``expanded`` and ``full_expanded`` are the same expanded lattice holding the</span>
@@ -359,9 +359,9 @@
 <span class="sd">    expansion was clean. Filter it on ``severity`` or ``origin`` to decide what</span>
 <span class="sd">    is worth acting on::</span>
 
-<span class="sd">        lat = parse_and_expand_pals(&quot;ex.pals.yaml&quot;, problems=&quot;none&quot;)</span>
+<span class="sd">        lat = parse_and_expand_pals("ex.pals.yaml", problems="none")</span>
 <span class="sd">        mine = [p for p in lat.problems if p.origin is PROBLEM_INPUT]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">original</span><span class="p">:</span> <span class="n">YAMLNode</span>
     <span class="n">combined</span><span class="p">:</span> <span class="n">YAMLNode</span>
     <span class="n">expanded</span><span class="p">:</span> <span class="n">YAMLNode</span>
@@ -374,12 +374,12 @@
 <div class="viewcode-block" id="NodeCorrespondence">
 <a class="viewcode-back" href="../../api.html#palsparserpy.NodeCorrespondence">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">NodeCorrespondence</span><span class="p">(</span><span class="n">NamedTuple</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The nodes one logical entity maps to in each of the four</span>
+<span class="w">    </span><span class="sd">"""The nodes one logical entity maps to in each of the four</span>
 <span class="sd">    derivation-chain trees, grouped by tree.</span>
 
 <span class="sd">    ``expanded`` takes no part -- it is a pruned copy of ``full_expanded``, not a</span>
 <span class="sd">    step in the chain. A field is empty when a tree has no corresponding node.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">original</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">YAMLNode</span><span class="p">]</span>
     <span class="n">combined</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">YAMLNode</span><span class="p">]</span>
     <span class="n">full_expanded</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">YAMLNode</span><span class="p">]</span>

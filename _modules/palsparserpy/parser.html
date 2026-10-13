@@ -239,11 +239,11 @@
         </div>
         <article role="main" id="furo-main-content">
           <h1>Source code for palsparserpy.parser</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">The lattice-level API: expanding a PALS document into its five views, evaluating</span>
 <span class="sd">an expression, mapping nodes across the derivation chain, resolving a name-match</span>
 <span class="sd">string, and reading a parameter value.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
 
@@ -258,23 +258,23 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.structs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">Lattices</span><span class="p">,</span> <span class="n">NodeCorrespondence</span><span class="p">,</span> <span class="n">Problem</span><span class="p">,</span> <span class="n">ProblemOrigin</span><span class="p">,</span>
                       <span class="n">ProblemSeverity</span><span class="p">)</span>
 
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;parse_and_expand_pals&quot;</span><span class="p">,</span> <span class="s2">&quot;evaluate_pals_expression&quot;</span><span class="p">,</span>
-           <span class="s2">&quot;node_correspondence&quot;</span><span class="p">,</span> <span class="s2">&quot;match_names&quot;</span><span class="p">,</span> <span class="s2">&quot;parameter_value&quot;</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"parse_and_expand_pals"</span><span class="p">,</span> <span class="s2">"evaluate_pals_expression"</span><span class="p">,</span>
+           <span class="s2">"node_correspondence"</span><span class="p">,</span> <span class="s2">"match_names"</span><span class="p">,</span> <span class="s2">"parameter_value"</span><span class="p">]</span>
 
 
 <span class="c1"># ─── parse_and_expand_pals ───────────────────────────────────────────────────</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_take_problem_list</span><span class="p">(</span><span class="n">problems</span><span class="p">:</span> <span class="n">ProblemListC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Problem</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Copy the C-owned problems into a list and free the underlying C array.</span>
+<span class="w">    </span><span class="sd">"""Copy the C-owned problems into a list and free the underlying C array.</span>
 
 <span class="sd">    Always frees, even when the list is empty. Both strings are copied out before</span>
 <span class="sd">    the free, so nothing points into C memory afterwards.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">out</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">problems</span><span class="o">.</span><span class="n">count</span><span class="p">):</span>
         <span class="n">entry</span> <span class="o">=</span> <span class="n">problems</span><span class="o">.</span><span class="n">items</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Problem</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
-                           <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Problem</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">message</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">),</span>
+                           <span class="n">entry</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">"utf-8"</span><span class="p">),</span>
                            <span class="n">ProblemSeverity</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">severity</span><span class="p">),</span>
                            <span class="n">ProblemOrigin</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">origin</span><span class="p">)))</span>
     <span class="n">libparser</span><span class="p">()</span><span class="o">.</span><span class="n">free_lattice_problems</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span>
@@ -282,32 +282,32 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_report_problems</span><span class="p">(</span><span class="n">problems</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Problem</span><span class="p">],</span> <span class="n">mode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply the ``problems`` output policy: ``&quot;print&quot;`` (the default) writes to</span>
-<span class="sd">    stderr, ``&quot;none&quot;`` does nothing, and anything else names a file to write.&quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;none&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Apply the ``problems`` output policy: ``"print"`` (the default) writes to</span>
+<span class="sd">    stderr, ``"none"`` does nothing, and anything else names a file to write."""</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"none"</span><span class="p">:</span>
         <span class="k">return</span>
-    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;print&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">"print"</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">problems</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;parse_and_expand_pals: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span><span class="si">}</span><span class="s2"> problem(s) encountered &quot;</span>
-                  <span class="s2">&quot;during lattice expansion:&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"parse_and_expand_pals: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span><span class="si">}</span><span class="s2"> problem(s) encountered "</span>
+                  <span class="s2">"during lattice expansion:"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">problem</span> <span class="ow">in</span> <span class="n">problems</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
         <span class="k">return</span>
-    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span> <span class="s2">"w"</span><span class="p">)</span> <span class="k">as</span> <span class="n">out</span><span class="p">:</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">problems</span><span class="p">:</span>
-            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;No problems encountered during lattice expansion.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">"No problems encountered during lattice expansion.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span><span class="si">}</span><span class="s2"> problem(s) encountered during lattice &quot;</span>
-                      <span class="s2">&quot;expansion:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">problems</span><span class="p">)</span><span class="si">}</span><span class="s2"> problem(s) encountered during lattice "</span>
+                      <span class="s2">"expansion:</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">problem</span> <span class="ow">in</span> <span class="n">problems</span><span class="p">:</span>
-                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  - </span><span class="si">{</span><span class="n">problem</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="parse_and_expand_pals">
 <a class="viewcode-back" href="../../api.html#palsparserpy.parse_and_expand_pals">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">parse_and_expand_pals</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">root_lattice</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
-                          <span class="n">problems</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;print&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Lattices</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a PALS lattice file and return its five views.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_and_expand_pals</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">root_lattice</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                          <span class="n">problems</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">PathLike</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"print"</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Lattices</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Parse a PALS lattice file and return its five views.</span>
 
 <span class="sd">    Returns a :class:`~palsparserpy.structs.Lattices` holding the ``original``,</span>
 <span class="sd">    ``combined``, ``expanded``, ``full_expanded`` and ``adjunct`` views together</span>
@@ -327,15 +327,15 @@
 <span class="sd">        ``inherit``/``repeat``/``Fork`` targets, and expressions that could not be</span>
 <span class="sd">        evaluated). One of:</span>
 
-<span class="sd">          - ``&quot;print&quot;`` (the default) -- print the problems to ``stderr``</span>
+<span class="sd">          - ``"print"`` (the default) -- print the problems to ``stderr``</span>
 <span class="sd">            (nothing is printed when there are none);</span>
-<span class="sd">          - ``&quot;none&quot;`` -- do nothing (no printing, no file);</span>
+<span class="sd">          - ``"none"`` -- do nothing (no printing, no file);</span>
 <span class="sd">          - any other path -- write the problems to that file, printing nothing.</span>
 <span class="sd">            Those two names are reserved, so a report cannot be written to a file</span>
 <span class="sd">            called ``print`` or ``none``.</span>
 
 <span class="sd">    The same problems handed to ``problems`` are also returned in the</span>
-<span class="sd">    ``problems`` field regardless of the reporting mode, so ``&quot;none&quot;`` still lets</span>
+<span class="sd">    ``problems`` field regardless of the reporting mode, so ``"none"`` still lets</span>
 <span class="sd">    the caller inspect them programmatically. Each entry carries a ``message``,</span>
 <span class="sd">    the ``path`` it was found at, a ``severity`` and an ``origin``; only a</span>
 <span class="sd">    ``PROBLEM_INPUT`` can be cleared by editing the lattice.</span>
@@ -352,8 +352,8 @@
 <span class="sd">      commands executed and ABSOLUTE controllers applied. It is rooted at a map</span>
 <span class="sd">      holding the single ``name -&gt; Lattice`` entry, without the ``PALS``/</span>
 <span class="sd">      ``facility`` scaffolding the lattice was defined under, so the lattice is</span>
-<span class="sd">      reached as ``lat.full_expanded[&quot;lat1&quot;]`` rather than through</span>
-<span class="sd">      ``[&quot;PALS&quot;][&quot;facility&quot;]``. Its ``branches`` entries are branches, not the</span>
+<span class="sd">      reached as ``lat.full_expanded["lat1"]`` rather than through</span>
+<span class="sd">      ``["PALS"]["facility"]``. Its ``branches`` entries are branches, not the</span>
 <span class="sd">      ``BeamLine``s they were built from, and so carry no ``kind``; a</span>
 <span class="sd">      ``BeamLine`` referenced inside a ``line`` is a sub-line whose contents are</span>
 <span class="sd">      spliced directly into the enclosing line, so no nested ``BeamLine``</span>
@@ -390,10 +390,10 @@
 
 <span class="sd">    Each view is backed by its own tree; all five are freed independently when</span>
 <span class="sd">    their nodes are garbage collected.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">fspath</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;File not found: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"File not found: </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">handles</span> <span class="o">=</span> <span class="n">libparser</span><span class="p">()</span><span class="o">.</span><span class="n">parse_and_expand_PALS</span><span class="p">(</span><span class="n">encode</span><span class="p">(</span><span class="n">filename</span><span class="p">),</span>
                                                 <span class="n">encode</span><span class="p">(</span><span class="n">root_lattice</span><span class="p">))</span>
@@ -407,9 +407,9 @@
     <span class="c1"># failure.</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">((</span><span class="n">handles</span><span class="o">.</span><span class="n">original</span><span class="p">,</span> <span class="n">handles</span><span class="o">.</span><span class="n">combined</span><span class="p">,</span> <span class="n">handles</span><span class="o">.</span><span class="n">expanded</span><span class="p">,</span>
                 <span class="n">handles</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="n">handles</span><span class="o">.</span><span class="n">adjunct</span><span class="p">)):</span>
-        <span class="n">detail</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">problem_list</span> <span class="k">else</span> \
-            <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span> <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">  &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">message</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">problem_list</span><span class="p">)</span>
-        <span class="k">raise</span> <span class="n">PALSParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to parse lattice file: </span><span class="si">{</span><span class="n">filename</span><span class="si">}{</span><span class="n">detail</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">detail</span> <span class="o">=</span> <span class="s2">""</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">problem_list</span> <span class="k">else</span> \
+            <span class="s2">"</span><span class="se">\n</span><span class="s2">  "</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">  "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">message</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">problem_list</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="n">PALSParseError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to parse lattice file: </span><span class="si">{</span><span class="n">filename</span><span class="si">}{</span><span class="n">detail</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="n">_report_problems</span><span class="p">(</span><span class="n">problem_list</span><span class="p">,</span> <span class="n">problems</span><span class="p">)</span>
 
@@ -427,7 +427,7 @@
 <div class="viewcode-block" id="evaluate_pals_expression">
 <a class="viewcode-back" href="../../api.html#palsparserpy.evaluate_pals_expression">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_pals_expression</span><span class="p">(</span><span class="n">expr</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evaluate a single PALS mathematical expression to a ``float``.</span>
+<span class="w">    </span><span class="sd">"""Evaluate a single PALS mathematical expression to a ``float``.</span>
 
 <span class="sd">    Supports the full PALS expression grammar: arithmetic (``+ - * / ^``), unary</span>
 <span class="sd">    signs, parentheses, the built-in constants (``pi``, ``c_light``,</span>
@@ -435,7 +435,7 @@
 <span class="sd">    ``floor``, ``modulo``, ...), and the particle-data functions ``mass_of``,</span>
 <span class="sd">    ``charge_of`` and ``anomalous_moment_of`` (backed by</span>
 <span class="sd">    AtomicAndPhysicalConstantsCLib), whose species-name argument must be quoted,</span>
-<span class="sd">    e.g. ``mass_of(&quot;#3He&quot;)`` (a mass number carries a leading ``#``). A leading</span>
+<span class="sd">    e.g. ``mass_of("#3He")`` (a mass number carries a leading ``#``). A leading</span>
 <span class="sd">    ``expr(...)`` wrapper is accepted and unwrapped.</span>
 
 <span class="sd">    This evaluates a standalone string, so user-defined constants and variables</span>
@@ -446,14 +446,14 @@
 <span class="sd">    (which is intentionally deferred), or a non-finite result.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; evaluate_pals_expression(&quot;3.75e7 / c_light^2&quot;)     # 4.172...e-10</span>
-<span class="sd">        &gt;&gt;&gt; evaluate_pals_expression(&#39;mass_of(&quot;electron&quot;)&#39;)    # 510998.95069...</span>
-<span class="sd">        &gt;&gt;&gt; evaluate_pals_expression(&quot;expr(2 * pi)&quot;)           # 6.283...</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; evaluate_pals_expression("3.75e7 / c_light^2")     # 4.172...e-10</span>
+<span class="sd">        &gt;&gt;&gt; evaluate_pals_expression('mass_of("electron")')    # 510998.95069...</span>
+<span class="sd">        &gt;&gt;&gt; evaluate_pals_expression("expr(2 * pi)")           # 6.283...</span>
+<span class="sd">    """</span>
     <span class="n">ok</span> <span class="o">=</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">c_bool</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">libparser</span><span class="p">()</span><span class="o">.</span><span class="n">evaluate_pals_expression</span><span class="p">(</span><span class="n">encode</span><span class="p">(</span><span class="n">expr</span><span class="p">),</span> <span class="n">ctypes</span><span class="o">.</span><span class="n">byref</span><span class="p">(</span><span class="n">ok</span><span class="p">))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ok</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Not an evaluable PALS expression: &quot;</span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Not an evaluable PALS expression: "</span><span class="si">{</span><span class="n">expr</span><span class="si">}</span><span class="s1">"'</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">value</span></div>
 
 
@@ -463,7 +463,7 @@
 <div class="viewcode-block" id="node_correspondence">
 <a class="viewcode-back" href="../../api.html#palsparserpy.node_correspondence">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">node_correspondence</span><span class="p">(</span><span class="n">lat</span><span class="p">:</span> <span class="n">Lattices</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="n">YAMLNode</span><span class="p">,</span> <span class="n">NodeCorrespondence</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Map every node of a lattice to the nodes it corresponds to across the</span>
+<span class="w">    </span><span class="sd">"""Map every node of a lattice to the nodes it corresponds to across the</span>
 <span class="sd">    ``original``, ``combined``, ``full_expanded`` and ``adjunct`` trees.</span>
 
 <span class="sd">    The correspondence is exact: it is computed from provenance recorded while</span>
@@ -490,20 +490,20 @@
 <span class="sd">      :class:`~palsparserpy.structs.NodeCorrespondence` --</span>
 <span class="sd">      ``(original, combined, full_expanded, adjunct)`` -- listing every</span>
 <span class="sd">      corresponding node grouped by tree. The queried node appears in its own</span>
-<span class="sd">      tree&#39;s list, so the four lists together are the full equivalence class of</span>
+<span class="sd">      tree's list, so the four lists together are the full equivalence class of</span>
 <span class="sd">      ``node``. A list is empty when a tree has no corresponding node (e.g. the</span>
 <span class="sd">      synthesised ``destination_pointer`` scalar exists only in</span>
 <span class="sd">      ``full_expanded``, and a constant that the lattice never references exists</span>
 <span class="sd">      only in ``adjunct``).</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; lat = parse_and_expand_pals(&quot;lattice.pals.yaml&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; lat = parse_and_expand_pals("lattice.pals.yaml")</span>
 <span class="sd">        &gt;&gt;&gt; corr = node_correspondence(lat)</span>
-<span class="sd">        &gt;&gt;&gt; a_const = lat.combined[&quot;PALS&quot;][&quot;facility&quot;][0][&quot;constants&quot;][&quot;a_const&quot;]</span>
+<span class="sd">        &gt;&gt;&gt; a_const = lat.combined["PALS"]["facility"][0]["constants"]["a_const"]</span>
 <span class="sd">        &gt;&gt;&gt; corr[a_const].original        # the same constant in the original tree</span>
 <span class="sd">        &gt;&gt;&gt; corr[a_const].adjunct         # constants are not part of the lattice</span>
 <span class="sd">        &gt;&gt;&gt; corr[a_const].full_expanded   # empty unless the lattice referenced it</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">lib</span> <span class="o">=</span> <span class="n">libparser</span><span class="p">()</span>
     <span class="n">cmap</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">build_correspondence_map</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
                                         <span class="n">lat</span><span class="o">.</span><span class="n">combined</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
@@ -540,21 +540,21 @@
 
     <span class="k">for</span> <span class="n">original</span><span class="p">,</span> <span class="n">combined</span><span class="p">,</span> <span class="n">full_expanded</span><span class="p">,</span> <span class="n">adjunct</span> <span class="ow">in</span> <span class="n">links</span><span class="p">:</span>
         <span class="c1"># A link names a node in exactly one of the two derived trees.</span>
-        <span class="n">derived</span> <span class="o">=</span> <span class="n">add</span><span class="p">((</span><span class="s2">&quot;full_expanded&quot;</span><span class="p">,</span> <span class="n">full_expanded</span><span class="p">))</span> \
-            <span class="k">if</span> <span class="n">full_expanded</span> <span class="o">!=</span> <span class="n">YAML_NULL_ID</span> <span class="k">else</span> <span class="n">add</span><span class="p">((</span><span class="s2">&quot;adjunct&quot;</span><span class="p">,</span> <span class="n">adjunct</span><span class="p">))</span>
+        <span class="n">derived</span> <span class="o">=</span> <span class="n">add</span><span class="p">((</span><span class="s2">"full_expanded"</span><span class="p">,</span> <span class="n">full_expanded</span><span class="p">))</span> \
+            <span class="k">if</span> <span class="n">full_expanded</span> <span class="o">!=</span> <span class="n">YAML_NULL_ID</span> <span class="k">else</span> <span class="n">add</span><span class="p">((</span><span class="s2">"adjunct"</span><span class="p">,</span> <span class="n">adjunct</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">combined</span> <span class="o">!=</span> <span class="n">YAML_NULL_ID</span><span class="p">:</span>
-            <span class="n">key_combined</span> <span class="o">=</span> <span class="n">add</span><span class="p">((</span><span class="s2">&quot;combined&quot;</span><span class="p">,</span> <span class="n">combined</span><span class="p">))</span>
+            <span class="n">key_combined</span> <span class="o">=</span> <span class="n">add</span><span class="p">((</span><span class="s2">"combined"</span><span class="p">,</span> <span class="n">combined</span><span class="p">))</span>
             <span class="n">union</span><span class="p">(</span><span class="n">derived</span><span class="p">,</span> <span class="n">key_combined</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">original</span> <span class="o">!=</span> <span class="n">YAML_NULL_ID</span><span class="p">:</span>
-                <span class="n">union</span><span class="p">(</span><span class="n">key_combined</span><span class="p">,</span> <span class="n">add</span><span class="p">((</span><span class="s2">&quot;original&quot;</span><span class="p">,</span> <span class="n">original</span><span class="p">)))</span>
+                <span class="n">union</span><span class="p">(</span><span class="n">key_combined</span><span class="p">,</span> <span class="n">add</span><span class="p">((</span><span class="s2">"original"</span><span class="p">,</span> <span class="n">original</span><span class="p">)))</span>
 
     <span class="c1"># Gather the members of each connected component.</span>
     <span class="n">groups</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">tuple</span><span class="p">,</span> <span class="nb">list</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">parent</span><span class="p">:</span>
         <span class="n">groups</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">find</span><span class="p">(</span><span class="n">key</span><span class="p">),</span> <span class="p">[])</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-    <span class="n">trees</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;original&quot;</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;combined&quot;</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">combined</span><span class="o">.</span><span class="n">tree</span><span class="p">,</span>
-             <span class="s2">&quot;full_expanded&quot;</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="o">.</span><span class="n">tree</span><span class="p">,</span> <span class="s2">&quot;adjunct&quot;</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">adjunct</span><span class="o">.</span><span class="n">tree</span><span class="p">}</span>
+    <span class="n">trees</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"original"</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="n">tree</span><span class="p">,</span> <span class="s2">"combined"</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">combined</span><span class="o">.</span><span class="n">tree</span><span class="p">,</span>
+             <span class="s2">"full_expanded"</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="o">.</span><span class="n">tree</span><span class="p">,</span> <span class="s2">"adjunct"</span><span class="p">:</span> <span class="n">lat</span><span class="o">.</span><span class="n">adjunct</span><span class="o">.</span><span class="n">tree</span><span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">node_of</span><span class="p">(</span><span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">YAMLNode</span><span class="p">(</span><span class="n">trees</span><span class="p">[</span><span class="n">key</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">key</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
@@ -562,10 +562,10 @@
     <span class="n">result</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="n">YAMLNode</span><span class="p">,</span> <span class="n">NodeCorrespondence</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="k">for</span> <span class="n">members</span> <span class="ow">in</span> <span class="n">groups</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
         <span class="n">entry</span> <span class="o">=</span> <span class="n">NodeCorrespondence</span><span class="p">(</span>
-            <span class="n">original</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;original&quot;</span><span class="p">],</span>
-            <span class="n">combined</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;combined&quot;</span><span class="p">],</span>
-            <span class="n">full_expanded</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;full_expanded&quot;</span><span class="p">],</span>
-            <span class="n">adjunct</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;adjunct&quot;</span><span class="p">])</span>
+            <span class="n">original</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"original"</span><span class="p">],</span>
+            <span class="n">combined</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"combined"</span><span class="p">],</span>
+            <span class="n">full_expanded</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"full_expanded"</span><span class="p">],</span>
+            <span class="n">adjunct</span><span class="o">=</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">members</span> <span class="k">if</span> <span class="n">k</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"adjunct"</span><span class="p">])</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
             <span class="n">result</span><span class="p">[</span><span class="n">node_of</span><span class="p">(</span><span class="n">key</span><span class="p">)]</span> <span class="o">=</span> <span class="n">entry</span>
     <span class="k">return</span> <span class="n">result</span></div>
@@ -577,7 +577,7 @@
 <div class="viewcode-block" id="match_names">
 <a class="viewcode-back" href="../../api.html#palsparserpy.match_names">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">match_names</span><span class="p">(</span><span class="n">node</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span> <span class="n">match_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">YAMLNode</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Every named construct in ``node``&#39;s tree that is matched by</span>
+<span class="w">    </span><span class="sd">"""Every named construct in ``node``'s tree that is matched by</span>
 <span class="sd">    ``match_string``, following PALS *Name Matching*.</span>
 
 <span class="sd">    ``node`` may be any node of the tree to search (typically a lattice-view root</span>
@@ -586,43 +586,52 @@
 
 <span class="sd">    ``match_string`` has the form::</span>
 
-<span class="sd">        [{lattice}&gt;&gt;&gt;][{branch}&gt;&gt;][{kind}::]{name}[&gt;{group}.{sub}. ... .{parameter}]</span>
+<span class="sd">        {element-set}[&gt;{group}.{sub}. ... .{parameter}]</span>
 
-<span class="sd">    ``{lattice}``, ``{branch}`` and ``{name}`` are `PCRE2 &lt;https://www.pcre.org&gt;`_</span>
-<span class="sd">    patterns matched against the whole name (anchored at both ends); ``{kind}``</span>
-<span class="sd">    is matched exactly; the parameter path after the single ``&gt;`` is matched</span>
-<span class="sd">    exactly, key by key. An omitted or empty pattern matches any name at that</span>
-<span class="sd">    level. ``{branch}`` matches an element if any enclosing BeamLine/Branch name</span>
-<span class="sd">    matches, so elements in sub-lines are included.</span>
+<span class="sd">    where ``{element-set}`` is a ``,`` union of ``&amp;`` intersections of ``:``</span>
+<span class="sd">    ranges of element names, and an element name is::</span>
+
+<span class="sd">        [{lattice}&gt;&gt;&gt;][{branch}&gt;&gt;][{kind}::]{name}[#{N}]</span>
+
+<span class="sd">    The operators bind, tightest first: ``&gt;&gt;&gt;``, ``&gt;&gt;``, ``::``, ``#``, ``:``,</span>
+<span class="sd">    ``&amp;``, ``,``, ``&gt;``. ``{lattice}``, ``{branch}`` and ``{name}`` are</span>
+<span class="sd">    `PCRE2 &lt;https://www.pcre.org&gt;`_ patterns matched against the whole name;</span>
+<span class="sd">    characters inside a ``(...)``, ``[...]`` or ``{...}`` group belong to the</span>
+<span class="sd">    pattern. A ``{name}`` of digits only is the 1-based index of an element in</span>
+<span class="sd">    its line. ``{kind}`` is an element kind, ``Controller``, or one of the MetaP</span>
+<span class="sd">    components ``alias``, ``ID``, ``label`` and ``description``. ``#{N}`` keeps</span>
+<span class="sd">    the N-th match, and a range ``{a}:{b}`` runs from each ``a`` to the next</span>
+<span class="sd">    ``b`` in the same line. The parameter path after the single ``&gt;`` is matched</span>
+<span class="sd">    exactly, key by key, and applies to every element of the set.</span>
+
+<span class="sd">    In an expanded lattice (``lat.expanded``, ``lat.full_expanded``) a name</span>
+<span class="sd">    reaches the elements of the lattice. In a tree holding a ``PALS`` node</span>
+<span class="sd">    (``lat.original``, ``lat.combined``, ``lat.adjunct``, or a file read with</span>
+<span class="sd">    ``parse_file``) an unqualified name reaches the element definitions under</span>
+<span class="sd">    ``facility`` or ``post_expansion``, and only a ``{branch}&gt;&gt;`` qualified name</span>
+<span class="sd">    reaches the elements written in a beamline's ``line``.</span>
 
 <span class="sd">    The node returned for each match is whatever the string resolves to: the</span>
-<span class="sd">    element node (no parameter path), the parameter-group or parameter node (with</span>
-<span class="sd">    a path), or -- for a bare name (no lattice/branch/kind qualifier and no</span>
-<span class="sd">    parameter path) -- additionally each matching constant and variable defined</span>
-<span class="sd">    directly under the ``PALS`` or ``facility`` node (both the full</span>
-<span class="sd">    ``kind: constant``/``kind: variable`` and the compact</span>
-<span class="sd">    ``constants:``/``variables:`` forms). Lattice parameters therefore include</span>
-<span class="sd">    constant and variable names.</span>
+<span class="sd">    element node (no parameter path), or the parameter-group or parameter node</span>
+<span class="sd">    (with a path). Controllers are matched by ``Controller::{name}`` and a</span>
+<span class="sd">    controller variable by ``{controller}&gt;{variable}``. A bare name -- one</span>
+<span class="sd">    element name with no qualifier and no parameter path -- additionally matches</span>
+<span class="sd">    each constant and variable of that name defined under the ``PALS``,</span>
+<span class="sd">    ``facility`` or ``post_expansion`` node, and each controller of that name.</span>
+<span class="sd">    Constants, variables and controllers are found in ``lat.adjunct``, not in</span>
+<span class="sd">    ``lat.full_expanded``.</span>
 
-<span class="sd">    Which tree to search follows from that: elements are in</span>
-<span class="sd">    ``lat.full_expanded``, while constants and variables are defined at facility</span>
-<span class="sd">    level and so are found in ``lat.adjunct``. Searching ``lat.full_expanded``</span>
-<span class="sd">    for a constant matches nothing, since the ``PALS``/``facility`` node it would</span>
-<span class="sd">    be defined under is not part of that tree.</span>
-
-<span class="sd">    Not yet implemented from *Element Name Matching*: ``#N`` instance selection,</span>
-<span class="sd">    ``{e1}:{e2}`` ranges, ``,`` unions, and ``&amp;`` intersections.</span>
-
-<span class="sd">    Results are de-duplicated and returned in document order. A malformed pattern</span>
+<span class="sd">    Results are de-duplicated and returned in match order. A malformed pattern</span>
 <span class="sd">    yields an empty list.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; lat = parse_and_expand_pals(&quot;lattice.pals.yaml&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; match_names(lat.full_expanded, &quot;B1.*&gt;BendP.e1&quot;)   # e1 of every B1... bend</span>
-<span class="sd">        &gt;&gt;&gt; match_names(lat.full_expanded, &quot;Quadrupole::.*&quot;)  # every quadrupole</span>
-<span class="sd">        &gt;&gt;&gt; match_names(lat.full_expanded, &quot;inj&gt;&gt;&gt;arc&gt;&gt;Q.*&gt;length&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; match_names(lat.adjunct, &quot;a_.*&quot;)                  # constants/variables</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; lat = parse_and_expand_pals("lattice.pals.yaml")</span>
+<span class="sd">        &gt;&gt;&gt; match_names(lat.full_expanded, "B1.*&gt;BendP.e1")   # e1 of every B1... bend</span>
+<span class="sd">        &gt;&gt;&gt; match_names(lat.full_expanded, "Quadrupole::.*")  # every quadrupole</span>
+<span class="sd">        &gt;&gt;&gt; match_names(lat.full_expanded, "inj&gt;&gt;&gt;arc&gt;&gt;Q.*&gt;length")</span>
+<span class="sd">        &gt;&gt;&gt; match_names(lat.full_expanded, "Q1:Q5 &amp; Quadrupole::.*")</span>
+<span class="sd">        &gt;&gt;&gt; match_names(lat.adjunct, "a_.*")                  # constants/variables</span>
+<span class="sd">    """</span>
     <span class="n">lib</span> <span class="o">=</span> <span class="n">libparser</span><span class="p">()</span>
     <span class="n">matches</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">node</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">encode</span><span class="p">(</span><span class="n">match_string</span><span class="p">))</span>
     <span class="k">try</span><span class="p">:</span>
@@ -636,9 +645,9 @@
 <span class="c1"># ─── parameter values ────────────────────────────────────────────────────────</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_param_value_result</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">ParamValueC</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Turn the raw ``param_value`` returned by the C API into a Python value: a</span>
+<span class="w">    </span><span class="sd">"""Turn the raw ``param_value`` returned by the C API into a Python value: a</span>
 <span class="sd">    ``float`` for a number, a ``str`` for a string (copied out, then the owning C</span>
-<span class="sd">    string is freed), or ``None``.&quot;&quot;&quot;</span>
+<span class="sd">    string is freed), or ``None``."""</span>
     <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="n">PARAM_VALUE_NUMBER</span><span class="p">:</span>
         <span class="k">return</span> <span class="n">value</span><span class="o">.</span><span class="n">number</span>
     <span class="k">if</span> <span class="n">value</span><span class="o">.</span><span class="n">kind</span> <span class="o">!=</span> <span class="n">PARAM_VALUE_STRING</span><span class="p">:</span>
@@ -649,7 +658,7 @@
 <div class="viewcode-block" id="parameter_value">
 <a class="viewcode-back" href="../../api.html#palsparserpy.parameter_value">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">:</span> <span class="n">Lattices</span><span class="p">,</span> <span class="n">match_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;The value of the lattice parameter named by ``match_string``, looked up in</span>
+<span class="w">    </span><span class="sd">"""The value of the lattice parameter named by ``match_string``, looked up in</span>
 <span class="sd">    the expanded lattice ``lat``.</span>
 
 <span class="sd">    ``match_string`` uses the same PALS *Name Matching* syntax as</span>
@@ -658,7 +667,7 @@
 <span class="sd">    lattice/branch/kind qualifier and no path), a constant or variable -- the</span>
 <span class="sd">    same constructs :func:`match_names` resolves.</span>
 
-<span class="sd">    Only two of ``lat``&#39;s five views are searched: ``lat.full_expanded``, which</span>
+<span class="sd">    Only two of ``lat``'s five views are searched: ``lat.full_expanded``, which</span>
 <span class="sd">    holds the element parameters, and then, if the name is not found there,</span>
 <span class="sd">    ``lat.adjunct``, which holds the facility-level constants, variables, and any</span>
 <span class="sd">    definitions not spliced into the lattice. The raw ``lat.original`` and</span>
@@ -669,14 +678,14 @@
 
 <span class="sd">    Because both searched views are post-expansion, values come back already</span>
 <span class="sd">    evaluated: a numeric value as a ``float``, and a non-numeric one (e.g. a</span>
-<span class="sd">    species name like ``&quot;#3He&quot;``, or an expression expansion left unevaluated</span>
+<span class="sd">    species name like ``"#3He"``, or an expression expansion left unevaluated</span>
 <span class="sd">    such as one using ``random()``) verbatim as a ``str``.</span>
 
 <span class="sd">    The value is resolved as follows:</span>
 
 <span class="sd">      - **Element parameter, set:** its value -- a ``float``, or a ``str`` when</span>
 <span class="sd">        non-numeric.</span>
-<span class="sd">      - **Element parameter, not set:** the parameter&#39;s default is returned</span>
+<span class="sd">      - **Element parameter, not set:** the parameter's default is returned</span>
 <span class="sd">        (``0.0`` for every parameter, for now -- real per-parameter defaults come</span>
 <span class="sd">        later).</span>
 <span class="sd">      - **Constant or variable (bare name):** its value, the same way.</span>
@@ -685,12 +694,12 @@
 <span class="sd">        on a whole parameter group, or several matches carry conflicting values.</span>
 
 <span class="sd">    Example:</span>
-<span class="sd">        &gt;&gt;&gt; lat = parse_and_expand_pals(&quot;lattice.pals.yaml&quot;)</span>
-<span class="sd">        &gt;&gt;&gt; parameter_value(lat, &quot;quad1&gt;MagneticMultipoleP.Bn1&quot;)  # 1.0</span>
-<span class="sd">        &gt;&gt;&gt; parameter_value(lat, &quot;quad1&gt;BendP.g&quot;)                 # 0.0 (unset)</span>
-<span class="sd">        &gt;&gt;&gt; parameter_value(lat, &quot;a_const&quot;)                       # from adjunct</span>
-<span class="sd">        &gt;&gt;&gt; parameter_value(lat, &quot;quad1&gt;nope.nope&quot;)               # None</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        &gt;&gt;&gt; lat = parse_and_expand_pals("lattice.pals.yaml")</span>
+<span class="sd">        &gt;&gt;&gt; parameter_value(lat, "quad1&gt;MagneticMultipoleP.Bn1")  # 1.0</span>
+<span class="sd">        &gt;&gt;&gt; parameter_value(lat, "quad1&gt;BendP.g")                 # 0.0 (unset)</span>
+<span class="sd">        &gt;&gt;&gt; parameter_value(lat, "a_const")                       # from adjunct</span>
+<span class="sd">        &gt;&gt;&gt; parameter_value(lat, "quad1&gt;nope.nope")               # None</span>
+<span class="sd">    """</span>
     <span class="n">value</span> <span class="o">=</span> <span class="n">libparser</span><span class="p">()</span><span class="o">.</span><span class="n">get_lattice_parameter_value</span><span class="p">(</span>
         <span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">lat</span><span class="o">.</span><span class="n">adjunct</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
         <span class="n">encode</span><span class="p">(</span><span class="n">match_string</span><span class="p">))</span>

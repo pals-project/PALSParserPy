@@ -312,7 +312,7 @@ and the test suite put the repository root on <code class="docutils literal notr
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">palsparserpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 
 <span class="n">root</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">create_empty_tree</span><span class="p">()</span>
-<span class="n">root</span><span class="p">[</span><span class="s2">&quot;hello&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;world&quot;</span>
+<span class="n">root</span><span class="p">[</span><span class="s2">"hello"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"world"</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">root</span><span class="p">))</span>
 </pre></div>
 </div>
@@ -342,7 +342,7 @@ one any time before that first call works, including after <code class="docutils
 </table>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
-<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;PALS_PARSER_CPP_DIR&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;/opt/src/PALSParserCpp&quot;</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">"PALS_PARSER_CPP_DIR"</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"/opt/src/PALSParserCpp"</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">palsparserpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 </pre></div>

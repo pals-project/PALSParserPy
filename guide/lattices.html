@@ -298,7 +298,7 @@ of every parameter family it uses (<code class="docutils literal notranslate"><s
 branch is capped with a <code class="docutils literal notranslate"><span class="pre">branch_end</span></code> <code class="docutils literal notranslate"><span class="pre">Placeholder</span></code> holding its final reference
 and floor.</p>
 <p><code class="docutils literal notranslate"><span class="pre">expanded</span></code> is that same tree with all of it pruned: a parameter is kept only
-when the author wrote it (or a post-<code class="docutils literal notranslate"><span class="pre">expand_lattice</span></code> <code class="docutils literal notranslate"><span class="pre">set</span></code> wrote it). It is
+when the author wrote it (or a <code class="docutils literal notranslate"><span class="pre">post_expansion</span></code> <code class="docutils literal notranslate"><span class="pre">set</span></code> wrote it). It is
 <code class="docutils literal notranslate"><span class="pre">full_expanded</span></code> with nodes removed rather than an earlier snapshot, so a
 parameter present in both holds the <em>same</em> value in both, with every <code class="docutils literal notranslate"><span class="pre">set</span></code> and
 ABSOLUTE controller applied.</p>
@@ -315,7 +315,7 @@ lattice back out without the computed values.</p></li>
 <h2>Basic use<a class="headerlink" href="#basic-use" title="Link to this heading">¶</a></h2>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">palsparserpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pp</span>
 
-<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">)</span>
+<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">original</span><span class="p">))</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">to_yaml_string</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">combined</span><span class="p">))</span>
@@ -326,7 +326,7 @@ lattice back out without the computed values.</p></li>
 </div>
 <p>To expand a single named lattice from a file that defines several, pass its
 name as the second argument:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">,</span> <span class="s2">&quot;main_ring&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">,</span> <span class="s2">"main_ring"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -340,20 +340,20 @@ dependency cycle). Rather than abort, expansion keeps going — leaving the
 offending value as text — and collects a list of every such problem.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">problems</span></code> argument controls what is done with that list:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Default: print the problems to stderr (nothing prints when there are none).</span>
-<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">)</span>
+<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">)</span>
 
 <span class="c1"># Write the problems to a file instead, printing nothing.</span>
-<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">,</span> <span class="n">problems</span><span class="o">=</span><span class="s2">&quot;problems.txt&quot;</span><span class="p">)</span>
+<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">,</span> <span class="n">problems</span><span class="o">=</span><span class="s2">"problems.txt"</span><span class="p">)</span>
 
 <span class="c1"># Say nothing at all.</span>
-<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">,</span> <span class="n">problems</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+<span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">,</span> <span class="n">problems</span><span class="o">=</span><span class="s2">"none"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">&quot;print&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code> are the two reserved names; any other value is taken as
 the path of the file to write.</p>
 <p>A typical report looks like:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>parse_and_expand_pals: 2 problem(s) encountered during lattice expansion:
-  - ERROR: reference to undefined element or line &#39;NoSuchElement&#39;
+  - ERROR: reference to undefined element or line 'NoSuchElement'
   - ERROR: could not evaluate expression for BendP.edge_int2: 0.02 * thingB&gt;MagneticMultipoleP.NotThere
 </pre></div>
 </div>
@@ -374,12 +374,12 @@ case, so nothing was invented.</p></li>
 </ul>
 <p>The last one is the one to filter on before failing a build, since editing the
 lattice can only ever clear a <code class="docutils literal notranslate"><span class="pre">PROBLEM_INPUT</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">,</span> <span class="n">problems</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">,</span> <span class="n">problems</span><span class="o">=</span><span class="s2">"none"</span><span class="p">)</span>
 
 <span class="n">mine</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">lat</span><span class="o">.</span><span class="n">problems</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">origin</span> <span class="ow">is</span> <span class="n">pp</span><span class="o">.</span><span class="n">PROBLEM_INPUT</span><span class="p">]</span>
 <span class="k">if</span> <span class="n">mine</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mine</span><span class="p">)</span><span class="si">}</span><span class="s2"> problem(s) to fix:</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span>
-                     <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">mine</span><span class="p">))</span>
+    <span class="k">raise</span> <span class="ne">SystemExit</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">mine</span><span class="p">)</span><span class="si">}</span><span class="s2"> problem(s) to fix:</span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span>
+                     <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">mine</span><span class="p">))</span>
 </pre></div>
 </div>
 <p>Only values that look like expressions (an operator, a parenthesis, an
@@ -405,8 +405,8 @@ by relative path, change into the lattice directory first:</p>
     <span class="k">finally</span><span class="p">:</span>
         <span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">old</span><span class="p">)</span>
 
-<span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="s2">&quot;lattice_files&quot;</span><span class="p">):</span>
-    <span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">)</span>
+<span class="k">with</span> <span class="n">chdir</span><span class="p">(</span><span class="s2">"lattice_files"</span><span class="p">):</span>
+    <span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>(On Python 3.11 and newer, <code class="docutils literal notranslate"><span class="pre">contextlib.chdir</span></code> does this for you.)</p>
@@ -418,14 +418,14 @@ processing, so most of their nodes correspond: the constant <code class="docutil
 instance, exists in <code class="docutils literal notranslate"><span class="pre">original</span></code>, in <code class="docutils literal notranslate"><span class="pre">combined</span></code>, and — since it is not part of the
 lattice — in <code class="docutils literal notranslate"><span class="pre">adjunct</span></code>. <code class="docutils literal notranslate"><span class="pre">node_correspondence</span></code> builds that mapping: given any
 node, it returns the nodes it corresponds to in the other views.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">)</span>
 <span class="n">corr</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">node_correspondence</span><span class="p">(</span><span class="n">lat</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The result is a <code class="docutils literal notranslate"><span class="pre">dict</span></code> keyed by <code class="docutils literal notranslate"><span class="pre">YAMLNode</span></code>. Looking up a node returns a named
 tuple whose fields — <code class="docutils literal notranslate"><span class="pre">original</span></code>, <code class="docutils literal notranslate"><span class="pre">combined</span></code>, <code class="docutils literal notranslate"><span class="pre">full_expanded</span></code>, <code class="docutils literal notranslate"><span class="pre">adjunct</span></code> — are
 each a list of <code class="docutils literal notranslate"><span class="pre">YAMLNode</span></code> listing the corresponding nodes in that view:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a_const</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">combined</span><span class="p">[</span><span class="s2">&quot;PALS&quot;</span><span class="p">][</span><span class="s2">&quot;facility&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;constants&quot;</span><span class="p">][</span><span class="s2">&quot;a_const&quot;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">a_const</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">combined</span><span class="p">[</span><span class="s2">"PALS"</span><span class="p">][</span><span class="s2">"facility"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"constants"</span><span class="p">][</span><span class="s2">"a_const"</span><span class="p">]</span>
 
 <span class="n">corr</span><span class="p">[</span><span class="n">a_const</span><span class="p">]</span><span class="o">.</span><span class="n">original</span>        <span class="c1"># [ the a_const node in the original tree ]</span>
 <span class="n">corr</span><span class="p">[</span><span class="n">a_const</span><span class="p">]</span><span class="o">.</span><span class="n">adjunct</span>         <span class="c1"># [ the a_const node in the adjunct tree ]</span>
@@ -457,7 +457,7 @@ copy, which is why each field is a <em>list</em>: one <code class="docutils lite
 <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">corr</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">combined</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">node</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">combined</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> \
             <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;combined node →&quot;</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">),</span> <span class="s2">&quot;expanded copies&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"combined node →"</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">),</span> <span class="s2">"expanded copies"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>A list is empty when a view has no corresponding node. For example, the
@@ -483,64 +483,82 @@ merged, or renamed during expansion.</p>
 PALS <em>Name Matching</em> string refers to — elements, parameter groups, parameters,
 constants, and variables — and returns them as a list of <code class="docutils literal notranslate"><span class="pre">YAMLNode</span></code>. The syntax
 is:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[{lattice}&gt;&gt;&gt;][{branch}&gt;&gt;][{kind}::]{name}[&gt;{group}.{subgroup}. … .{parameter}]
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{element-set}[&gt;{group}.{subgroup}. … .{parameter}]
 </pre></div>
 </div>
-<p><code class="docutils literal notranslate"><span class="pre">{lattice}</span></code>, <code class="docutils literal notranslate"><span class="pre">{branch}</span></code>, and <code class="docutils literal notranslate"><span class="pre">{name}</span></code> are <a class="reference external" href="https://www.pcre.org">PCRE2</a> patterns
+<p>where <code class="docutils literal notranslate"><span class="pre">{element-set}</span></code> is a <code class="docutils literal notranslate"><span class="pre">,</span></code> union of <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> intersections of <code class="docutils literal notranslate"><span class="pre">:</span></code> ranges of
+element names, and an element name is</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>[{lattice}&gt;&gt;&gt;][{branch}&gt;&gt;][{kind}::]{name}[#{N}]
+</pre></div>
+</div>
+<p>The operators bind, tightest first: <code class="docutils literal notranslate"><span class="pre">&gt;&gt;&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">::</span></code>, <code class="docutils literal notranslate"><span class="pre">#</span></code>, <code class="docutils literal notranslate"><span class="pre">:</span></code>, <code class="docutils literal notranslate"><span class="pre">&amp;</span></code>, <code class="docutils literal notranslate"><span class="pre">,</span></code>, <code class="docutils literal notranslate"><span class="pre">&gt;</span></code>.
+<code class="docutils literal notranslate"><span class="pre">{lattice}</span></code>, <code class="docutils literal notranslate"><span class="pre">{branch}</span></code>, and <code class="docutils literal notranslate"><span class="pre">{name}</span></code> are <a class="reference external" href="https://www.pcre.org">PCRE2</a> patterns
 matched against the <em>whole</em> name (anchored at both ends), so <code class="docutils literal notranslate"><span class="pre">B1.*</span></code> matches <code class="docutils literal notranslate"><span class="pre">B1a</span></code>
-and <code class="docutils literal notranslate"><span class="pre">B1b</span></code> but <code class="docutils literal notranslate"><span class="pre">B1</span></code> on its own matches neither. <code class="docutils literal notranslate"><span class="pre">{kind}</span></code> is matched exactly, and
-the dotted parameter path after the single <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> is matched exactly, key by key.
-An omitted or empty pattern matches every name at that level, and <code class="docutils literal notranslate"><span class="pre">{branch}</span></code>
-matches an element if any enclosing BeamLine/Branch name matches — so elements in
-sub-lines are included.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">)</span>
+and <code class="docutils literal notranslate"><span class="pre">B1b</span></code> but <code class="docutils literal notranslate"><span class="pre">B1</span></code> on its own matches neither. Characters inside a <code class="docutils literal notranslate"><span class="pre">(...)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">[...]</span></code> or <code class="docutils literal notranslate"><span class="pre">{...}</span></code> group belong to the pattern, so the comma in <code class="docutils literal notranslate"><span class="pre">Q\d{2,3}</span></code> is not
+a union. A <code class="docutils literal notranslate"><span class="pre">{name}</span></code> of digits only is the 1-based index of an element in its line.
+<code class="docutils literal notranslate"><span class="pre">{kind}</span></code> is an element kind, <code class="docutils literal notranslate"><span class="pre">Controller</span></code>, or one of the MetaP components <code class="docutils literal notranslate"><span class="pre">alias</span></code>,
+<code class="docutils literal notranslate"><span class="pre">ID</span></code>, <code class="docutils literal notranslate"><span class="pre">label</span></code> and <code class="docutils literal notranslate"><span class="pre">description</span></code> (<code class="docutils literal notranslate"><span class="pre">alias::black</span></code> matches the elements whose
+<code class="docutils literal notranslate"><span class="pre">MetaP.alias</span></code> is <code class="docutils literal notranslate"><span class="pre">black</span></code>). <code class="docutils literal notranslate"><span class="pre">#{N}</span></code> keeps the N-th match, and a range <code class="docutils literal notranslate"><span class="pre">{a}:{b}</span></code>
+runs from each <code class="docutils literal notranslate"><span class="pre">a</span></code> to the next <code class="docutils literal notranslate"><span class="pre">b</span></code> in the same line, wrapping round the end of the
+line. The dotted parameter path after the single <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> is matched exactly, key by
+key, and applies to every element of the set. <code class="docutils literal notranslate"><span class="pre">{branch}</span></code> matches an element if
+any enclosing BeamLine/Branch name matches — so elements in sub-lines are
+included.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">)</span>
 
 <span class="c1"># The `e1` bend parameter of every element whose name begins with `B1`:</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">&quot;B1.*&gt;BendP.e1&quot;</span><span class="p">)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"B1.*&gt;BendP.e1"</span><span class="p">)</span>
 
 <span class="c1"># Restrict to an element kind with `::`:</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">&quot;Quadrupole::.*&gt;length&quot;</span><span class="p">)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"Quadrupole::.*&gt;length"</span><span class="p">)</span>
 
 <span class="c1"># Restrict to a named beamline/branch (`&gt;&gt;`) or lattice (`&gt;&gt;&gt;`):</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">&quot;inj_line&gt;&gt;Q.*&gt;length&quot;</span><span class="p">)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">&quot;ring&gt;&gt;&gt;inj_line&gt;&gt;Q.*&gt;length&quot;</span><span class="p">)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"inj_line&gt;&gt;Q.*&gt;length"</span><span class="p">)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"ring&gt;&gt;&gt;inj_line&gt;&gt;Q.*&gt;length"</span><span class="p">)</span>
 
 <span class="c1"># Omit the parameter path to match the element itself, or the group:</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">&quot;Q1a&quot;</span><span class="p">)</span>             <span class="c1"># the element node</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">&quot;Q1a&gt;BendP&quot;</span><span class="p">)</span>       <span class="c1"># a parameter-group node</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"Q1a"</span><span class="p">)</span>             <span class="c1"># the element node</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"Q1a&gt;BendP"</span><span class="p">)</span>       <span class="c1"># a parameter-group node</span>
+
+<span class="c1"># Instances, ranges, unions and intersections:</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"Q1a#2"</span><span class="p">)</span>                     <span class="c1"># the second Q1a</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"Q1a:Q2a&gt;length"</span><span class="p">)</span>            <span class="c1"># Q1a through Q2a</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"Q1a, Q2a"</span><span class="p">)</span>                  <span class="c1"># either</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"Quadrupole::.* &amp; Q1a:Q2a"</span><span class="p">)</span>  <span class="c1"># the quads among them</span>
 </pre></div>
 </div>
+<p>Searched before expansion — in <code class="docutils literal notranslate"><span class="pre">lat.combined</span></code>, <code class="docutils literal notranslate"><span class="pre">lat.adjunct</span></code>, or a tree read with
+<code class="docutils literal notranslate"><span class="pre">parse_file</span></code> — an unqualified name reaches the element <em>definitions</em> standing
+under <code class="docutils literal notranslate"><span class="pre">facility</span></code> or <code class="docutils literal notranslate"><span class="pre">post_expansion</span></code>, not the elements written inside a beamline’s
+<code class="docutils literal notranslate"><span class="pre">line</span></code>; only a name qualified by the beamline reaches those (<code class="docutils literal notranslate"><span class="pre">myline&gt;&gt;q1</span></code>).</p>
 <p>Pass any node of the tree you want to search — <code class="docutils literal notranslate"><span class="pre">lat.full_expanded</span></code> for beamlines
 and elements, since those are only fully realised after expansion. The returned
 nodes belong to that same tree, so you can read or modify them in place:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">&quot;B1.*&gt;BendP.e1&quot;</span><span class="p">):</span>
-    <span class="n">n</span><span class="o">.</span><span class="n">set_scalar</span><span class="p">(</span><span class="s2">&quot;0.0&quot;</span><span class="p">)</span>   <span class="c1"># zero the entrance-face angle of each B1… bend</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">full_expanded</span><span class="p">,</span> <span class="s2">"B1.*&gt;BendP.e1"</span><span class="p">):</span>
+    <span class="n">n</span><span class="o">.</span><span class="n">set_scalar</span><span class="p">(</span><span class="s2">"0.0"</span><span class="p">)</span>   <span class="c1"># zero the entrance-face angle of each B1… bend</span>
 </pre></div>
 </div>
 <section id="constants-and-variables">
 <h3>Constants and variables<a class="headerlink" href="#constants-and-variables" title="Link to this heading">¶</a></h3>
-<p>Lattice parameters include constant and variable names. A <em>bare</em> name — no
-lattice/branch/kind qualifier and no parameter path — also matches every
-constant and variable defined directly under the <code class="docutils literal notranslate"><span class="pre">PALS</span></code> or <code class="docutils literal notranslate"><span class="pre">facility</span></code> node, in
-both the full (<code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">constant</span></code> / <code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">variable</span></code>) and compact
-(<code class="docutils literal notranslate"><span class="pre">constants:</span></code> / <code class="docutils literal notranslate"><span class="pre">variables:</span></code> list) forms.</p>
+<p>Lattice parameters include constant and variable names. A <em>bare</em> name — one
+element name with no qualifier of any sort and no parameter path — also matches
+every constant and variable defined directly under the <code class="docutils literal notranslate"><span class="pre">PALS</span></code>, <code class="docutils literal notranslate"><span class="pre">facility</span></code> or
+<code class="docutils literal notranslate"><span class="pre">post_expansion</span></code> node, in both the full (<code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">constant</span></code> / <code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">variable</span></code>) and
+compact (<code class="docutils literal notranslate"><span class="pre">constants:</span></code> / <code class="docutils literal notranslate"><span class="pre">variables:</span></code> list) forms, and every controller of that
+name. A controller is also matched by <code class="docutils literal notranslate"><span class="pre">Controller::{name}</span></code>, and its variable by
+<code class="docutils literal notranslate"><span class="pre">{controller}&gt;{variable}</span></code>.</p>
 <p>Constants and variables are defined at facility level rather than inside the
 lattice, so they are found in <code class="docutils literal notranslate"><span class="pre">lat.adjunct</span></code> — searching <code class="docutils literal notranslate"><span class="pre">lat.full_expanded</span></code> for
 one matches nothing, as the <code class="docutils literal notranslate"><span class="pre">PALS</span></code>/<code class="docutils literal notranslate"><span class="pre">facility</span></code> node it lives under is not part of
 that tree:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">adjunct</span><span class="p">,</span> <span class="s2">&quot;a_const&quot;</span><span class="p">)</span>   <span class="c1"># one named constant</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">adjunct</span><span class="p">,</span> <span class="s2">&quot;a_.*&quot;</span><span class="p">)</span>      <span class="c1"># every constant/var named a_…</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">adjunct</span><span class="p">,</span> <span class="s2">"a_const"</span><span class="p">)</span>   <span class="c1"># one named constant</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">match_names</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">adjunct</span><span class="p">,</span> <span class="s2">"a_.*"</span><span class="p">)</span>      <span class="c1"># every constant/var named a_…</span>
 </pre></div>
 </div>
 <p>For a compact-form entry the matched node is the <code class="docutils literal notranslate"><span class="pre">name:</span> <span class="pre">value</span></code> scalar; for a
 full-form entry it is the named node, underneath which <code class="docutils literal notranslate"><span class="pre">kind</span></code>/<code class="docutils literal notranslate"><span class="pre">value</span></code> live.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p><strong>Not yet implemented.</strong> The full <em>Element Name Matching</em> grammar also defines
-<code class="docutils literal notranslate"><span class="pre">#N</span></code> instance selection, <code class="docutils literal notranslate"><span class="pre">{e1}:{e2}</span></code> ranges, <code class="docutils literal notranslate"><span class="pre">,</span></code> unions, and <code class="docutils literal notranslate"><span class="pre">&amp;</span></code> intersections.
-These are not yet handled by <code class="docutils literal notranslate"><span class="pre">match_names</span></code>.</p>
-</div>
-<p>Results are de-duplicated and returned in document order, and a malformed
+<p>Results are de-duplicated and returned in match order, and a malformed
 pattern yields an empty list. A runnable version of these examples is in
 <code class="docutils literal notranslate"><span class="pre">examples/match_names.py</span></code>.</p>
 </section>
@@ -552,13 +570,13 @@ returns the single <em>value</em> a parameter holds. It takes the whole expanded
 <code class="docutils literal notranslate"><span class="pre">lat</span></code> and the same <em>Name Matching</em> syntax, and returns a <code class="docutils literal notranslate"><span class="pre">float</span></code>, a <code class="docutils literal notranslate"><span class="pre">str</span></code>, or
 <code class="docutils literal notranslate"><span class="pre">None</span></code>. Like <code class="docutils literal notranslate"><span class="pre">match_names</span></code>, the string names either an element parameter (with a
 parameter path) or, as a <em>bare</em> name, a constant or variable:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">&quot;ex.pals.yaml&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lat</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"ex.pals.yaml"</span><span class="p">)</span>
 
-<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">&quot;lat1&gt;&gt;&gt;B1a&gt;BendP.e1&quot;</span><span class="p">)</span>        <span class="c1"># 0.1    (from full_expanded)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">&quot;F1&gt;ReferenceP.species_ref&quot;</span><span class="p">)</span>  <span class="c1"># &#39;#3He&#39; (a string)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">&quot;Q1&gt;BendP.g&quot;</span><span class="p">)</span>                 <span class="c1"># 0.0    (unset → default)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">&quot;Q1&quot;</span><span class="p">)</span>                         <span class="c1"># None   (not a value)</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">&quot;a_const&quot;</span><span class="p">)</span>                    <span class="c1"># a constant (from adjunct)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">"lat1&gt;&gt;&gt;B1a&gt;BendP.e1"</span><span class="p">)</span>        <span class="c1"># 0.1    (from full_expanded)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">"F1&gt;ReferenceP.species_ref"</span><span class="p">)</span>  <span class="c1"># '#3He' (a string)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">"Q1&gt;BendP.g"</span><span class="p">)</span>                 <span class="c1"># 0.0    (unset → default)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">"Q1"</span><span class="p">)</span>                         <span class="c1"># None   (not a value)</span>
+<span class="n">pp</span><span class="o">.</span><span class="n">parameter_value</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="s2">"a_const"</span><span class="p">)</span>                    <span class="c1"># a constant (from adjunct)</span>
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">parameter_value</span></code> searches only two of <code class="docutils literal notranslate"><span class="pre">lat</span></code>’s five views: <code class="docutils literal notranslate"><span class="pre">lat.full_expanded</span></code>,
