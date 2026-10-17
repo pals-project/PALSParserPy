@@ -1,14 +1,16 @@
-# Translating to SciBmad, Bmad and MAD-X
+# Translating to SciBmad, Bmad, MAD-X and Xsuite
 
-PALSParserPy can translate a PALS-format lattice into three accelerator formats:
+PALSParserPy can translate a PALS-format lattice into four accelerator formats:
 
 - **`palsparserpy/to_scibmad.py`** — emits a [SciBmad](https://github.com/bmad-sim/SciBmad.jl)
   / [Beamlines](https://github.com/bmad-sim/Beamlines.jl) description.
 - **`palsparserpy/to_bmad.py`** — emits a classic [Bmad](https://www.classe.cornell.edu/bmad/)
   lattice.
 - **`palsparserpy/to_madx.py`** — emits a [MAD-X](https://mad.web.cern.ch/mad/) lattice.
+- **`palsparserpy/to_xsuite.py`** — emits a Python script that builds an
+  [Xsuite](https://github.com/xsuite/xsuite) lattice in an `xtrack.Environment`.
 
-All three translators take a lattice already parsed by `parse_file`,
+All four translators take a lattice already parsed by `parse_file`,
 walk the element list, and map each PALS element and its parameters
 onto the corresponding target-format element.
 
@@ -16,10 +18,11 @@ onto the corresponding target-format element.
 
 Translating is a three-step process: parse, translate, write. `parse_file` reads
 a PALS-YAML file into a parsed tree (a `YAMLNode`); `pals_to_bmad` /
-`pals_to_madx` / `pals_to_scibmad` translate that tree into an in-memory model of
-the *target* lattice (a `BmadLattice` / `MadxLattice` / `SciBmadLattice` of
-elements, beamlines, and parameters); and `write_bmad_file` / `write_madx_file` /
-`write_scibmad_file` take that structure and an output path and serialize the
+`pals_to_madx` / `pals_to_scibmad` / `pals_to_xsuite` translate that tree into an
+in-memory model of the *target* lattice (a `BmadLattice` / `MadxLattice` /
+`SciBmadLattice` / `XsuiteLattice` of elements, beamlines, and parameters); and
+`write_bmad_file` / `write_madx_file` / `write_scibmad_file` / `write_xsuite_file`
+take that structure and an output path and serialize the
 lattice file:
 
 ```python
@@ -35,18 +38,37 @@ pp.write_madx_file(madx, os.path.join("lattice_files", "bta.pals_out.madx"))
 scibmad = pp.pals_to_scibmad(pp.parse_file(os.path.join("lattice_files",
                                                        "convert.pals.yaml")))
 pp.write_scibmad_file(scibmad, os.path.join("lattice_files", "convert.pals_out.jl"))
+
+xsuite = pp.pals_to_xsuite(pp.parse_file(os.path.join("lattice_files", "bta.pals.yaml")))
+pp.write_xsuite_file(xsuite, os.path.join("lattice_files", "bta.pals_out.py"))
+```
+
+The Xsuite translation is a Python script rather than a lattice file, since an
+Xsuite lattice is built by Python code. Running it needs `xtrack`, which
+PALSParserPy itself does not; it defines the environment `env`, every element and
+line, and `line`, the first branch of the lattice, together with `twiss_init` and
+`particle_start`, the initial conditions the `BeginningEle` states:
+
+```python
+import xtrack as xt
+
+namespace = {}
+exec(open("lattice_files/bta.pals_out.py").read(), namespace)
+line = namespace["line"]
+tw = line.twiss(start=xt.START, end=xt.END, method="4d", **namespace["twiss_init"])
 ```
 
 The [`examples/`](https://github.com/pals-project/PALSParserPy/tree/main/examples)
-directory has runnable scripts, such as `examples/pals_to_bmad.py` and
-`examples/pals_to_madx.py`.
+directory has runnable scripts, such as `examples/pals_to_bmad.py`,
+`examples/pals_to_madx.py` and `examples/pals_to_xsuite.py`.
 
 Anything a translator cannot express is either reported on stdout and skipped, or
 raised as a `ValueError` when skipping it would quietly change the physics.
 
 ## Element and parameter mapping
 
-PALS element kinds and their parameters do not map one-to-one onto Bmad or MAD-X.
+PALS element kinds and their parameters do not map one-to-one onto Bmad, MAD-X or
+Xsuite.
 The translators encode the conversions — renamed parameters, unit changes, and
 cases that have no equivalent (and are skipped with a warning). For example,
 an `ApertureP` becomes a Bmad `ApertureParams`, with `x_min`/`x_max` mapped to
@@ -56,7 +78,8 @@ The complete, element-by-element list of these mappings is given in the
 [Parameter mapping reference](#parameter-mapping-reference) below. Consult it
 when adding support for a new element or when a parameter comes through
 untranslated. MAD-X differs from Bmad widely enough to be worth reading
-[What MAD-X does differently](#what-mad-x-does-differently) first.
+[What MAD-X does differently](#what-mad-x-does-differently) first, and the same
+goes for [What Xsuite does differently](#what-xsuite-does-differently).
 
 ## Extending a translator
 
@@ -65,8 +88,9 @@ To add support for a new element or parameter:
 1. Find its PALS definition and decide on the target-format equivalent; record
    it in the [Parameter mapping reference](#parameter-mapping-reference) below.
 2. Add the mapping to the element builder — `_make_bmad_ele` in
-   `palsparserpy/to_bmad.py`, `_make_madx_ele` in `palsparserpy/to_madx.py`, or
-   `_make_scibmad_ele` in `palsparserpy/to_scibmad.py` — and to any helper it
+   `palsparserpy/to_bmad.py`, `_make_madx_ele` in `palsparserpy/to_madx.py`,
+   `_make_scibmad_ele` in `palsparserpy/to_scibmad.py`, or `_make_xsuite_ele` in
+   `palsparserpy/to_xsuite.py` — and to any helper it
    calls (e.g. `_ele_to_bmad_str`, `_make_bmad_line`, `_ele_to_madx_str`, or
    `_ele_to_scibmad_str`, `_make_scibmad_beamline`).
 3. Translate a lattice that exercises the element and check the output.
@@ -123,6 +147,63 @@ almost every element. The ones that shape the whole translation:
   expanded sequence to apply an error to before then. `write_madx_file` writes the
   sections in that order.
 
+## What Xsuite does differently
+
+Xsuite takes its conventions from MAD-X — normalized strengths, `knl`/`ksl`
+multipole arrays without a `1/n!`, sector-bend edge angles — but it is a Python
+library rather than a file format, and that shapes the translation as much as the
+physics does:
+
+- **The output is a Python script.** `write_xsuite_file` writes a script that
+  builds an `xtrack.Environment`: `env.new(...)` for each element,
+  `env.new_line(...)` for each BeamLine, and `env.particle_ref` for the reference
+  particle. A PALS value written as an expression becomes a quoted string, which
+  Xsuite turns into a *deferred* expression that follows the variables it names,
+  so changing `env['kq']` after the script has run changes every strength
+  written in terms of `kq`.
+- **Expressions are re-parenthesized.** Xsuite's expression parser reads `-a^2` as
+  `(-a)^2` and `a^b^c` as `(a^b)^c`; PALS reads them as `-(a^2)` and `a^(b^c)`. So
+  each PALS expression is parsed with PALS' precedence and written back out with
+  `**` and explicit parentheses. Xsuite has most of PALS' functions; `cot` and
+  `coth` are rewritten, and the rest (`modulo`, `factorial`, `random`, the
+  particle-data functions, ...) are reported. Xsuite predefines no constants, so
+  the script defines whichever PALS constants (`pi`, `c_light`, ...) it uses.
+- **Every strength is normalized**, as in MAD-X. A field (`Bn1`, `Bsol`,
+  `Bn0_ref`) is divided by the signed rigidity, which the script defines once as
+  `env['pals_brho'] = p0c / (c * q0)` from the reference particle.
+- **A bend's field is held apart from its geometry**, as in PALS and unlike MAD-X.
+  The geometry is the `Bend`'s `angle` and arc `length`; its field `k0` follows the
+  geometry by default (PALS' `Kn0_from_g_ref`), and is written out when `Kn0`
+  differs from the reference curvature or when `Kn0_from_g_ref` is false.
+- **Every magnet carries multipole arrays.** Orders a magnet has an attribute for
+  become that attribute (`k1`/`k1s` of a `Quadrupole`, `k0`/`k1`/`k2` of a `Bend`,
+  ...), per unit length; every other order goes into its integrated `knl`/`ksl`,
+  with the PALS tilt rotated into the normal and skew parts. A zero-length
+  quadrupole, sextupole or octupole is a thin `Multipole`, the Xsuite magnets of
+  those names being thick.
+- **Apertures and patches are elements of their own.** A PALS `ApertureP` becomes a
+  `LimitRect` or `LimitEllipse` placed before and/or after the element
+  (`<name>__aperture_entrance`, `<name>__aperture_exit`), and a `Patch` that both
+  shifts and rotates becomes a `Translation` followed by a `Rotation`
+  (`<name>__rotation`). Wherever a line names the element, its parts come with it.
+- **The RF phase zero is Xsuite's own.** Both measure the phase in radians and
+  frequency, voltage and energy in Hz, V and eV, so nothing is rescaled. But an
+  Xsuite `Cavity` gives the reference particle `V sin(phase)`: its zero is the
+  zero crossing below transition. So `pi/2` is added to an `ACCELERATING` phase,
+  `pi` to an `ABOVE_TRANSITION` one, and nothing to a `BELOW_TRANSITION` one. (The
+  script uses `phase`; Xsuite's older `lag`, in degrees, is deprecated.)
+- **A misalignment lives on the element**, as Xsuite's `shift_*` and `rot_*_rad`
+  attributes, anchored at the element's centre as PALS' is. Xsuite's `rot_x_rad`
+  turns `s` towards `y`, the opposite of PALS' right-handed `x_rot`.
+- **The coordinates are PALS' under other names**: `zeta` is `z`, `delta` is
+  `pz` — and Xsuite's dispersion is measured against `delta`, so the PALS
+  dispersion carries over unchanged.
+- **Line items use Xsuite's line arithmetic**: a repeated subline is
+  `n * env['sub']` and a reversed one `-env['sub']`; an `inherit`ed element is an
+  Xsuite clone, `env.new('q2', 'q1')`. Xsuite has no element direction reversal
+  (`direction: -1`), placement offsets, or per-occurrence parameter changes, which
+  are reported.
+
 ## Parameter mapping reference
 
 The following is the element-by-element mapping between PALS parameter groups
@@ -148,8 +229,72 @@ and their SciBmad/Bmad/MAD-X equivalents.
 - Taylor --> matrix (the map itself is not yet translated)
 - ACKicker, Wiggler, Converter, EGun, Foil, Match, Fiducial, FloorShift, Fork,
   ReferenceChange, UnionEle, Feedback --> no MAD-X equivalent (an error)
-- Placeholder --> dropped from every line, as lattice expansion drops it, in all
-  three formats
+- Placeholder --> dropped from every line, as lattice expansion drops it, in every
+  format
+
+### Element kinds --> Xsuite classes
+
+- Bend --> `Bend` (sector bend; `ref_geometry` other than `ARC` is reported)
+- Quadrupole, Sextupole, Octupole --> `Quadrupole`, `Sextupole`, `Octupole`; a
+  `Multipole` when the length is zero
+- Multipole --> `Multipole`
+- Kicker --> `Multipole` (`knl[0]` = `Kn0L`, `ksl[0]` = `Ks0L`), thick
+  (`isthick=True`) when it has a length
+- Solenoid --> `UniformSolenoid`
+- RFCavity --> `Cavity`; CrabCavity --> `CrabCavity`
+- Drift --> `Drift`
+- Marker, BeginningEle --> `Marker`
+- Instrument, Mask --> `Marker`, or `Drift` when it has a length (a mask's
+  aperture becomes an aperture element of its own)
+- Patch --> `Translation` and/or `Rotation`
+- ACKicker, BeamBeam (an `xfields` element), Wiggler, Converter, EGun, Foil, Match,
+  Fiducial, FloorShift, Fork, ReferenceChange, Girder, Taylor, UnionEle,
+  Feedback --> not translated (an error)
+
+### Parameter groups --> Xsuite
+
+- ReferenceP --> `xt.Particles(species, p0c=pc_ref | energy0=E_tot_ref)`, set as
+  `env.particle_ref`; a line whose own BeginningEle states a different one gets it
+  as `env['line'].particle_ref`. `time_ref` and `location` are reported.
+- TwissP --> `twiss_init`: `beta_a/b` --> `betx/y`, `alpha_a/b` --> `alfx/y`,
+  `eta_x/y` --> `dx/dy`, `etap_x/y` --> `dpx/dpy`, `phi_a/b` --> `mux/muy` (in
+  turns). `cmat*` and `deta_*_ds` are reported.
+- ParticleP --> `particle_start`: `x`, `px`, `y`, `py`, `z` --> `zeta`,
+  `pz` --> `delta`, `spin_x/y/z`.
+- MagneticMultipoleP --> the element's own strength attributes (per unit length)
+  and `knl`/`ksl` (integrated), tilts rotated in; fields divided by `pals_brho`.
+  A component written as an expression stays a deferred expression (its order may
+  not then be tilted).
+- BendP --> `angle` and `length` (from whichever two of curvature, length and
+  angle PALS gives); `e1`/`e2` --> `edge_entry_angle`/`edge_exit_angle`
+  (`e1_rect`/`e2_rect` converted by `ref_geometry`); `edge1_int`/`edge2_int` -->
+  `edge_*_fint = 0.5`, `edge_*_hgap = 2 * edge_int`; `tilt_ref` --> `rot_s_rad`;
+  `Kn0_from_g_ref: false` --> `k0 = 0`. `h1`, `h2` are reported.
+- BodyShiftP --> `shift_x`, `shift_y`, `shift_s`, `rot_x_rad = -x_rot`,
+  `rot_y_rad = y_rot`, `rot_s_rad_no_frame = z_rot`, with
+  `rot_shift_anchor = length/2`. A Drift or Marker cannot be misaligned (reported);
+  a bend turns about its arc's middle rather than its chord's (reported).
+- ApertureP --> `LimitRect(min_x, max_x, min_y, max_y)` or
+  `LimitEllipse(a, b, shift_x, shift_y)` at `ENTRANCE_END`, `EXIT_END` or
+  `BOTH_ENDS`. `CENTER`, `EVERYWHERE`, `VERTICES`, `CUSTOM_SHAPE`, `material`,
+  `thickness`, a switched-off aperture, and `aperture_shifts_with_body` on a
+  misaligned element are reported.
+- RFP --> `frequency` | `harmonic`, `voltage` (or `gradient * L_active`),
+  `phase` shifted by the `zero_phase` offset above. `multipass_phase`,
+  `num_cells`, `dE_ref` and a `TRAVELING_WAVE` `cavity_type` are reported.
+- SolenoidP --> `ks = Ksol` or `Bsol / pals_brho`.
+- PatchP --> `Translation(shift_x, shift_y, shift_s)` then
+  `Rotation(rot_y_rad, rot_x_rad, rot_s_rad)`, Xsuite's default rotation order
+  being PALS' `R_y R_x R_z`. A `z_offset` is tracked as a drift but does not
+  advance `s` (reported); `flexible`, `ref_coords` and `user_sets_length` are
+  reported.
+- MetaP --> comment lines above the element.
+- TrackingP --> ignored (program specific by design).
+- An extension block (marked with an `extension` key or declared under `PALS:
+  extension_labels`) --> reported once, by name.
+- ACKickerP, BeamBeamP, CoordinateSetP, ElectricMultipoleP, FloorP, ForkP,
+  GirderP, ReferenceChangeP, TaylorP --> not translated (an error). Any other
+  group is reported.
 
 ### ACKickerP --> None
 
@@ -529,6 +674,20 @@ and their SciBmad/Bmad/MAD-X equivalents.
 - Note (MAD-X): a control aimed at a multipole array entry has no target — MAD-X
   cannot name one entry of a `knl` — and is an error, as is one aimed at a tilted
   multipole or selecting its slaves by pattern.
+
+### Controllers --> Xsuite variables and deferred expressions
+- variables --> `env['name'] = value` (global Xsuite variables)
+- controls --> `env['ele'].attribute = 'expression'`, or
+  `env['ele'].knl[n] = 'expression'` for an order the element has no attribute for
+  (the array is padded out to reach it)
+- MetaP --> comment lines above the definitions
+- Note (Xsuite): as for MAD-X, a variable whose bare name another controller or a
+  constant also claims is written as `<controller>__<variable>`; a `RELATIVE`
+  controller's expression is the element's own value plus the control expression
+  less that expression at the variables' initial settings; and the expression is
+  scaled by the length, or divided by `pals_brho`, as the attribute was. Unlike
+  MAD-X, Xsuite can name one entry of a multipole array. A pattern, a `>>`
+  qualifier or a tilted multipole is an error.
 
 ### Controllers --> SciBmad Controllers
 - Each control becomes an `(ele, :property) => (ele; vars...) -> expression` pair,

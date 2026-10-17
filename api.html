@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Translating to SciBmad, Bmad and MAD-X" href="guide/translation.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Translating to SciBmad, Bmad, MAD-X and Xsuite" href="guide/translation.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>API Reference - PALSParserPy</title>
@@ -197,7 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="guide/parsing.html">Parsing and writing YAML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/lattices.html">Reading and expanding lattices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/expressions.html">Evaluating expressions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/translation.html">Translating to SciBmad, Bmad and MAD-X</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/translation.html">Translating to SciBmad, Bmad, MAD-X and Xsuite</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -2342,6 +2342,335 @@ from the line’s first entry.</p>
 
 </dd></dl>
 
+<dl class="py function">
+<dt class="sig sig-object py" id="palsparserpy.pals_to_xsuite">
+<span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">pals_to_xsuite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_xsuite.html#pals_to_xsuite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.pals_to_xsuite" title="Link to this definition">¶</a></dt>
+<dd><p>Translate a parsed PALS lattice <code class="docutils literal notranslate"><span class="pre">yaml</span></code> (as returned by
+<a class="reference internal" href="#palsparserpy.parse_file" title="palsparserpy.parse_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_file()</span></code></a>) into an <a class="reference internal" href="#palsparserpy.XsuiteLattice" title="palsparserpy.XsuiteLattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">XsuiteLattice</span></code></a>.</p>
+<p>The returned structure is an in-memory model of the <em>Xsuite</em> lattice
+(elements, lines, reference particle), not the input PALS tree. Translation
+is a three-step process: parse the PALS file with <code class="docutils literal notranslate"><span class="pre">parse_file</span></code>, build the
+target model with <code class="docutils literal notranslate"><span class="pre">pals_to_xsuite</span></code>, then emit the Python script that builds
+the lattice with <a class="reference internal" href="#palsparserpy.write_xsuite_file" title="palsparserpy.write_xsuite_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_xsuite_file()</span></code></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yaml</span> <span class="o">=</span> <span class="n">parse_file</span><span class="p">(</span><span class="n">file_dir</span><span class="p">)</span>
+<span class="n">write_xsuite_file</span><span class="p">(</span><span class="n">pals_to_xsuite</span><span class="p">(</span><span class="n">yaml</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Controllers are translated after the elements, in a second pass: a
+<code class="docutils literal notranslate"><span class="pre">control_type:</span> <span class="pre">RELATIVE</span></code> controller adds to the value the element already
+carries, and the only place that value is written down is the element
+definition this pass has just built.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>yaml</strong> (<a class="reference internal" href="#palsparserpy.YAMLNode" title="palsparserpy.node.YAMLNode"><em>YAMLNode</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#palsparserpy.XsuiteLattice" title="palsparserpy.to_xsuite.XsuiteLattice"><em>XsuiteLattice</em></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="palsparserpy.write_xsuite_file">
+<span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">write_xsuite_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_xsuite.html#write_xsuite_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.write_xsuite_file" title="Link to this definition">¶</a></dt>
+<dd><p>Serialize the <a class="reference internal" href="#palsparserpy.XsuiteLattice" title="palsparserpy.XsuiteLattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">XsuiteLattice</span></code></a> <code class="docutils literal notranslate"><span class="pre">lat</span></code> to <code class="docutils literal notranslate"><span class="pre">filename</span></code> as a Python
+script that builds the lattice in an <code class="docutils literal notranslate"><span class="pre">xtrack.Environment</span></code>.</p>
+<p>The script defines the environment <code class="docutils literal notranslate"><span class="pre">env</span></code>, the reference particle, every
+element and line, and ends with <code class="docutils literal notranslate"><span class="pre">line</span></code>, the first branch of the lattice,
+ready to track or twiss. It also defines <code class="docutils literal notranslate"><span class="pre">twiss_init</span></code> and
+<code class="docutils literal notranslate"><span class="pre">particle_start</span></code>, the initial conditions the PALS <code class="docutils literal notranslate"><span class="pre">BeginningEle</span></code> states,
+as keyword arguments for <code class="docutils literal notranslate"><span class="pre">Line.twiss</span></code> and <code class="docutils literal notranslate"><span class="pre">Line.build_particles</span></code>. Run it,
+or execute it from another script, to get the lattice:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">python</span> <span class="n">lattice</span><span class="o">.</span><span class="n">py</span>
+<span class="n">exec</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">"lattice.py"</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>   <span class="c1"># env, line, ... are now defined</span>
+</pre></div>
+</div>
+<p>The sections come in the order Python needs them in: a variable has to exist
+before an expression names it, and an element before a line holds it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lat</strong> (<a class="reference internal" href="#palsparserpy.XsuiteLattice" title="palsparserpy.to_xsuite.XsuiteLattice"><em>XsuiteLattice</em></a>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">XsuiteLattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">constants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">twiss_init</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle_start</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controllers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beamlines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">use</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rigidity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pals_constants</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_xsuite.html#XsuiteLattice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.XsuiteLattice" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An in-memory model of an Xsuite lattice.</p>
+<p>Produced by <a class="reference internal" href="#palsparserpy.pals_to_xsuite" title="palsparserpy.pals_to_xsuite"><code class="xref py py-func docutils literal notranslate"><span class="pre">pals_to_xsuite()</span></code></a> and serialized to a Python script by
+<a class="reference internal" href="#palsparserpy.write_xsuite_file" title="palsparserpy.write_xsuite_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_xsuite_file()</span></code></a>. The fields mirror the sections of the script:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">constants</span></code>: variable definitions, each a <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">source)</span></code> pair, in
+definition order.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">particle_ref</span></code>: the <code class="docutils literal notranslate"><span class="pre">xt.Particles</span></code> arguments of the reference particle
+(species and energy).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">twiss_init</span></code>: the initial Twiss and dispersion, each a <code class="docutils literal notranslate"><span class="pre">(keyword,</span>
+<span class="pre">source)</span></code> pair for <code class="docutils literal notranslate"><span class="pre">Line.twiss</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">particle_start</span></code>: the initial particle coordinates, each a <code class="docutils literal notranslate"><span class="pre">(keyword,</span>
+<span class="pre">source)</span></code> pair for <code class="docutils literal notranslate"><span class="pre">Line.build_particles</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">elements</span></code>: element definitions (<a class="reference internal" href="#palsparserpy.XsuiteEle" title="palsparserpy.XsuiteEle"><code class="xref py py-class docutils literal notranslate"><span class="pre">XsuiteEle</span></code></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">controllers</span></code>: variables and deferred expressions
+(<a class="reference internal" href="#palsparserpy.XsuiteController" title="palsparserpy.XsuiteController"><code class="xref py py-class docutils literal notranslate"><span class="pre">XsuiteController</span></code></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">beamlines</span></code>: line definitions (<a class="reference internal" href="#palsparserpy.XsuiteBeamline" title="palsparserpy.XsuiteBeamline"><code class="xref py py-class docutils literal notranslate"><span class="pre">XsuiteBeamline</span></code></a>).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">branches</span></code>: the branches of the lattice, each a <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">periodic)</span></code>
+pair.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">use</span></code>: the branch the script makes its <code class="docutils literal notranslate"><span class="pre">line</span></code>: the first branch of the
+lattice the last PALS <code class="docutils literal notranslate"><span class="pre">use</span></code> names, or of the last lattice defined.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">rigidity</span></code>: whether anything written refers to the rigidity variable,
+which then has to be defined ahead of it.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pals_constants</span></code>: the PALS predefined constants the script refers to,
+which it has to define because Xsuite does not, each a <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">source)</span></code>
+pair.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>constants</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>particle_ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+<li><p><strong>twiss_init</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>particle_start</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>elements</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.XsuiteEle" title="palsparserpy.to_xsuite.XsuiteEle"><em>XsuiteEle</em></a><em>]</em>)</p></li>
+<li><p><strong>controllers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.XsuiteController" title="palsparserpy.to_xsuite.XsuiteController"><em>XsuiteController</em></a><em>]</em>)</p></li>
+<li><p><strong>beamlines</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.XsuiteBeamline" title="palsparserpy.to_xsuite.XsuiteBeamline"><em>XsuiteBeamline</em></a><em>]</em>)</p></li>
+<li><p><strong>branches</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>use</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em> | </em><em>None</em>)</p></li>
+<li><p><strong>rigidity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><em>bool</em></a>)</p></li>
+<li><p><strong>pals_constants</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.constants">
+<span class="sig-name descname"><span class="pre">constants</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.constants" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.particle_ref">
+<span class="sig-name descname"><span class="pre">particle_ref</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.particle_ref" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.twiss_init">
+<span class="sig-name descname"><span class="pre">twiss_init</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.twiss_init" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.particle_start">
+<span class="sig-name descname"><span class="pre">particle_start</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.particle_start" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.elements">
+<span class="sig-name descname"><span class="pre">elements</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.XsuiteEle" title="palsparserpy.to_xsuite.XsuiteEle"><span class="pre">XsuiteEle</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.elements" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.controllers">
+<span class="sig-name descname"><span class="pre">controllers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.XsuiteController" title="palsparserpy.to_xsuite.XsuiteController"><span class="pre">XsuiteController</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.controllers" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.beamlines">
+<span class="sig-name descname"><span class="pre">beamlines</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.XsuiteBeamline" title="palsparserpy.to_xsuite.XsuiteBeamline"><span class="pre">XsuiteBeamline</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.beamlines" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.branches">
+<span class="sig-name descname"><span class="pre">branches</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.branches" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.use">
+<span class="sig-name descname"><span class="pre">use</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.use" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.rigidity">
+<span class="sig-name descname"><span class="pre">rigidity</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">False</span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.rigidity" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteLattice.pals_constants">
+<span class="sig-name descname"><span class="pre">pals_constants</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteLattice.pals_constants" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">XsuiteEle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ksl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">before</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">after</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_xsuite.html#XsuiteEle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.XsuiteEle" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A single Xsuite element, which the script creates with <code class="docutils literal notranslate"><span class="pre">env.new</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: the element name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">type</span></code>: the <code class="docutils literal notranslate"><span class="pre">xtrack</span></code> element class (e.g. <code class="docutils literal notranslate"><span class="pre">Drift</span></code>, <code class="docutils literal notranslate"><span class="pre">Quadrupole</span></code>), or,
+for an element cloned from another, the name of the element it is cloned
+from.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">attrs</span></code>: the element’s keyword arguments, each a <code class="docutils literal notranslate"><span class="pre">(keyword,</span> <span class="pre">source)</span></code>
+pair whose <code class="docutils literal notranslate"><span class="pre">source</span></code> is the Python text of the value: a number, or a
+quoted string Xsuite turns into a deferred expression.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">knl</span></code>, <code class="docutils literal notranslate"><span class="pre">ksl</span></code>: the multipole arrays, entry by entry in the same Python
+text, kept apart from <code class="docutils literal notranslate"><span class="pre">attrs</span></code> so a controller can lengthen them to reach
+an order the element did not set.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">notes</span></code>: comment lines to write above the definition, holding the PALS
+<code class="docutils literal notranslate"><span class="pre">MetaP</span></code> and anything else worth saying about the element in the script.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">before</span></code>, <code class="docutils literal notranslate"><span class="pre">after</span></code>: elements the translation adds to stand in for what a
+single Xsuite element cannot hold – an aperture is an element of its own in
+Xsuite, placed at the end of the element it bounds, and a PALS <code class="docutils literal notranslate"><span class="pre">Patch</span></code>
+that both shifts and rotates is two. Wherever a line names this element,
+these come with it.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>type</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>attrs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>knl</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+<li><p><strong>ksl</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+<li><p><strong>notes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+<li><p><strong>before</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.XsuiteEle" title="palsparserpy.to_xsuite.XsuiteEle"><em>XsuiteEle</em></a><em>]</em>)</p></li>
+<li><p><strong>after</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.XsuiteEle" title="palsparserpy.to_xsuite.XsuiteEle"><em>XsuiteEle</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.XsuiteEle.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.type">
+<span class="sig-name descname"><span class="pre">type</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.XsuiteEle.type" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.attrs">
+<span class="sig-name descname"><span class="pre">attrs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteEle.attrs" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.knl">
+<span class="sig-name descname"><span class="pre">knl</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteEle.knl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.ksl">
+<span class="sig-name descname"><span class="pre">ksl</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteEle.ksl" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.notes">
+<span class="sig-name descname"><span class="pre">notes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteEle.notes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.before">
+<span class="sig-name descname"><span class="pre">before</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.XsuiteEle" title="palsparserpy.to_xsuite.XsuiteEle"><span class="pre">XsuiteEle</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteEle.before" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteEle.after">
+<span class="sig-name descname"><span class="pre">after</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.XsuiteEle" title="palsparserpy.to_xsuite.XsuiteEle"><span class="pre">XsuiteEle</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteEle.after" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteBeamline">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">XsuiteBeamline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">particle_ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_xsuite.html#XsuiteBeamline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.XsuiteBeamline" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An Xsuite line, which the script creates with <code class="docutils literal notranslate"><span class="pre">env.new_line</span></code>.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: the line name.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">members</span></code>: the ordered line items, each a <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">repeat)</span></code> pair naming
+an element or another line and how many times it is repeated. A negative
+<code class="docutils literal notranslate"><span class="pre">repeat</span></code> reverses the order of the items, as it does in PALS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">particle_ref</span></code>: the <code class="docutils literal notranslate"><span class="pre">xt.Particles</span></code> arguments of the reference particle
+given by the line’s own <code class="docutils literal notranslate"><span class="pre">BeginningEle</span></code>, if it has one.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>members</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><em>int</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>particle_ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteBeamline.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.XsuiteBeamline.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteBeamline.members">
+<span class="sig-name descname"><span class="pre">members</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteBeamline.members" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteBeamline.particle_ref">
+<span class="sig-name descname"><span class="pre">particle_ref</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteBeamline.particle_ref" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteController">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">XsuiteController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controls</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">notes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_xsuite.html#XsuiteController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.XsuiteController" title="Link to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>An Xsuite rendering of a PALS <code class="docutils literal notranslate"><span class="pre">Controller</span></code>.</p>
+<p>Xsuite has no controller element. What it has instead is the deferred
+expression: an element attribute assigned a string becomes an expression in
+the environment’s variables and follows them from then on. So a controller’s
+variables become Xsuite variables and each of its controls becomes an
+expression assigned to the attribute it drives.</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: the controller name, written out as a comment heading.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vars</span></code>: the variables’ initial values, each a <code class="docutils literal notranslate"><span class="pre">(name,</span> <span class="pre">source)</span></code> pair.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">controls</span></code>: the deferred assignments, each a <code class="docutils literal notranslate"><span class="pre">(target,</span> <span class="pre">expression)</span></code>
+pair where <code class="docutils literal notranslate"><span class="pre">target</span></code> is the Python text of the attribute, such as
+<code class="docutils literal notranslate"><span class="pre">env['q1'].k1</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">notes</span></code>: comment lines to write above the definitions, holding the
+controller’s <code class="docutils literal notranslate"><span class="pre">MetaP</span></code>.</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
+<li><p><strong>vars</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>controls</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><em>Tuple</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em><em>]</em>)</p></li>
+<li><p><strong>notes</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteController.name">
+<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.XsuiteController.name" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteController.vars">
+<span class="sig-name descname"><span class="pre">vars</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteController.vars" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteController.controls">
+<span class="sig-name descname"><span class="pre">controls</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.15)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteController.controls" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="palsparserpy.XsuiteController.notes">
+<span class="sig-name descname"><span class="pre">notes</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.XsuiteController.notes" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -2358,7 +2687,7 @@ from the line’s first entry.</p>
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Translating to SciBmad, Bmad and MAD-X</div>
+                <div class="title">Translating to SciBmad, Bmad, MAD-X and Xsuite</div>
                 
               </div>
             </a>
@@ -2609,6 +2938,46 @@ from the line’s first entry.</p>
 <li><a class="reference internal" href="#palsparserpy.SciBmadController.name"><code class="docutils literal notranslate"><span class="pre">SciBmadController.name</span></code></a></li>
 <li><a class="reference internal" href="#palsparserpy.SciBmadController.slaves"><code class="docutils literal notranslate"><span class="pre">SciBmadController.slaves</span></code></a></li>
 <li><a class="reference internal" href="#palsparserpy.SciBmadController.vars"><code class="docutils literal notranslate"><span class="pre">SciBmadController.vars</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#palsparserpy.pals_to_xsuite"><code class="docutils literal notranslate"><span class="pre">pals_to_xsuite()</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.write_xsuite_file"><code class="docutils literal notranslate"><span class="pre">write_xsuite_file()</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice</span></code></a><ul>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.constants"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.constants</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.particle_ref"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.particle_ref</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.twiss_init"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.twiss_init</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.particle_start"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.particle_start</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.elements"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.elements</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.controllers"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.controllers</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.beamlines"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.beamlines</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.branches"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.branches</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.use"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.use</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.rigidity"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.rigidity</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteLattice.pals_constants"><code class="docutils literal notranslate"><span class="pre">XsuiteLattice.pals_constants</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle"><code class="docutils literal notranslate"><span class="pre">XsuiteEle</span></code></a><ul>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.name"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.name</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.type"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.type</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.attrs"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.attrs</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.knl"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.knl</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.ksl"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.ksl</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.notes"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.notes</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.before"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.before</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteEle.after"><code class="docutils literal notranslate"><span class="pre">XsuiteEle.after</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteBeamline"><code class="docutils literal notranslate"><span class="pre">XsuiteBeamline</span></code></a><ul>
+<li><a class="reference internal" href="#palsparserpy.XsuiteBeamline.name"><code class="docutils literal notranslate"><span class="pre">XsuiteBeamline.name</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteBeamline.members"><code class="docutils literal notranslate"><span class="pre">XsuiteBeamline.members</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteBeamline.particle_ref"><code class="docutils literal notranslate"><span class="pre">XsuiteBeamline.particle_ref</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteController"><code class="docutils literal notranslate"><span class="pre">XsuiteController</span></code></a><ul>
+<li><a class="reference internal" href="#palsparserpy.XsuiteController.name"><code class="docutils literal notranslate"><span class="pre">XsuiteController.name</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteController.vars"><code class="docutils literal notranslate"><span class="pre">XsuiteController.vars</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteController.controls"><code class="docutils literal notranslate"><span class="pre">XsuiteController.controls</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.XsuiteController.notes"><code class="docutils literal notranslate"><span class="pre">XsuiteController.notes</span></code></a></li>
 </ul>
 </li>
 </ul>

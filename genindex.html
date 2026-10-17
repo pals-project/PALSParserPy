@@ -195,7 +195,7 @@
 <li class="toctree-l1"><a class="reference internal" href="guide/parsing.html">Parsing and writing YAML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/lattices.html">Reading and expanding lattices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/expressions.html">Evaluating expressions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/translation.html">Translating to SciBmad, Bmad and MAD-X</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/translation.html">Translating to SciBmad, Bmad, MAD-X and Xsuite</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -240,7 +240,7 @@
           
 <section class="genindex-section">
   <h1 id="index">Index</h1>
-  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#Y"><strong>Y</strong></a></div>
+  <div class="genindex-jumpbox"><a href="#_"><strong>_</strong></a> | <a href="#A"><strong>A</strong></a> | <a href="#B"><strong>B</strong></a> | <a href="#C"><strong>C</strong></a> | <a href="#D"><strong>D</strong></a> | <a href="#E"><strong>E</strong></a> | <a href="#F"><strong>F</strong></a> | <a href="#G"><strong>G</strong></a> | <a href="#H"><strong>H</strong></a> | <a href="#I"><strong>I</strong></a> | <a href="#K"><strong>K</strong></a> | <a href="#L"><strong>L</strong></a> | <a href="#M"><strong>M</strong></a> | <a href="#N"><strong>N</strong></a> | <a href="#O"><strong>O</strong></a> | <a href="#P"><strong>P</strong></a> | <a href="#R"><strong>R</strong></a> | <a href="#S"><strong>S</strong></a> | <a href="#T"><strong>T</strong></a> | <a href="#U"><strong>U</strong></a> | <a href="#V"><strong>V</strong></a> | <a href="#W"><strong>W</strong></a> | <a href="#X"><strong>X</strong></a> | <a href="#Y"><strong>Y</strong></a></div>
 </section>
 <section id="_" class="genindex-section">
   <h2>_</h2>
@@ -292,6 +292,8 @@
           <li><a href="api.html#palsparserpy.NodeCorrespondence.adjunct">(palsparserpy.NodeCorrespondence attribute)</a>
 </li>
         </ul></li>
+        <li><a href="api.html#palsparserpy.XsuiteEle.after">after (palsparserpy.XsuiteEle attribute)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#palsparserpy.MadxLattice.alignments">alignments (palsparserpy.MadxLattice attribute)</a>
@@ -311,6 +313,8 @@
 </li>
           <li><a href="api.html#palsparserpy.SciBmadEle.attrs">(palsparserpy.SciBmadEle attribute)</a>
 </li>
+          <li><a href="api.html#palsparserpy.XsuiteEle.attrs">(palsparserpy.XsuiteEle attribute)</a>
+</li>
         </ul></li>
     </ul></td>
   </tr></table>
@@ -329,7 +333,11 @@
 </li>
           <li><a href="api.html#palsparserpy.SciBmadLattice.beamlines">(palsparserpy.SciBmadLattice attribute)</a>
 </li>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.beamlines">(palsparserpy.XsuiteLattice attribute)</a>
+</li>
         </ul></li>
+        <li><a href="api.html#palsparserpy.XsuiteEle.before">before (palsparserpy.XsuiteEle attribute)</a>
+</li>
         <li><a href="api.html#palsparserpy.BmadLattice.beginning">beginning (palsparserpy.BmadLattice attribute)</a>
 </li>
     </ul></td>
@@ -345,7 +353,11 @@
         <li><a href="api.html#palsparserpy.BmadLattice">BmadLattice (class in palsparserpy)</a>
 </li>
         <li><a href="api.html#palsparserpy.SciBmadLatticeList.branches">branches (palsparserpy.SciBmadLatticeList attribute)</a>
+
+        <ul>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.branches">(palsparserpy.XsuiteLattice attribute)</a>
 </li>
+        </ul></li>
     </ul></td>
   </tr></table>
 </section>
@@ -367,9 +379,9 @@
         <ul>
           <li><a href="api.html#palsparserpy.MadxLattice.constants">(palsparserpy.MadxLattice attribute)</a>
 </li>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.constants">(palsparserpy.XsuiteLattice attribute)</a>
+</li>
         </ul></li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#palsparserpy.BmadLattice.controllers">controllers (palsparserpy.BmadLattice attribute)</a>
 
         <ul>
@@ -377,9 +389,17 @@
 </li>
           <li><a href="api.html#palsparserpy.SciBmadLattice.controllers">(palsparserpy.SciBmadLattice attribute)</a>
 </li>
-        </ul></li>
-        <li><a href="api.html#palsparserpy.MadxController.controls">controls (palsparserpy.MadxController attribute)</a>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.controllers">(palsparserpy.XsuiteLattice attribute)</a>
 </li>
+        </ul></li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#palsparserpy.MadxController.controls">controls (palsparserpy.MadxController attribute)</a>
+
+        <ul>
+          <li><a href="api.html#palsparserpy.XsuiteController.controls">(palsparserpy.XsuiteController attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api.html#palsparserpy.YAMLNode.copy">copy() (palsparserpy.YAMLNode method)</a>
 </li>
         <li><a href="api.html#palsparserpy.create_empty_tree">create_empty_tree() (in module palsparserpy)</a>
@@ -420,6 +440,8 @@
           <li><a href="api.html#palsparserpy.MadxLattice.elements">(palsparserpy.MadxLattice attribute)</a>
 </li>
           <li><a href="api.html#palsparserpy.SciBmadLattice.elements">(palsparserpy.SciBmadLattice attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.elements">(palsparserpy.XsuiteLattice attribute)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -515,6 +537,12 @@
         <li><a href="api.html#palsparserpy.YAMLNode.keys">keys() (palsparserpy.YAMLNode method)</a>
 </li>
     </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#palsparserpy.XsuiteEle.knl">knl (palsparserpy.XsuiteEle attribute)</a>
+</li>
+        <li><a href="api.html#palsparserpy.XsuiteEle.ksl">ksl (palsparserpy.XsuiteEle attribute)</a>
+</li>
+    </ul></td>
   </tr></table>
 </section>
 
@@ -557,6 +585,8 @@
 </li>
           <li><a href="api.html#palsparserpy.SciBmadBeamline.members">(palsparserpy.SciBmadBeamline attribute)</a>
 </li>
+          <li><a href="api.html#palsparserpy.XsuiteBeamline.members">(palsparserpy.XsuiteBeamline attribute)</a>
+</li>
         </ul></li>
         <li><a href="api.html#palsparserpy.Problem.message">message (palsparserpy.Problem attribute)</a>
 </li>
@@ -591,6 +621,12 @@
 </li>
           <li><a href="api.html#palsparserpy.SciBmadLatticeList.name">(palsparserpy.SciBmadLatticeList attribute)</a>
 </li>
+          <li><a href="api.html#palsparserpy.XsuiteBeamline.name">(palsparserpy.XsuiteBeamline attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteController.name">(palsparserpy.XsuiteController attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteEle.name">(palsparserpy.XsuiteEle attribute)</a>
+</li>
         </ul></li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
@@ -608,6 +644,10 @@
 
         <ul>
           <li><a href="api.html#palsparserpy.MadxEleDef.notes">(palsparserpy.MadxEleDef attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteController.notes">(palsparserpy.XsuiteController attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteEle.notes">(palsparserpy.XsuiteEle attribute)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -636,11 +676,15 @@
   <h2>P</h2>
   <table style="width: 100%" class="indextable genindextable"><tr>
     <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#palsparserpy.XsuiteLattice.pals_constants">pals_constants (palsparserpy.XsuiteLattice attribute)</a>
+</li>
         <li><a href="api.html#palsparserpy.pals_to_bmad">pals_to_bmad() (in module palsparserpy)</a>
 </li>
         <li><a href="api.html#palsparserpy.pals_to_madx">pals_to_madx() (in module palsparserpy)</a>
 </li>
         <li><a href="api.html#palsparserpy.pals_to_scibmad">pals_to_scibmad() (in module palsparserpy)</a>
+</li>
+        <li><a href="api.html#palsparserpy.pals_to_xsuite">pals_to_xsuite() (in module palsparserpy)</a>
 </li>
         <li><a href="api.html#palsparserpy.PALSParseError">PALSParseError</a>
 </li>
@@ -660,10 +704,18 @@
 </li>
         <li><a href="api.html#palsparserpy.SciBmadLattice.particle">particle (palsparserpy.SciBmadLattice attribute)</a>
 </li>
+        <li><a href="api.html#palsparserpy.XsuiteBeamline.particle_ref">particle_ref (palsparserpy.XsuiteBeamline attribute)</a>
+
+        <ul>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.particle_ref">(palsparserpy.XsuiteLattice attribute)</a>
+</li>
+        </ul></li>
         <li><a href="api.html#palsparserpy.BmadLattice.particle_start">particle_start (palsparserpy.BmadLattice attribute)</a>
 
         <ul>
           <li><a href="api.html#palsparserpy.MadxLattice.particle_start">(palsparserpy.MadxLattice attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.particle_start">(palsparserpy.XsuiteLattice attribute)</a>
 </li>
         </ul></li>
         <li><a href="api.html#palsparserpy.Problem.path">path (palsparserpy.Problem attribute)</a>
@@ -695,7 +747,11 @@
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#palsparserpy.MadxLattice.rigidity">rigidity (palsparserpy.MadxLattice attribute)</a>
+
+        <ul>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.rigidity">(palsparserpy.XsuiteLattice attribute)</a>
 </li>
+        </ul></li>
         <li><a href="api.html#palsparserpy.YAMLNode.root">root() (palsparserpy.YAMLNode method)</a>
 </li>
     </ul></td>
@@ -754,6 +810,8 @@
         </ul></li>
         <li><a href="api.html#palsparserpy.YAMLNode.tree">tree (palsparserpy.YAMLNode attribute)</a>
 </li>
+        <li><a href="api.html#palsparserpy.XsuiteLattice.twiss_init">twiss_init (palsparserpy.XsuiteLattice attribute)</a>
+</li>
     </ul></td>
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#palsparserpy.BmadController.type">type (palsparserpy.BmadController attribute)</a>
@@ -762,6 +820,8 @@
           <li><a href="api.html#palsparserpy.BmadEleDef.type">(palsparserpy.BmadEleDef attribute)</a>
 </li>
           <li><a href="api.html#palsparserpy.MadxEleDef.type">(palsparserpy.MadxEleDef attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteEle.type">(palsparserpy.XsuiteEle attribute)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -783,6 +843,8 @@
         <ul>
           <li><a href="api.html#palsparserpy.MadxLattice.use">(palsparserpy.MadxLattice attribute)</a>
 </li>
+          <li><a href="api.html#palsparserpy.XsuiteLattice.use">(palsparserpy.XsuiteLattice attribute)</a>
+</li>
         </ul></li>
     </ul></td>
   </tr></table>
@@ -796,14 +858,14 @@
 </li>
         <li><a href="api.html#palsparserpy.YAMLNode.values">values() (palsparserpy.YAMLNode method)</a>
 </li>
-    </ul></td>
-    <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#palsparserpy.BmadController.vars">vars (palsparserpy.BmadController attribute)</a>
 
         <ul>
           <li><a href="api.html#palsparserpy.MadxController.vars">(palsparserpy.MadxController attribute)</a>
 </li>
           <li><a href="api.html#palsparserpy.SciBmadController.vars">(palsparserpy.SciBmadController attribute)</a>
+</li>
+          <li><a href="api.html#palsparserpy.XsuiteController.vars">(palsparserpy.XsuiteController attribute)</a>
 </li>
         </ul></li>
     </ul></td>
@@ -824,12 +886,32 @@
     <td style="width: 33%; vertical-align: top;"><ul>
         <li><a href="api.html#palsparserpy.write_scibmad_file">write_scibmad_file() (in module palsparserpy)</a>
 </li>
+        <li><a href="api.html#palsparserpy.write_xsuite_file">write_xsuite_file() (in module palsparserpy)</a>
+</li>
         <li><a href="api.html#palsparserpy.write_yaml">write_yaml() (in module palsparserpy)</a>
 
         <ul>
           <li><a href="api.html#palsparserpy.YAMLNode.write_yaml">(palsparserpy.YAMLNode method)</a>
 </li>
         </ul></li>
+    </ul></td>
+  </tr></table>
+</section>
+
+<section id="X" class="genindex-section">
+  <h2>X</h2>
+  <table style="width: 100%" class="indextable genindextable"><tr>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#palsparserpy.XsuiteBeamline">XsuiteBeamline (class in palsparserpy)</a>
+</li>
+        <li><a href="api.html#palsparserpy.XsuiteController">XsuiteController (class in palsparserpy)</a>
+</li>
+    </ul></td>
+    <td style="width: 33%; vertical-align: top;"><ul>
+        <li><a href="api.html#palsparserpy.XsuiteEle">XsuiteEle (class in palsparserpy)</a>
+</li>
+        <li><a href="api.html#palsparserpy.XsuiteLattice">XsuiteLattice (class in palsparserpy)</a>
+</li>
     </ul></td>
   </tr></table>
 </section>

@@ -100,4 +100,11 @@ Each of these is the free-function spelling of the like-named
 .. autoclass:: palsparserpy.SciBmadBeamline
 .. autoclass:: palsparserpy.SciBmadLatticeList
 .. autoclass:: palsparserpy.SciBmadController
+
+.. autofunction:: palsparserpy.pals_to_xsuite
+.. autofunction:: palsparserpy.write_xsuite_file
+.. autoclass:: palsparserpy.XsuiteLattice
+.. autoclass:: palsparserpy.XsuiteEle
+.. autoclass:: palsparserpy.XsuiteBeamline
+.. autoclass:: palsparserpy.XsuiteController
 ```
