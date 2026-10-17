@@ -43,6 +43,8 @@ from .to_madx import (MadxAlignment, MadxBeamline, MadxController, MadxEleDef,
 from .to_scibmad import (SciBmadBeamline, SciBmadController, SciBmadEle,
                          SciBmadLattice, SciBmadLatticeList, pals_to_scibmad,
                          write_scibmad_file)
+from .to_xsuite import (XsuiteBeamline, XsuiteController, XsuiteEle,
+                        XsuiteLattice, pals_to_xsuite, write_xsuite_file)
 
 __version__ = "0.1.0"
 
@@ -70,4 +72,6 @@ __all__ = [
     "pals_to_scibmad", "write_scibmad_file",
     "SciBmadLattice", "SciBmadEle", "SciBmadBeamline", "SciBmadLatticeList",
     "SciBmadController",
+    "pals_to_xsuite", "write_xsuite_file",
+    "XsuiteLattice", "XsuiteEle", "XsuiteBeamline", "XsuiteController",
 ]

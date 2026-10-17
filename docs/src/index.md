@@ -4,8 +4,9 @@
 ([PALS](https://github.com/campa-consortium/pals)). It reads PALS-format lattice
 files, performs lattice expansion, and translates lattices into
 [SciBmad](https://github.com/bmad-sim/SciBmad.jl),
-[Bmad](https://www.classe.cornell.edu/bmad/) and
-[MAD-X](https://mad.web.cern.ch/mad/) formats.
+[Bmad](https://www.classe.cornell.edu/bmad/),
+[MAD-X](https://mad.web.cern.ch/mad/) and
+[Xsuite](https://github.com/xsuite/xsuite) formats.
 
 Under the hood, the package is a thin `ctypes` wrapper around the C library built
 by [PALSParserCpp](https://github.com/pals-project/PALSParserCpp) (a
@@ -40,8 +41,8 @@ api
    [Reading and expanding lattices](guide/lattices.md).
 3. **Evaluate** the mathematical expressions in the expanded lattice to
    numbers — see [Evaluating expressions](guide/expressions.md).
-4. **Translate** a PALS lattice to SciBmad, Bmad or MAD-X format — see
-   [Translating to SciBmad, Bmad and MAD-X](guide/translation.md).
+4. **Translate** a PALS lattice to SciBmad, Bmad, MAD-X or Xsuite format — see
+   [Translating to SciBmad, Bmad, MAD-X and Xsuite](guide/translation.md).
 
 The complete docstring reference is in the [API Reference](api.md).
 
