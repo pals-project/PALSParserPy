@@ -1,16 +1,17 @@
-# Translating to SciBmad, Bmad, MAD-X and Xsuite
+# Translating to Bmad, MAD-X and Xsuite
 
-PALSParserPy can translate a PALS-format lattice into four accelerator formats:
+PALSParserPy can translate a PALS-format lattice into three accelerator formats:
 
-- **`palsparserpy/to_scibmad.py`** — emits a [SciBmad](https://github.com/bmad-sim/SciBmad.jl)
-  / [Beamlines](https://github.com/bmad-sim/Beamlines.jl) description.
 - **`palsparserpy/to_bmad.py`** — emits a classic [Bmad](https://www.classe.cornell.edu/bmad/)
   lattice.
 - **`palsparserpy/to_madx.py`** — emits a [MAD-X](https://mad.web.cern.ch/mad/) lattice.
 - **`palsparserpy/to_xsuite.py`** — emits a Python script that builds an
   [Xsuite](https://github.com/xsuite/xsuite) lattice in an `xtrack.Environment`.
 
-All four translators take a lattice already parsed by `parse_file`,
+A [SciBmad](https://github.com/bmad-sim/SciBmad.jl) translator is in the Julia package
+[PALSParserJ](https://github.com/pals-project/PALSParserJ.jl) (`pals_to_scibmad`).
+
+All three translators take a lattice already parsed by `parse_file`,
 walk the element list, and map each PALS element and its parameters
 onto the corresponding target-format element.
 
@@ -18,10 +19,10 @@ onto the corresponding target-format element.
 
 Translating is a three-step process: parse, translate, write. `parse_file` reads
 a PALS-YAML file into a parsed tree (a `YAMLNode`); `pals_to_bmad` /
-`pals_to_madx` / `pals_to_scibmad` / `pals_to_xsuite` translate that tree into an
+`pals_to_madx` / `pals_to_xsuite` translate that tree into an
 in-memory model of the *target* lattice (a `BmadLattice` / `MadxLattice` /
-`SciBmadLattice` / `XsuiteLattice` of elements, beamlines, and parameters); and
-`write_bmad_file` / `write_madx_file` / `write_scibmad_file` / `write_xsuite_file`
+`XsuiteLattice` of elements, beamlines, and parameters); and
+`write_bmad_file` / `write_madx_file` / `write_xsuite_file`
 take that structure and an output path and serialize the
 lattice file:
 
@@ -34,10 +35,6 @@ pp.write_bmad_file(bmad, os.path.join("lattice_files", "bta.pals_out.bmad"))
 
 madx = pp.pals_to_madx(pp.parse_file(os.path.join("lattice_files", "bta.pals.yaml")))
 pp.write_madx_file(madx, os.path.join("lattice_files", "bta.pals_out.madx"))
-
-scibmad = pp.pals_to_scibmad(pp.parse_file(os.path.join("lattice_files",
-                                                       "convert.pals.yaml")))
-pp.write_scibmad_file(scibmad, os.path.join("lattice_files", "convert.pals_out.jl"))
 
 xsuite = pp.pals_to_xsuite(pp.parse_file(os.path.join("lattice_files", "bta.pals.yaml")))
 pp.write_xsuite_file(xsuite, os.path.join("lattice_files", "bta.pals_out.py"))
@@ -89,10 +86,8 @@ To add support for a new element or parameter:
    it in the [Parameter mapping reference](#parameter-mapping-reference) below.
 2. Add the mapping to the element builder — `_make_bmad_ele` in
    `palsparserpy/to_bmad.py`, `_make_madx_ele` in `palsparserpy/to_madx.py`,
-   `_make_scibmad_ele` in `palsparserpy/to_scibmad.py`, or `_make_xsuite_ele` in
-   `palsparserpy/to_xsuite.py` — and to any helper it
-   calls (e.g. `_ele_to_bmad_str`, `_make_bmad_line`, `_ele_to_madx_str`, or
-   `_ele_to_scibmad_str`, `_make_scibmad_beamline`).
+   or `_make_xsuite_ele` in `palsparserpy/to_xsuite.py` — and to any helper it
+   calls (e.g. `_ele_to_bmad_str`, `_make_bmad_line`, `_ele_to_madx_str`).
 3. Translate a lattice that exercises the element and check the output.
 
 ## What MAD-X does differently
@@ -207,7 +202,7 @@ physics does:
 ## Parameter mapping reference
 
 The following is the element-by-element mapping between PALS parameter groups
-and their SciBmad/Bmad/MAD-X equivalents.
+and their Bmad, MAD-X and Xsuite equivalents.
 
 ### Element kinds --> MAD-X keywords
 
@@ -296,41 +291,8 @@ and their SciBmad/Bmad/MAD-X equivalents.
   GirderP, ReferenceChangeP, TaylorP --> not translated (an error). Any other
   group is reported.
 
-### ACKickerP --> None
-
-### ApertureP --> ApertureParams
-- x_min --> x1_limit
-- x_max --> x2_limit
-- x_width and x_center:
-    - x1_limit = x_center - x_width / 2
-    - x2_limit = x_center + x_width / 2
+### ApertureP
 - Note: Either both min and max are defined, or width and center are defined, not both.
-- y_min --> y1_limit
-- y_may --> y2_limit
-- y_width and y_center:
-    - y1_limit = y_center - y_width / 2
-    - y2_limit = y_center + y_width / 2
-
-- shape --> aperture_shape
-    - RECTANGULAR --> Rectangular
-    - ELLIPTICAL --> Elliptical
-    - VERTICES --> none
-    - CUSTOM_SHAPE --> none
-
-- location --> aperture_at
-    - ENTRANCE_END --> Entrance
-    - EXIT_END --> Exit
-    - BOTH_ENDS --> BothEnds
-    - EVERYWHERE --> BothEnds
-    - CENTER --> BothEnds
-    - NOWHERE --> none
-
-- aperture_shifts_with_body --> aperture_shifts_with_body
-- aperture_active --> aperture_active
-- vertices --> none
-- material --> none
-- thickness --> none
-
 - Note (Bmad): Bmad states a limit as a distance from the axis rather than as a
   coordinate — it loses a particle at `x < -x1_limit` — so the low-side limit is
   the negated PALS `x_min`.
@@ -349,31 +311,16 @@ and their SciBmad/Bmad/MAD-X equivalents.
   its aperture values are positional, so a group that bounds one plane and not the
   other has the unbounded one written out as 1 m.
 - Note: shape, location and the rest describe an aperture; they do not put one
-  there. A group that sets no limit is skipped entirely by all three translators,
+  there. A group that sets no limit is skipped entirely by every translator,
   since writing it out would give the element an aperture the PALS lattice does
   not have.
 
-### BeamBeamP --> Not in SciBmad yet
+### BeamBeamP
 - Note (MAD-X): sigma_x --> sigx, sigma_y --> sigy, charge --> charge,
   N_particle --> npart. MAD-X models the opposite beam as a four-dimensional lens,
   so sigma_z, alpha_x, beta_x, alpha_y, beta_y and energy have no equivalent.
 
-### BendP --> BendParams
-- radius_ref -> caluclated (Bmad: rho)
-- Bn0_ref -> calculated (Bmad: B_field)
-- e1 --> e1
-- e2 --> e2
-- e1_rect --> calculated
-- e2_rect --> calcualted
-- edge1_int --> edge1_int
-- edge2_int --> edge2_int
-- g_ref --> g_ref
-- h1 --> not in scibmad
-- h2 --> not in scibmad
-- L_chord --> calculated
-- L_sagitta --> calculated
-- tilt_ref --> tilt_ref
-
+### BendP
 - Note (MAD-X): PALS states a bend's geometry with any two of three sets of mutually
   dependent parameters — a curvature (`g_ref`, `radius_ref`, `Bn0_ref`), a length
   (`length`, `L_chord`, `L_rectangle`) and the angle (`angle_ref`) — one from each of
@@ -388,8 +335,8 @@ and their SciBmad/Bmad/MAD-X equivalents.
   `ref_geometry`: `ARC`/`CHORD` --> `e = e_rect + angle/2`; `ENTRANCE_COORDS` -->
   `e1 = e1_rect`, `e2 = e2_rect + angle`; `EXIT_COORDS` --> `e1 = e1_rect + angle`,
   `e2 = e2_rect`.
-- Note (Bmad): angle_ref --> angle. e1 --> e1 and e2 --> e2, a Bmad sbend measuring its
-  faces against the sector geometry too; `e1_rect`/`e2_rect` are converted the same way as
+- Note (Bmad): radius_ref --> rho, angle_ref --> angle. e1 --> e1 and e2 --> e2, a Bmad
+  sbend measuring its faces against the sector geometry too; `e1_rect`/`e2_rect` are converted the same way as
   for MAD-X, with the angle worked out from `angle_ref`, or from `g_ref`/`radius_ref` with
   `length`, `L_chord` or `L_rectangle`.
 - Note (MAD-X): edge1_int --> `fint = 0.5, hgap = 2*edge1_int`, edge2_int -->
@@ -402,14 +349,8 @@ and their SciBmad/Bmad/MAD-X equivalents.
   the reference geometry and no field of its own, which MAD-X — tracking through the
   same `angle` it bends the reference orbit with — cannot express, and is reported.
 
-### BodyShiftP --> AlignmentParams
-- x_offset --> x_offset
-- y_offset --> y_offset
-- z_offset --> z_offset
-- x_rot --> x_rot
-- y_rot --> y_rot
-- z_rot --> tilt
-
+### BodyShiftP
+- Note (Bmad): x_offset, y_offset and z_offset carry over by name, and z_rot --> tilt.
 - Note (Bmad): x_rot --> `y_pitch = -x_rot` and y_rot --> `x_pitch`, Bmad naming a
   rotation by the plane it tips the element into rather than by the axis it turns
   about.
@@ -418,11 +359,7 @@ and their SciBmad/Bmad/MAD-X equivalents.
   y_rot --> dtheta, z_rot --> dpsi. MAD-X rotates about the entrance of an element
   where PALS rotates about its centre, so the two agree only to first order.
 
-### ElectricMultipoleP --> Not in SciBmad yet
-
-### FloorP --> Calculated
-
-### CoordinateSetP --> Set in floor shift element (to be added to scibmad)
+### CoordinateSetP
 - Note (Bmad): a `FloorShift` becomes a `floor_shift` and a `Fiducial` a `fiducial`.
   `origin_ele` and `origin_ele_ref_pt` carry over (PALS defaults to `EXIT_END`, Bmad to
   `center`, so the reference point is always written). The CoordinateSetP shift and the
@@ -439,8 +376,6 @@ and their SciBmad/Bmad/MAD-X equivalents.
   curve, so the group is an error. `FloorShift` and `Fiducial`, the two kinds that
   carry it, have no MAD-X equivalent either.
 
-### ForkP --> Needs to be Implemented in scibmad
-
 ### Girders (`PALS: girders`, GirderP)
 - Note (Bmad): each girder becomes a Bmad `girder`, written after any girder it supports as
   Bmad requires. `GirderP.elements` becomes the slave list, which Bmad takes either as
@@ -449,12 +384,8 @@ and their SciBmad/Bmad/MAD-X equivalents.
   its shift the `d*_origin` attributes; the BodyShiftP becomes the girder's offsets, pitches
   and tilt.
 - Note (MAD-X): MAD-X has no girders, so `PALS: girders` is an error.
-- Note (SciBmad): SciBmad has no girders; they are not translated.
 
-### MagneticMultipoleP --> BMultipoleParams
-- tiltN --> tiltN
-- [BK][ns]NL? --> [BK][ns]NL?
-- BnN(L) --> BnN(L)
+### MagneticMultipoleP
 - Note (Bmad): the normal component of the multipole that is an element's own strength becomes
   that strength: `Kn1` --> `K1` for a quadrupole, `Kn2` --> `K2`, `Kn3` --> `K3`, and `Kn0` -->
   `dg` for a bend (`Bn1` --> `B1_GRADIENT`, ..., `Bn0` --> `db_field`). Every other order stays
@@ -492,79 +423,39 @@ and their SciBmad/Bmad/MAD-X equivalents.
 - Note (MAD-X): a `BnN`/`BsN` is divided by the signed rigidity `pals_brho`, MAD-X
   having no field-valued strength attribute.
 
-### MetaP --> MetaParams
-- alias --> alias (Bmad: alias)
-- label --> label (Bmad: type)
-- description --> description (Bmad: descrip)
-- ID --> none
-- location --> none
-- history --> none
-- Note: any other (non-standard) component --> none
+### MetaP
+- Note (Bmad): alias --> alias, label --> type, description --> descrip. ID, location,
+  history and any other (non-standard) component are not translated.
 - Note: a component holding a structure rather than a string is not translated.
 - Note (Bmad): Bmad has no escape for a quote inside a string, so a value holding one
   quote character is wrapped in the other, and one holding both is not translated.
 - Note (MAD-X): a MAD-X element holds no metadata of its own, so every component
   that is a plain string becomes a comment line above the element definition.
 
-### ParticleP --> Create new bunch
+### ParticleP
 - Note (MAD-X): MAD-X starts a particle with the `START` command of the `TRACK`
   module, which has no place in a lattice file, so the coordinates are written out
   as a comment: x, px, y, py as they stand, `z` --> `t = z / beam->beta` and
   `pz` --> `pt = pz * beam->beta`. Spin has no MAD-X equivalent.
 
-### PatchP --> PatchParams
-- x_offset --> x_offset
-- y_offset --> y_offset
-- z_offset --> z_offset
-- t_offset --> dt (not in PALS yet)
-- x_rot --> x_rot
-- y_rot --> y_rot
-- z_rot --> z_rot
-- flexible --> none
-- ref_coords --> none
-- user_sets_length --> none
+### PatchP
 - Note (MAD-X): the offsets become `patch_trans = {x, y, z}` and the rotations
   `patch_ang = {x_rot, y_rot, z_rot}` of a `changeref`. MAD-X applies the three
   angles in an order of its own, so the correspondence is exact only to first order
   in the angles. A changeref has no length, and `flexible`, `ref_coords` and
   `user_sets_length` have no equivalent.
 
-### ReferenceP --> Beamline Properties
-- species_ref --> species_ref
-- pc_ref --> pc_ref
-- E_tot_ref --> E_ref
-- time_ref --> none
-- location --> none
+### ReferenceP
 - Note (MAD-X): the group becomes the `BEAM` command: species_ref --> particle
   (positron, electron, proton, antiproton, posmuon, negmuon; anything else has to
   be given its mass and charge by hand), pc_ref --> `pc` and E_tot_ref --> `energy`,
   both in GeV rather than eV.
 
-### ReferenceChangeP --> Beamline Properties
-- extra_dtime_ref --> none
-- dE_ref --> dE_ref
-- E_tot_ref --> E_ref
-- species_ref --> species_ref
+### ReferenceChangeP
 - Note (MAD-X): MAD-X takes the reference energy from the `BEAM` command and cannot
   change it in mid-line, so the whole group is an error.
 
-### RFP --> RFParams
-- frequency --> rate, rate_meaning = false
-- harmon --> rate, if rate_meaning = true
-- if neither frequency or harmon exist, set rate_meaning = -1
-- voltage --> voltage
-- gradient --> none
-- phase --> phi0 (both in radians)
-- multipass_phase --> none
-- cavity_type --> traveling_wave
-    - STANDING_WAVE --> false
-    - TRAVELING_WAVE --> true
-- num_cells --> tracking_method = SaganCavity(num_cells)
-- zero_phase --> zero_phase
-    - ACCELERATING --> Accelerating
-    - BELOW_TRANSITION --> BelowTransition
-    - ABOVE_TRANSITION --> AboveTransition
-
+### RFP
 - Note (MAD-X): frequency --> `freq` in MHz, harmon --> `harmon`,
   voltage --> `volt` in MV, gradient --> `volt = gradient * L_active`.
 - Note (Bmad): gradient --> `voltage = gradient * L_active` (`L_active` defaulting to the
@@ -580,13 +471,11 @@ and their SciBmad/Bmad/MAD-X equivalents.
   tracks, so it is translated as an `rfcavity` with a warning; `multipass_phase`,
   `num_cells`, `L_active` and `dE_ref` have no equivalent.
 
-### SolenoidP --> BMultipoleParams
-- Ksol --> Ksol
-- Bsol --> Bsol
+### SolenoidP
 - Note (MAD-X): Ksol --> `ks`, Bsol --> `ks = Bsol / pals_brho`. A solenoid of zero
   length also needs MAD-X's integrated `ksi`, which PALS does not state.
 
-### TrackingP --> UniversalParams.tracking_method
+### TrackingP
 - Note (MAD-X): tracking parameters are program specific by design and are skipped.
 
 ### TwissP --> initial conditions
@@ -603,8 +492,6 @@ and their SciBmad/Bmad/MAD-X equivalents.
   MAD-X having no dispersion derivative.
 
 ### Lattices
-- Beamlines --> Beamlines
-- To be added: Lattices in PALS --> Lattices
 - Note (MAD-X): a BeamLine becomes a `line` and a Lattice becomes the `use, period`
   statement. A leading `BeginningEle` is dropped — it carries the reference parameters,
   which become the `BEAM` command — whether the line spells it out or names it; a line
@@ -622,7 +509,6 @@ and their SciBmad/Bmad/MAD-X equivalents.
 - Note: the definitions are written, in the order the PALS file gives them, ahead of every
   other section of the Bmad file. Bmad, unlike PALS, resolves a name against what the file
   has defined *above* the point of use.
-- Not translated to SciBmad.
 - Note (MAD-X): the same in every respect, MAD-X also resolving a name against what
   is defined above the point of use. A MAD-X variable is a value and nothing else, so
   `absolute_error` and `relative_error` are reported.
@@ -689,12 +575,6 @@ and their SciBmad/Bmad/MAD-X equivalents.
   MAD-X, Xsuite can name one entry of a multipole array. A pattern, a `>>`
   qualifier or a tilted multipole is an error.
 
-### Controllers --> SciBmad Controllers
-- Each control becomes an `(ele, :property) => (ele; vars...) -> expression` pair,
-  SciBmad keeping the PALS parameter names so that only the group prefix is dropped
-  and nothing needs rescaling.
-- `RELATIVE` adds its expression to the value the element already carries;
-  `ABSOLUTE` replaces it.
 
 ### TODO
 - translating expression
