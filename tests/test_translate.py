@@ -1281,3 +1281,26 @@ def test_girders_madx_and_bmad_cannot_express_are_reported(tmp_path):
                                                           "elements: q.*"))
     with pytest.raises(ValueError, match="neither a list of names nor a single range"):
         pals_to_bmad(pattern)
+
+
+def test_a_rectangular_face_angle_becomes_bmads_sector_one(tmp_path):
+    # Bmad holds a chord length only as a dependent attribute, so b3 states its arc
+    # length.
+    fixture = re.sub(r"\n *L_chord: 1.5", "", MADX_GEOMETRY_FIXTURE)
+    fixture = re.sub(r"(- b3:\n( *)kind: Bend\n)", r"\1\2length: 1.5\n", fixture)
+    out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, fixture)))
+    # Curvature and arc length give the angle 0.5; e1_rect picks up half of it, and
+    # the exit face, given the sector way, comes straight across.
+    assert "b2: SBend,\n\tL = 2,\n\tg = 0.25,\n\te1 = 0.26,\n\te2 = 0.3" in out
+    # With ref_geometry EXIT_COORDS the whole angle lands on the entrance face.
+    assert ("b3: SBend,\n\tL = 1.5,\n\tangle = 0.4,\n\te1 = 0.42000000000000004,"
+            "\n\te2 = 0.03") in out
+    # The angle is stated as well as the curvature it came with.
+    assert "b1: SBend,\n\tangle = 0.25,\n\tg = 0.5\n" in out
+
+
+def test_an_rf_gradient_becomes_bmads_voltage(tmp_path):
+    fixture = PLACEMENT_FIXTURE.split("girders:")[0].replace("voltage: 1E6",
+                                                             "gradient: 2E6")
+    out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, fixture)))
+    assert "rf1: RFCavity,\n\tL = 1.3,\n\tvoltage = 2600000.0" in out
