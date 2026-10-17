@@ -6,7 +6,7 @@
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="API Reference" href="../api.html"><link rel="prev" title="Evaluating expressions" href="expressions.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
-        <title>Translating to SciBmad, Bmad, MAD-X and Xsuite - PALSParserPy</title>
+        <title>Translating to Bmad, MAD-X and Xsuite - PALSParserPy</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo-extensions.css?v=8dab3a3b" />
@@ -197,7 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="parsing.html">Parsing and writing YAML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="lattices.html">Reading and expanding lattices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="expressions.html">Evaluating expressions</a></li>
-<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Translating to SciBmad, Bmad, MAD-X and Xsuite</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">Translating to Bmad, MAD-X and Xsuite</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul>
@@ -249,29 +249,29 @@
           </label>
         </div>
         <article role="main" id="furo-main-content">
-          <section class="tex2jax_ignore mathjax_ignore" id="translating-to-scibmad-bmad-mad-x-and-xsuite">
-<h1>Translating to SciBmad, Bmad, MAD-X and Xsuite<a class="headerlink" href="#translating-to-scibmad-bmad-mad-x-and-xsuite" title="Link to this heading">¶</a></h1>
-<p>PALSParserPy can translate a PALS-format lattice into four accelerator formats:</p>
+          <section class="tex2jax_ignore mathjax_ignore" id="translating-to-bmad-mad-x-and-xsuite">
+<h1>Translating to Bmad, MAD-X and Xsuite<a class="headerlink" href="#translating-to-bmad-mad-x-and-xsuite" title="Link to this heading">¶</a></h1>
+<p>PALSParserPy can translate a PALS-format lattice into three accelerator formats:</p>
 <ul class="simple">
-<li><p><strong><code class="docutils literal notranslate"><span class="pre">palsparserpy/to_scibmad.py</span></code></strong> — emits a <a class="reference external" href="https://github.com/bmad-sim/SciBmad.jl">SciBmad</a>
-/ <a class="reference external" href="https://github.com/bmad-sim/Beamlines.jl">Beamlines</a> description.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">palsparserpy/to_bmad.py</span></code></strong> — emits a classic <a class="reference external" href="https://www.classe.cornell.edu/bmad/">Bmad</a>
 lattice.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">palsparserpy/to_madx.py</span></code></strong> — emits a <a class="reference external" href="https://mad.web.cern.ch/mad/">MAD-X</a> lattice.</p></li>
 <li><p><strong><code class="docutils literal notranslate"><span class="pre">palsparserpy/to_xsuite.py</span></code></strong> — emits a Python script that builds an
 <a class="reference external" href="https://github.com/xsuite/xsuite">Xsuite</a> lattice in an <code class="docutils literal notranslate"><span class="pre">xtrack.Environment</span></code>.</p></li>
 </ul>
-<p>All four translators take a lattice already parsed by <code class="docutils literal notranslate"><span class="pre">parse_file</span></code>,
+<p>A <a class="reference external" href="https://github.com/bmad-sim/SciBmad.jl">SciBmad</a> translator is in the Julia package
+<a class="reference external" href="https://github.com/pals-project/PALSParserJ.jl">PALSParserJ</a> (<code class="docutils literal notranslate"><span class="pre">pals_to_scibmad</span></code>).</p>
+<p>All three translators take a lattice already parsed by <code class="docutils literal notranslate"><span class="pre">parse_file</span></code>,
 walk the element list, and map each PALS element and its parameters
 onto the corresponding target-format element.</p>
 <section id="running-the-translators">
 <h2>Running the translators<a class="headerlink" href="#running-the-translators" title="Link to this heading">¶</a></h2>
 <p>Translating is a three-step process: parse, translate, write. <code class="docutils literal notranslate"><span class="pre">parse_file</span></code> reads
 a PALS-YAML file into a parsed tree (a <code class="docutils literal notranslate"><span class="pre">YAMLNode</span></code>); <code class="docutils literal notranslate"><span class="pre">pals_to_bmad</span></code> /
-<code class="docutils literal notranslate"><span class="pre">pals_to_madx</span></code> / <code class="docutils literal notranslate"><span class="pre">pals_to_scibmad</span></code> / <code class="docutils literal notranslate"><span class="pre">pals_to_xsuite</span></code> translate that tree into an
+<code class="docutils literal notranslate"><span class="pre">pals_to_madx</span></code> / <code class="docutils literal notranslate"><span class="pre">pals_to_xsuite</span></code> translate that tree into an
 in-memory model of the <em>target</em> lattice (a <code class="docutils literal notranslate"><span class="pre">BmadLattice</span></code> / <code class="docutils literal notranslate"><span class="pre">MadxLattice</span></code> /
-<code class="docutils literal notranslate"><span class="pre">SciBmadLattice</span></code> / <code class="docutils literal notranslate"><span class="pre">XsuiteLattice</span></code> of elements, beamlines, and parameters); and
-<code class="docutils literal notranslate"><span class="pre">write_bmad_file</span></code> / <code class="docutils literal notranslate"><span class="pre">write_madx_file</span></code> / <code class="docutils literal notranslate"><span class="pre">write_scibmad_file</span></code> / <code class="docutils literal notranslate"><span class="pre">write_xsuite_file</span></code>
+<code class="docutils literal notranslate"><span class="pre">XsuiteLattice</span></code> of elements, beamlines, and parameters); and
+<code class="docutils literal notranslate"><span class="pre">write_bmad_file</span></code> / <code class="docutils literal notranslate"><span class="pre">write_madx_file</span></code> / <code class="docutils literal notranslate"><span class="pre">write_xsuite_file</span></code>
 take that structure and an output path and serialize the
 lattice file:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -282,10 +282,6 @@ lattice file:</p>
 
 <span class="n">madx</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">pals_to_madx</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"lattice_files"</span><span class="p">,</span> <span class="s2">"bta.pals.yaml"</span><span class="p">)))</span>
 <span class="n">pp</span><span class="o">.</span><span class="n">write_madx_file</span><span class="p">(</span><span class="n">madx</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"lattice_files"</span><span class="p">,</span> <span class="s2">"bta.pals_out.madx"</span><span class="p">))</span>
-
-<span class="n">scibmad</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">pals_to_scibmad</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"lattice_files"</span><span class="p">,</span>
-                                                       <span class="s2">"convert.pals.yaml"</span><span class="p">)))</span>
-<span class="n">pp</span><span class="o">.</span><span class="n">write_scibmad_file</span><span class="p">(</span><span class="n">scibmad</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"lattice_files"</span><span class="p">,</span> <span class="s2">"convert.pals_out.jl"</span><span class="p">))</span>
 
 <span class="n">xsuite</span> <span class="o">=</span> <span class="n">pp</span><span class="o">.</span><span class="n">pals_to_xsuite</span><span class="p">(</span><span class="n">pp</span><span class="o">.</span><span class="n">parse_file</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"lattice_files"</span><span class="p">,</span> <span class="s2">"bta.pals.yaml"</span><span class="p">)))</span>
 <span class="n">pp</span><span class="o">.</span><span class="n">write_xsuite_file</span><span class="p">(</span><span class="n">xsuite</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">"lattice_files"</span><span class="p">,</span> <span class="s2">"bta.pals_out.py"</span><span class="p">))</span>
@@ -333,10 +329,8 @@ goes for <a class="reference internal" href="#what-xsuite-does-differently">What
 it in the <a class="reference internal" href="#parameter-mapping-reference">Parameter mapping reference</a> below.</p></li>
 <li><p>Add the mapping to the element builder — <code class="docutils literal notranslate"><span class="pre">_make_bmad_ele</span></code> in
 <code class="docutils literal notranslate"><span class="pre">palsparserpy/to_bmad.py</span></code>, <code class="docutils literal notranslate"><span class="pre">_make_madx_ele</span></code> in <code class="docutils literal notranslate"><span class="pre">palsparserpy/to_madx.py</span></code>,
-<code class="docutils literal notranslate"><span class="pre">_make_scibmad_ele</span></code> in <code class="docutils literal notranslate"><span class="pre">palsparserpy/to_scibmad.py</span></code>, or <code class="docutils literal notranslate"><span class="pre">_make_xsuite_ele</span></code> in
-<code class="docutils literal notranslate"><span class="pre">palsparserpy/to_xsuite.py</span></code> — and to any helper it
-calls (e.g. <code class="docutils literal notranslate"><span class="pre">_ele_to_bmad_str</span></code>, <code class="docutils literal notranslate"><span class="pre">_make_bmad_line</span></code>, <code class="docutils literal notranslate"><span class="pre">_ele_to_madx_str</span></code>, or
-<code class="docutils literal notranslate"><span class="pre">_ele_to_scibmad_str</span></code>, <code class="docutils literal notranslate"><span class="pre">_make_scibmad_beamline</span></code>).</p></li>
+or <code class="docutils literal notranslate"><span class="pre">_make_xsuite_ele</span></code> in <code class="docutils literal notranslate"><span class="pre">palsparserpy/to_xsuite.py</span></code> — and to any helper it
+calls (e.g. <code class="docutils literal notranslate"><span class="pre">_ele_to_bmad_str</span></code>, <code class="docutils literal notranslate"><span class="pre">_make_bmad_line</span></code>, <code class="docutils literal notranslate"><span class="pre">_ele_to_madx_str</span></code>).</p></li>
 <li><p>Translate a lattice that exercises the element and check the output.</p></li>
 </ol>
 </section>
@@ -454,7 +448,7 @@ are reported.</p></li>
 <section id="parameter-mapping-reference">
 <h2>Parameter mapping reference<a class="headerlink" href="#parameter-mapping-reference" title="Link to this heading">¶</a></h2>
 <p>The following is the element-by-element mapping between PALS parameter groups
-and their SciBmad/Bmad/MAD-X equivalents.</p>
+and their Bmad, MAD-X and Xsuite equivalents.</p>
 <section id="element-kinds-mad-x-keywords">
 <h3>Element kinds –&gt; MAD-X keywords<a class="headerlink" href="#element-kinds-mad-x-keywords" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -547,52 +541,10 @@ GirderP, ReferenceChangeP, TaylorP –&gt; not translated (an error). Any other
 group is reported.</p></li>
 </ul>
 </section>
-<section id="ackickerp-none">
-<h3>ACKickerP –&gt; None<a class="headerlink" href="#ackickerp-none" title="Link to this heading">¶</a></h3>
-</section>
-<section id="aperturep-apertureparams">
-<h3>ApertureP –&gt; ApertureParams<a class="headerlink" href="#aperturep-apertureparams" title="Link to this heading">¶</a></h3>
+<section id="aperturep">
+<h3>ApertureP<a class="headerlink" href="#aperturep" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>x_min –&gt; x1_limit</p></li>
-<li><p>x_max –&gt; x2_limit</p></li>
-<li><p>x_width and x_center:</p>
-<ul>
-<li><p>x1_limit = x_center - x_width / 2</p></li>
-<li><p>x2_limit = x_center + x_width / 2</p></li>
-</ul>
-</li>
 <li><p>Note: Either both min and max are defined, or width and center are defined, not both.</p></li>
-<li><p>y_min –&gt; y1_limit</p></li>
-<li><p>y_may –&gt; y2_limit</p></li>
-<li><p>y_width and y_center:</p>
-<ul>
-<li><p>y1_limit = y_center - y_width / 2</p></li>
-<li><p>y2_limit = y_center + y_width / 2</p></li>
-</ul>
-</li>
-<li><p>shape –&gt; aperture_shape</p>
-<ul>
-<li><p>RECTANGULAR –&gt; Rectangular</p></li>
-<li><p>ELLIPTICAL –&gt; Elliptical</p></li>
-<li><p>VERTICES –&gt; none</p></li>
-<li><p>CUSTOM_SHAPE –&gt; none</p></li>
-</ul>
-</li>
-<li><p>location –&gt; aperture_at</p>
-<ul>
-<li><p>ENTRANCE_END –&gt; Entrance</p></li>
-<li><p>EXIT_END –&gt; Exit</p></li>
-<li><p>BOTH_ENDS –&gt; BothEnds</p></li>
-<li><p>EVERYWHERE –&gt; BothEnds</p></li>
-<li><p>CENTER –&gt; BothEnds</p></li>
-<li><p>NOWHERE –&gt; none</p></li>
-</ul>
-</li>
-<li><p>aperture_shifts_with_body –&gt; aperture_shifts_with_body</p></li>
-<li><p>aperture_active –&gt; aperture_active</p></li>
-<li><p>vertices –&gt; none</p></li>
-<li><p>material –&gt; none</p></li>
-<li><p>thickness –&gt; none</p></li>
 <li><p>Note (Bmad): Bmad states a limit as a distance from the axis rather than as a
 coordinate — it loses a particle at <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">&lt;</span> <span class="pre">-x1_limit</span></code> — so the low-side limit is
 the negated PALS <code class="docutils literal notranslate"><span class="pre">x_min</span></code>.</p></li>
@@ -611,36 +563,22 @@ from a file of its own, which PALS does not name.</p></li>
 its aperture values are positional, so a group that bounds one plane and not the
 other has the unbounded one written out as 1 m.</p></li>
 <li><p>Note: shape, location and the rest describe an aperture; they do not put one
-there. A group that sets no limit is skipped entirely by all three translators,
+there. A group that sets no limit is skipped entirely by every translator,
 since writing it out would give the element an aperture the PALS lattice does
 not have.</p></li>
 </ul>
 </section>
-<section id="beambeamp-not-in-scibmad-yet">
-<h3>BeamBeamP –&gt; Not in SciBmad yet<a class="headerlink" href="#beambeamp-not-in-scibmad-yet" title="Link to this heading">¶</a></h3>
+<section id="beambeamp">
+<h3>BeamBeamP<a class="headerlink" href="#beambeamp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Note (MAD-X): sigma_x –&gt; sigx, sigma_y –&gt; sigy, charge –&gt; charge,
 N_particle –&gt; npart. MAD-X models the opposite beam as a four-dimensional lens,
 so sigma_z, alpha_x, beta_x, alpha_y, beta_y and energy have no equivalent.</p></li>
 </ul>
 </section>
-<section id="bendp-bendparams">
-<h3>BendP –&gt; BendParams<a class="headerlink" href="#bendp-bendparams" title="Link to this heading">¶</a></h3>
+<section id="bendp">
+<h3>BendP<a class="headerlink" href="#bendp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>radius_ref -&gt; caluclated (Bmad: rho)</p></li>
-<li><p>Bn0_ref -&gt; calculated (Bmad: B_field)</p></li>
-<li><p>e1 –&gt; e1</p></li>
-<li><p>e2 –&gt; e2</p></li>
-<li><p>e1_rect –&gt; calculated</p></li>
-<li><p>e2_rect –&gt; calcualted</p></li>
-<li><p>edge1_int –&gt; edge1_int</p></li>
-<li><p>edge2_int –&gt; edge2_int</p></li>
-<li><p>g_ref –&gt; g_ref</p></li>
-<li><p>h1 –&gt; not in scibmad</p></li>
-<li><p>h2 –&gt; not in scibmad</p></li>
-<li><p>L_chord –&gt; calculated</p></li>
-<li><p>L_sagitta –&gt; calculated</p></li>
-<li><p>tilt_ref –&gt; tilt_ref</p></li>
 <li><p>Note (MAD-X): PALS states a bend’s geometry with any two of three sets of mutually
 dependent parameters — a curvature (<code class="docutils literal notranslate"><span class="pre">g_ref</span></code>, <code class="docutils literal notranslate"><span class="pre">radius_ref</span></code>, <code class="docutils literal notranslate"><span class="pre">Bn0_ref</span></code>), a length
 (<code class="docutils literal notranslate"><span class="pre">length</span></code>, <code class="docutils literal notranslate"><span class="pre">L_chord</span></code>, <code class="docutils literal notranslate"><span class="pre">L_rectangle</span></code>) and the angle (<code class="docutils literal notranslate"><span class="pre">angle_ref</span></code>) — one from each of
@@ -655,8 +593,8 @@ the same sector geometry PALS does). <code class="docutils literal notranslate">
 <code class="docutils literal notranslate"><span class="pre">ref_geometry</span></code>: <code class="docutils literal notranslate"><span class="pre">ARC</span></code>/<code class="docutils literal notranslate"><span class="pre">CHORD</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">e</span> <span class="pre">=</span> <span class="pre">e_rect</span> <span class="pre">+</span> <span class="pre">angle/2</span></code>; <code class="docutils literal notranslate"><span class="pre">ENTRANCE_COORDS</span></code> –&gt;
 <code class="docutils literal notranslate"><span class="pre">e1</span> <span class="pre">=</span> <span class="pre">e1_rect</span></code>, <code class="docutils literal notranslate"><span class="pre">e2</span> <span class="pre">=</span> <span class="pre">e2_rect</span> <span class="pre">+</span> <span class="pre">angle</span></code>; <code class="docutils literal notranslate"><span class="pre">EXIT_COORDS</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">e1</span> <span class="pre">=</span> <span class="pre">e1_rect</span> <span class="pre">+</span> <span class="pre">angle</span></code>,
 <code class="docutils literal notranslate"><span class="pre">e2</span> <span class="pre">=</span> <span class="pre">e2_rect</span></code>.</p></li>
-<li><p>Note (Bmad): angle_ref –&gt; angle. e1 –&gt; e1 and e2 –&gt; e2, a Bmad sbend measuring its
-faces against the sector geometry too; <code class="docutils literal notranslate"><span class="pre">e1_rect</span></code>/<code class="docutils literal notranslate"><span class="pre">e2_rect</span></code> are converted the same way as
+<li><p>Note (Bmad): radius_ref –&gt; rho, angle_ref –&gt; angle. e1 –&gt; e1 and e2 –&gt; e2, a Bmad
+sbend measuring its faces against the sector geometry too; <code class="docutils literal notranslate"><span class="pre">e1_rect</span></code>/<code class="docutils literal notranslate"><span class="pre">e2_rect</span></code> are converted the same way as
 for MAD-X, with the angle worked out from <code class="docutils literal notranslate"><span class="pre">angle_ref</span></code>, or from <code class="docutils literal notranslate"><span class="pre">g_ref</span></code>/<code class="docutils literal notranslate"><span class="pre">radius_ref</span></code> with
 <code class="docutils literal notranslate"><span class="pre">length</span></code>, <code class="docutils literal notranslate"><span class="pre">L_chord</span></code> or <code class="docutils literal notranslate"><span class="pre">L_rectangle</span></code>.</p></li>
 <li><p>Note (MAD-X): edge1_int –&gt; <code class="docutils literal notranslate"><span class="pre">fint</span> <span class="pre">=</span> <span class="pre">0.5,</span> <span class="pre">hgap</span> <span class="pre">=</span> <span class="pre">2*edge1_int</span></code>, edge2_int –&gt;
@@ -670,15 +608,10 @@ the reference geometry and no field of its own, which MAD-X — tracking through
 same <code class="docutils literal notranslate"><span class="pre">angle</span></code> it bends the reference orbit with — cannot express, and is reported.</p></li>
 </ul>
 </section>
-<section id="bodyshiftp-alignmentparams">
-<h3>BodyShiftP –&gt; AlignmentParams<a class="headerlink" href="#bodyshiftp-alignmentparams" title="Link to this heading">¶</a></h3>
+<section id="bodyshiftp">
+<h3>BodyShiftP<a class="headerlink" href="#bodyshiftp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>x_offset –&gt; x_offset</p></li>
-<li><p>y_offset –&gt; y_offset</p></li>
-<li><p>z_offset –&gt; z_offset</p></li>
-<li><p>x_rot –&gt; x_rot</p></li>
-<li><p>y_rot –&gt; y_rot</p></li>
-<li><p>z_rot –&gt; tilt</p></li>
+<li><p>Note (Bmad): x_offset, y_offset and z_offset carry over by name, and z_rot –&gt; tilt.</p></li>
 <li><p>Note (Bmad): x_rot –&gt; <code class="docutils literal notranslate"><span class="pre">y_pitch</span> <span class="pre">=</span> <span class="pre">-x_rot</span></code> and y_rot –&gt; <code class="docutils literal notranslate"><span class="pre">x_pitch</span></code>, Bmad naming a
 rotation by the plane it tips the element into rather than by the axis it turns
 about.</p></li>
@@ -688,14 +621,8 @@ y_rot –&gt; dtheta, z_rot –&gt; dpsi. MAD-X rotates about the entrance of an
 where PALS rotates about its centre, so the two agree only to first order.</p></li>
 </ul>
 </section>
-<section id="electricmultipolep-not-in-scibmad-yet">
-<h3>ElectricMultipoleP –&gt; Not in SciBmad yet<a class="headerlink" href="#electricmultipolep-not-in-scibmad-yet" title="Link to this heading">¶</a></h3>
-</section>
-<section id="floorp-calculated">
-<h3>FloorP –&gt; Calculated<a class="headerlink" href="#floorp-calculated" title="Link to this heading">¶</a></h3>
-</section>
-<section id="coordinatesetp-set-in-floor-shift-element-to-be-added-to-scibmad">
-<h3>CoordinateSetP –&gt; Set in floor shift element (to be added to scibmad)<a class="headerlink" href="#coordinatesetp-set-in-floor-shift-element-to-be-added-to-scibmad" title="Link to this heading">¶</a></h3>
+<section id="coordinatesetp">
+<h3>CoordinateSetP<a class="headerlink" href="#coordinatesetp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Note (Bmad): a <code class="docutils literal notranslate"><span class="pre">FloorShift</span></code> becomes a <code class="docutils literal notranslate"><span class="pre">floor_shift</span></code> and a <code class="docutils literal notranslate"><span class="pre">Fiducial</span></code> a <code class="docutils literal notranslate"><span class="pre">fiducial</span></code>.
 <code class="docutils literal notranslate"><span class="pre">origin_ele</span></code> and <code class="docutils literal notranslate"><span class="pre">origin_ele_ref_pt</span></code> carry over (PALS defaults to <code class="docutils literal notranslate"><span class="pre">EXIT_END</span></code>, Bmad to
@@ -714,9 +641,6 @@ curve, so the group is an error. <code class="docutils literal notranslate"><spa
 carry it, have no MAD-X equivalent either.</p></li>
 </ul>
 </section>
-<section id="forkp-needs-to-be-implemented-in-scibmad">
-<h3>ForkP –&gt; Needs to be Implemented in scibmad<a class="headerlink" href="#forkp-needs-to-be-implemented-in-scibmad" title="Link to this heading">¶</a></h3>
-</section>
 <section id="girders-pals-girders-girderp">
 <h3>Girders (<code class="docutils literal notranslate"><span class="pre">PALS:</span> <span class="pre">girders</span></code>, GirderP)<a class="headerlink" href="#girders-pals-girders-girderp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -727,15 +651,11 @@ CoordinateSetP origin becomes <code class="docutils literal notranslate"><span c
 its shift the <code class="docutils literal notranslate"><span class="pre">d*_origin</span></code> attributes; the BodyShiftP becomes the girder’s offsets, pitches
 and tilt.</p></li>
 <li><p>Note (MAD-X): MAD-X has no girders, so <code class="docutils literal notranslate"><span class="pre">PALS:</span> <span class="pre">girders</span></code> is an error.</p></li>
-<li><p>Note (SciBmad): SciBmad has no girders; they are not translated.</p></li>
 </ul>
 </section>
-<section id="magneticmultipolep-bmultipoleparams">
-<h3>MagneticMultipoleP –&gt; BMultipoleParams<a class="headerlink" href="#magneticmultipolep-bmultipoleparams" title="Link to this heading">¶</a></h3>
+<section id="magneticmultipolep">
+<h3>MagneticMultipoleP<a class="headerlink" href="#magneticmultipolep" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>tiltN –&gt; tiltN</p></li>
-<li><p>[BK][ns]NL? –&gt; [BK][ns]NL?</p></li>
-<li><p>BnN(L) –&gt; BnN(L)</p></li>
 <li><p>Note (Bmad): the normal component of the multipole that is an element’s own strength becomes
 that strength: <code class="docutils literal notranslate"><span class="pre">Kn1</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">K1</span></code> for a quadrupole, <code class="docutils literal notranslate"><span class="pre">Kn2</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">K2</span></code>, <code class="docutils literal notranslate"><span class="pre">Kn3</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">K3</span></code>, and <code class="docutils literal notranslate"><span class="pre">Kn0</span></code> –&gt;
 <code class="docutils literal notranslate"><span class="pre">dg</span></code> for a bend (<code class="docutils literal notranslate"><span class="pre">Bn1</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">B1_GRADIENT</span></code>, …, <code class="docutils literal notranslate"><span class="pre">Bn0</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">db_field</span></code>). Every other order stays
@@ -773,16 +693,11 @@ any other order on any other magnet is reported and dropped.</p></li>
 having no field-valued strength attribute.</p></li>
 </ul>
 </section>
-<section id="metap-metaparams">
-<h3>MetaP –&gt; MetaParams<a class="headerlink" href="#metap-metaparams" title="Link to this heading">¶</a></h3>
+<section id="metap">
+<h3>MetaP<a class="headerlink" href="#metap" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>alias –&gt; alias (Bmad: alias)</p></li>
-<li><p>label –&gt; label (Bmad: type)</p></li>
-<li><p>description –&gt; description (Bmad: descrip)</p></li>
-<li><p>ID –&gt; none</p></li>
-<li><p>location –&gt; none</p></li>
-<li><p>history –&gt; none</p></li>
-<li><p>Note: any other (non-standard) component –&gt; none</p></li>
+<li><p>Note (Bmad): alias –&gt; alias, label –&gt; type, description –&gt; descrip. ID, location,
+history and any other (non-standard) component are not translated.</p></li>
 <li><p>Note: a component holding a structure rather than a string is not translated.</p></li>
 <li><p>Note (Bmad): Bmad has no escape for a quote inside a string, so a value holding one
 quote character is wrapped in the other, and one holding both is not translated.</p></li>
@@ -790,8 +705,8 @@ quote character is wrapped in the other, and one holding both is not translated.
 that is a plain string becomes a comment line above the element definition.</p></li>
 </ul>
 </section>
-<section id="particlep-create-new-bunch">
-<h3>ParticleP –&gt; Create new bunch<a class="headerlink" href="#particlep-create-new-bunch" title="Link to this heading">¶</a></h3>
+<section id="particlep">
+<h3>ParticleP<a class="headerlink" href="#particlep" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Note (MAD-X): MAD-X starts a particle with the <code class="docutils literal notranslate"><span class="pre">START</span></code> command of the <code class="docutils literal notranslate"><span class="pre">TRACK</span></code>
 module, which has no place in a lattice file, so the coordinates are written out
@@ -799,19 +714,9 @@ as a comment: x, px, y, py as they stand, <code class="docutils literal notransl
 <code class="docutils literal notranslate"><span class="pre">pz</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">pt</span> <span class="pre">=</span> <span class="pre">pz</span> <span class="pre">*</span> <span class="pre">beam-&gt;beta</span></code>. Spin has no MAD-X equivalent.</p></li>
 </ul>
 </section>
-<section id="patchp-patchparams">
-<h3>PatchP –&gt; PatchParams<a class="headerlink" href="#patchp-patchparams" title="Link to this heading">¶</a></h3>
+<section id="patchp">
+<h3>PatchP<a class="headerlink" href="#patchp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>x_offset –&gt; x_offset</p></li>
-<li><p>y_offset –&gt; y_offset</p></li>
-<li><p>z_offset –&gt; z_offset</p></li>
-<li><p>t_offset –&gt; dt (not in PALS yet)</p></li>
-<li><p>x_rot –&gt; x_rot</p></li>
-<li><p>y_rot –&gt; y_rot</p></li>
-<li><p>z_rot –&gt; z_rot</p></li>
-<li><p>flexible –&gt; none</p></li>
-<li><p>ref_coords –&gt; none</p></li>
-<li><p>user_sets_length –&gt; none</p></li>
 <li><p>Note (MAD-X): the offsets become <code class="docutils literal notranslate"><span class="pre">patch_trans</span> <span class="pre">=</span> <span class="pre">{x,</span> <span class="pre">y,</span> <span class="pre">z}</span></code> and the rotations
 <code class="docutils literal notranslate"><span class="pre">patch_ang</span> <span class="pre">=</span> <span class="pre">{x_rot,</span> <span class="pre">y_rot,</span> <span class="pre">z_rot}</span></code> of a <code class="docutils literal notranslate"><span class="pre">changeref</span></code>. MAD-X applies the three
 angles in an order of its own, so the correspondence is exact only to first order
@@ -819,55 +724,25 @@ in the angles. A changeref has no length, and <code class="docutils literal notr
 <code class="docutils literal notranslate"><span class="pre">user_sets_length</span></code> have no equivalent.</p></li>
 </ul>
 </section>
-<section id="referencep-beamline-properties">
-<h3>ReferenceP –&gt; Beamline Properties<a class="headerlink" href="#referencep-beamline-properties" title="Link to this heading">¶</a></h3>
+<section id="referencep">
+<h3>ReferenceP<a class="headerlink" href="#referencep" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>species_ref –&gt; species_ref</p></li>
-<li><p>pc_ref –&gt; pc_ref</p></li>
-<li><p>E_tot_ref –&gt; E_ref</p></li>
-<li><p>time_ref –&gt; none</p></li>
-<li><p>location –&gt; none</p></li>
 <li><p>Note (MAD-X): the group becomes the <code class="docutils literal notranslate"><span class="pre">BEAM</span></code> command: species_ref –&gt; particle
 (positron, electron, proton, antiproton, posmuon, negmuon; anything else has to
 be given its mass and charge by hand), pc_ref –&gt; <code class="docutils literal notranslate"><span class="pre">pc</span></code> and E_tot_ref –&gt; <code class="docutils literal notranslate"><span class="pre">energy</span></code>,
 both in GeV rather than eV.</p></li>
 </ul>
 </section>
-<section id="referencechangep-beamline-properties">
-<h3>ReferenceChangeP –&gt; Beamline Properties<a class="headerlink" href="#referencechangep-beamline-properties" title="Link to this heading">¶</a></h3>
+<section id="referencechangep">
+<h3>ReferenceChangeP<a class="headerlink" href="#referencechangep" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>extra_dtime_ref –&gt; none</p></li>
-<li><p>dE_ref –&gt; dE_ref</p></li>
-<li><p>E_tot_ref –&gt; E_ref</p></li>
-<li><p>species_ref –&gt; species_ref</p></li>
 <li><p>Note (MAD-X): MAD-X takes the reference energy from the <code class="docutils literal notranslate"><span class="pre">BEAM</span></code> command and cannot
 change it in mid-line, so the whole group is an error.</p></li>
 </ul>
 </section>
-<section id="rfp-rfparams">
-<h3>RFP –&gt; RFParams<a class="headerlink" href="#rfp-rfparams" title="Link to this heading">¶</a></h3>
+<section id="rfp">
+<h3>RFP<a class="headerlink" href="#rfp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>frequency –&gt; rate, rate_meaning = false</p></li>
-<li><p>harmon –&gt; rate, if rate_meaning = true</p></li>
-<li><p>if neither frequency or harmon exist, set rate_meaning = -1</p></li>
-<li><p>voltage –&gt; voltage</p></li>
-<li><p>gradient –&gt; none</p></li>
-<li><p>phase –&gt; phi0 (both in radians)</p></li>
-<li><p>multipass_phase –&gt; none</p></li>
-<li><p>cavity_type –&gt; traveling_wave</p>
-<ul>
-<li><p>STANDING_WAVE –&gt; false</p></li>
-<li><p>TRAVELING_WAVE –&gt; true</p></li>
-</ul>
-</li>
-<li><p>num_cells –&gt; tracking_method = SaganCavity(num_cells)</p></li>
-<li><p>zero_phase –&gt; zero_phase</p>
-<ul>
-<li><p>ACCELERATING –&gt; Accelerating</p></li>
-<li><p>BELOW_TRANSITION –&gt; BelowTransition</p></li>
-<li><p>ABOVE_TRANSITION –&gt; AboveTransition</p></li>
-</ul>
-</li>
 <li><p>Note (MAD-X): frequency –&gt; <code class="docutils literal notranslate"><span class="pre">freq</span></code> in MHz, harmon –&gt; <code class="docutils literal notranslate"><span class="pre">harmon</span></code>,
 voltage –&gt; <code class="docutils literal notranslate"><span class="pre">volt</span></code> in MV, gradient –&gt; <code class="docutils literal notranslate"><span class="pre">volt</span> <span class="pre">=</span> <span class="pre">gradient</span> <span class="pre">*</span> <span class="pre">L_active</span></code>.</p></li>
 <li><p>Note (Bmad): gradient –&gt; <code class="docutils literal notranslate"><span class="pre">voltage</span> <span class="pre">=</span> <span class="pre">gradient</span> <span class="pre">*</span> <span class="pre">L_active</span></code> (<code class="docutils literal notranslate"><span class="pre">L_active</span></code> defaulting to the
@@ -884,17 +759,15 @@ tracks, so it is translated as an <code class="docutils literal notranslate"><sp
 <code class="docutils literal notranslate"><span class="pre">num_cells</span></code>, <code class="docutils literal notranslate"><span class="pre">L_active</span></code> and <code class="docutils literal notranslate"><span class="pre">dE_ref</span></code> have no equivalent.</p></li>
 </ul>
 </section>
-<section id="solenoidp-bmultipoleparams">
-<h3>SolenoidP –&gt; BMultipoleParams<a class="headerlink" href="#solenoidp-bmultipoleparams" title="Link to this heading">¶</a></h3>
+<section id="solenoidp">
+<h3>SolenoidP<a class="headerlink" href="#solenoidp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Ksol –&gt; Ksol</p></li>
-<li><p>Bsol –&gt; Bsol</p></li>
 <li><p>Note (MAD-X): Ksol –&gt; <code class="docutils literal notranslate"><span class="pre">ks</span></code>, Bsol –&gt; <code class="docutils literal notranslate"><span class="pre">ks</span> <span class="pre">=</span> <span class="pre">Bsol</span> <span class="pre">/</span> <span class="pre">pals_brho</span></code>. A solenoid of zero
 length also needs MAD-X’s integrated <code class="docutils literal notranslate"><span class="pre">ksi</span></code>, which PALS does not state.</p></li>
 </ul>
 </section>
-<section id="trackingp-universalparams-tracking-method">
-<h3>TrackingP –&gt; UniversalParams.tracking_method<a class="headerlink" href="#trackingp-universalparams-tracking-method" title="Link to this heading">¶</a></h3>
+<section id="trackingp">
+<h3>TrackingP<a class="headerlink" href="#trackingp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Note (MAD-X): tracking parameters are program specific by design and are skipped.</p></li>
 </ul>
@@ -918,8 +791,6 @@ MAD-X having no dispersion derivative.</p></li>
 <section id="lattices">
 <h3>Lattices<a class="headerlink" href="#lattices" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Beamlines –&gt; Beamlines</p></li>
-<li><p>To be added: Lattices in PALS –&gt; Lattices</p></li>
 <li><p>Note (MAD-X): a BeamLine becomes a <code class="docutils literal notranslate"><span class="pre">line</span></code> and a Lattice becomes the <code class="docutils literal notranslate"><span class="pre">use,</span> <span class="pre">period</span></code>
 statement. A leading <code class="docutils literal notranslate"><span class="pre">BeginningEle</span></code> is dropped — it carries the reference parameters,
 which become the <code class="docutils literal notranslate"><span class="pre">BEAM</span></code> command — whether the line spells it out or names it; a line
@@ -940,7 +811,6 @@ used — so <code class="docutils literal notranslate"><span class="pre">periodi
 <li><p>Note: the definitions are written, in the order the PALS file gives them, ahead of every
 other section of the Bmad file. Bmad, unlike PALS, resolves a name against what the file
 has defined <em>above</em> the point of use.</p></li>
-<li><p>Not translated to SciBmad.</p></li>
 <li><p>Note (MAD-X): the same in every respect, MAD-X also resolving a name against what
 is defined above the point of use. A MAD-X variable is a value and nothing else, so
 <code class="docutils literal notranslate"><span class="pre">absolute_error</span></code> and <code class="docutils literal notranslate"><span class="pre">relative_error</span></code> are reported.</p></li>
@@ -1016,16 +886,6 @@ MAD-X, Xsuite can name one entry of a multipole array. A pattern, a <code class=
 qualifier or a tilted multipole is an error.</p></li>
 </ul>
 </section>
-<section id="controllers-scibmad-controllers">
-<h3>Controllers –&gt; SciBmad Controllers<a class="headerlink" href="#controllers-scibmad-controllers" title="Link to this heading">¶</a></h3>
-<ul class="simple">
-<li><p>Each control becomes an <code class="docutils literal notranslate"><span class="pre">(ele,</span> <span class="pre">:property)</span> <span class="pre">=&gt;</span> <span class="pre">(ele;</span> <span class="pre">vars...)</span> <span class="pre">-&gt;</span> <span class="pre">expression</span></code> pair,
-SciBmad keeping the PALS parameter names so that only the group prefix is dropped
-and nothing needs rescaling.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">RELATIVE</span></code> adds its expression to the value the element already carries;
-<code class="docutils literal notranslate"><span class="pre">ABSOLUTE</span></code> replaces it.</p></li>
-</ul>
-</section>
 <section id="todo">
 <h3>TODO<a class="headerlink" href="#todo" title="Link to this heading">¶</a></h3>
 <ul class="simple">
@@ -1094,7 +954,7 @@ and nothing needs rescaling.</p></li>
         <div class="toc-tree-container">
           <div class="toc-tree">
             <ul>
-<li><a class="reference internal" href="#">Translating to SciBmad, Bmad, MAD-X and Xsuite</a><ul>
+<li><a class="reference internal" href="#">Translating to Bmad, MAD-X and Xsuite</a><ul>
 <li><a class="reference internal" href="#running-the-translators">Running the translators</a></li>
 <li><a class="reference internal" href="#element-and-parameter-mapping">Element and parameter mapping</a></li>
 <li><a class="reference internal" href="#extending-a-translator">Extending a translator</a></li>
@@ -1104,32 +964,27 @@ and nothing needs rescaling.</p></li>
 <li><a class="reference internal" href="#element-kinds-mad-x-keywords">Element kinds –&gt; MAD-X keywords</a></li>
 <li><a class="reference internal" href="#element-kinds-xsuite-classes">Element kinds –&gt; Xsuite classes</a></li>
 <li><a class="reference internal" href="#parameter-groups-xsuite">Parameter groups –&gt; Xsuite</a></li>
-<li><a class="reference internal" href="#ackickerp-none">ACKickerP –&gt; None</a></li>
-<li><a class="reference internal" href="#aperturep-apertureparams">ApertureP –&gt; ApertureParams</a></li>
-<li><a class="reference internal" href="#beambeamp-not-in-scibmad-yet">BeamBeamP –&gt; Not in SciBmad yet</a></li>
-<li><a class="reference internal" href="#bendp-bendparams">BendP –&gt; BendParams</a></li>
-<li><a class="reference internal" href="#bodyshiftp-alignmentparams">BodyShiftP –&gt; AlignmentParams</a></li>
-<li><a class="reference internal" href="#electricmultipolep-not-in-scibmad-yet">ElectricMultipoleP –&gt; Not in SciBmad yet</a></li>
-<li><a class="reference internal" href="#floorp-calculated">FloorP –&gt; Calculated</a></li>
-<li><a class="reference internal" href="#coordinatesetp-set-in-floor-shift-element-to-be-added-to-scibmad">CoordinateSetP –&gt; Set in floor shift element (to be added to scibmad)</a></li>
-<li><a class="reference internal" href="#forkp-needs-to-be-implemented-in-scibmad">ForkP –&gt; Needs to be Implemented in scibmad</a></li>
+<li><a class="reference internal" href="#aperturep">ApertureP</a></li>
+<li><a class="reference internal" href="#beambeamp">BeamBeamP</a></li>
+<li><a class="reference internal" href="#bendp">BendP</a></li>
+<li><a class="reference internal" href="#bodyshiftp">BodyShiftP</a></li>
+<li><a class="reference internal" href="#coordinatesetp">CoordinateSetP</a></li>
 <li><a class="reference internal" href="#girders-pals-girders-girderp">Girders (<code class="docutils literal notranslate"><span class="pre">PALS:</span> <span class="pre">girders</span></code>, GirderP)</a></li>
-<li><a class="reference internal" href="#magneticmultipolep-bmultipoleparams">MagneticMultipoleP –&gt; BMultipoleParams</a></li>
-<li><a class="reference internal" href="#metap-metaparams">MetaP –&gt; MetaParams</a></li>
-<li><a class="reference internal" href="#particlep-create-new-bunch">ParticleP –&gt; Create new bunch</a></li>
-<li><a class="reference internal" href="#patchp-patchparams">PatchP –&gt; PatchParams</a></li>
-<li><a class="reference internal" href="#referencep-beamline-properties">ReferenceP –&gt; Beamline Properties</a></li>
-<li><a class="reference internal" href="#referencechangep-beamline-properties">ReferenceChangeP –&gt; Beamline Properties</a></li>
-<li><a class="reference internal" href="#rfp-rfparams">RFP –&gt; RFParams</a></li>
-<li><a class="reference internal" href="#solenoidp-bmultipoleparams">SolenoidP –&gt; BMultipoleParams</a></li>
-<li><a class="reference internal" href="#trackingp-universalparams-tracking-method">TrackingP –&gt; UniversalParams.tracking_method</a></li>
+<li><a class="reference internal" href="#magneticmultipolep">MagneticMultipoleP</a></li>
+<li><a class="reference internal" href="#metap">MetaP</a></li>
+<li><a class="reference internal" href="#particlep">ParticleP</a></li>
+<li><a class="reference internal" href="#patchp">PatchP</a></li>
+<li><a class="reference internal" href="#referencep">ReferenceP</a></li>
+<li><a class="reference internal" href="#referencechangep">ReferenceChangeP</a></li>
+<li><a class="reference internal" href="#rfp">RFP</a></li>
+<li><a class="reference internal" href="#solenoidp">SolenoidP</a></li>
+<li><a class="reference internal" href="#trackingp">TrackingP</a></li>
 <li><a class="reference internal" href="#twissp-initial-conditions">TwissP –&gt; initial conditions</a></li>
 <li><a class="reference internal" href="#lattices">Lattices</a></li>
 <li><a class="reference internal" href="#constants-and-variables-bmad-name-value-definitions">Constants and variables –&gt; Bmad <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">value</span></code> definitions</a></li>
 <li><a class="reference internal" href="#controllers-bmad-overlays-and-groups">Controllers –&gt; Bmad overlays and groups</a></li>
 <li><a class="reference internal" href="#controllers-mad-x-variables-and-deferred-assignments">Controllers –&gt; MAD-X variables and deferred assignments</a></li>
 <li><a class="reference internal" href="#controllers-xsuite-variables-and-deferred-expressions">Controllers –&gt; Xsuite variables and deferred expressions</a></li>
-<li><a class="reference internal" href="#controllers-scibmad-controllers">Controllers –&gt; SciBmad Controllers</a></li>
 <li><a class="reference internal" href="#todo">TODO</a></li>
 </ul>
 </li>

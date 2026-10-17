@@ -93,14 +93,6 @@ Each of these is the free-function spelling of the like-named
 .. autoclass:: palsparserpy.MadxController
 .. autoclass:: palsparserpy.MadxAlignment
 
-.. autofunction:: palsparserpy.pals_to_scibmad
-.. autofunction:: palsparserpy.write_scibmad_file
-.. autoclass:: palsparserpy.SciBmadLattice
-.. autoclass:: palsparserpy.SciBmadEle
-.. autoclass:: palsparserpy.SciBmadBeamline
-.. autoclass:: palsparserpy.SciBmadLatticeList
-.. autoclass:: palsparserpy.SciBmadController
-
 .. autofunction:: palsparserpy.pals_to_xsuite
 .. autofunction:: palsparserpy.write_xsuite_file
 .. autoclass:: palsparserpy.XsuiteLattice

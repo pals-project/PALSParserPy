@@ -3,7 +3,6 @@
 **PALSParserPy** is a Python parser for the Particle Accelerator Lattice Standard
 ([PALS](https://github.com/campa-consortium/pals)). It reads PALS-format lattice
 files, performs lattice expansion, and translates lattices into
-[SciBmad](https://github.com/bmad-sim/SciBmad.jl),
 [Bmad](https://www.classe.cornell.edu/bmad/),
 [MAD-X](https://mad.web.cern.ch/mad/) and
 [Xsuite](https://github.com/xsuite/xsuite) formats.
@@ -41,8 +40,8 @@ api
    [Reading and expanding lattices](guide/lattices.md).
 3. **Evaluate** the mathematical expressions in the expanded lattice to
    numbers — see [Evaluating expressions](guide/expressions.md).
-4. **Translate** a PALS lattice to SciBmad, Bmad, MAD-X or Xsuite format — see
-   [Translating to SciBmad, Bmad, MAD-X and Xsuite](guide/translation.md).
+4. **Translate** a PALS lattice to Bmad, MAD-X or Xsuite format — see
+   [Translating to Bmad, MAD-X and Xsuite](guide/translation.md).
 
 The complete docstring reference is in the [API Reference](api.md).
 

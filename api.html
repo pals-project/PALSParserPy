@@ -3,7 +3,7 @@
   <head><meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
-<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Translating to SciBmad, Bmad, MAD-X and Xsuite" href="guide/translation.html">
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Translating to Bmad, MAD-X and Xsuite" href="guide/translation.html">
 
     <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
         <title>API Reference - PALSParserPy</title>
@@ -197,7 +197,7 @@
 <li class="toctree-l1"><a class="reference internal" href="guide/parsing.html">Parsing and writing YAML</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/lattices.html">Reading and expanding lattices</a></li>
 <li class="toctree-l1"><a class="reference internal" href="guide/expressions.html">Evaluating expressions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="guide/translation.html">Translating to SciBmad, Bmad, MAD-X and Xsuite</a></li>
+<li class="toctree-l1"><a class="reference internal" href="guide/translation.html">Translating to Bmad, MAD-X and Xsuite</a></li>
 </ul>
 <p class="caption" role="heading"><span class="caption-text">Reference</span></p>
 <ul class="current">
@@ -2125,224 +2125,6 @@ picked out. <code class="docutils literal notranslate"><span class="pre">name</s
 </dd></dl>
 
 <dl class="py function">
-<dt class="sig sig-object py" id="palsparserpy.pals_to_scibmad">
-<span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">pals_to_scibmad</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_scibmad.html#pals_to_scibmad"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.pals_to_scibmad" title="Link to this definition">¶</a></dt>
-<dd><p>Translate a parsed PALS lattice <code class="docutils literal notranslate"><span class="pre">yaml</span></code> (as returned by
-<a class="reference internal" href="#palsparserpy.parse_file" title="palsparserpy.parse_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">parse_file()</span></code></a>) into a <a class="reference internal" href="#palsparserpy.SciBmadLattice" title="palsparserpy.SciBmadLattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">SciBmadLattice</span></code></a>.</p>
-<p>The returned structure is an in-memory model of the <em>SciBmad</em> lattice
-(elements, beamlines, lattice lists), not the input PALS tree. Translation is
-a three-step process: parse the PALS file with <code class="docutils literal notranslate"><span class="pre">parse_file</span></code>, build the
-target model with <code class="docutils literal notranslate"><span class="pre">pals_to_scibmad</span></code>, then emit the SciBmad lattice file with
-<a class="reference internal" href="#palsparserpy.write_scibmad_file" title="palsparserpy.write_scibmad_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_scibmad_file()</span></code></a>:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">yaml</span> <span class="o">=</span> <span class="n">parse_file</span><span class="p">(</span><span class="n">file_dir</span><span class="p">)</span>
-<span class="n">write_scibmad_file</span><span class="p">(</span><span class="n">pals_to_scibmad</span><span class="p">(</span><span class="n">yaml</span><span class="p">),</span> <span class="n">filename</span><span class="p">)</span>
-</pre></div>
-</div>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>yaml</strong> (<a class="reference internal" href="#palsparserpy.YAMLNode" title="palsparserpy.node.YAMLNode"><em>YAMLNode</em></a>)</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference internal" href="#palsparserpy.SciBmadLattice" title="palsparserpy.to_scibmad.SciBmadLattice"><em>SciBmadLattice</em></a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py function">
-<dt class="sig sig-object py" id="palsparserpy.write_scibmad_file">
-<span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">write_scibmad_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_scibmad.html#write_scibmad_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.write_scibmad_file" title="Link to this definition">¶</a></dt>
-<dd><p>Serialize the <a class="reference internal" href="#palsparserpy.SciBmadLattice" title="palsparserpy.SciBmadLattice"><code class="xref py py-class docutils literal notranslate"><span class="pre">SciBmadLattice</span></code></a> <code class="docutils literal notranslate"><span class="pre">lat</span></code> to <code class="docutils literal notranslate"><span class="pre">filename</span></code> as a SciBmad
-lattice file.</p>
-<p>Write the particle-start block, the <code class="docutils literal notranslate"><span class="pre">&#64;elements</span></code> block of <code class="docutils literal notranslate"><span class="pre">LineElement``s,</span>
-<span class="pre">the</span> <span class="pre">``Controller</span></code> definitions, the <code class="docutils literal notranslate"><span class="pre">Beamline</span></code> definitions, and the lattice
-lists.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>lat</strong> (<a class="reference internal" href="#palsparserpy.SciBmadLattice" title="palsparserpy.to_scibmad.SciBmadLattice"><em>SciBmadLattice</em></a>)</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLattice">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">SciBmadLattice</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">particle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elements</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">controllers</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beamlines</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lattices</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_scibmad.html#SciBmadLattice"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.SciBmadLattice" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>An in-memory model of a SciBmad lattice.</p>
-<p>Produced by <a class="reference internal" href="#palsparserpy.pals_to_scibmad" title="palsparserpy.pals_to_scibmad"><code class="xref py py-func docutils literal notranslate"><span class="pre">pals_to_scibmad()</span></code></a> and serialized to a file by
-<a class="reference internal" href="#palsparserpy.write_scibmad_file" title="palsparserpy.write_scibmad_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">write_scibmad_file()</span></code></a>:</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">particle</span></code>: <code class="docutils literal notranslate"><span class="pre">BeginningEle</span></code> particle-coordinate lines (including the
-<code class="docutils literal notranslate"><span class="pre">v</span> <span class="pre">=</span> <span class="pre">[...]</span></code> vector).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">elements</span></code>: <code class="docutils literal notranslate"><span class="pre">LineElement</span></code> definitions (<a class="reference internal" href="#palsparserpy.SciBmadEle" title="palsparserpy.SciBmadEle"><code class="xref py py-class docutils literal notranslate"><span class="pre">SciBmadEle</span></code></a>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">controllers</span></code>: <code class="docutils literal notranslate"><span class="pre">Controller</span></code> definitions (<a class="reference internal" href="#palsparserpy.SciBmadController" title="palsparserpy.SciBmadController"><code class="xref py py-class docutils literal notranslate"><span class="pre">SciBmadController</span></code></a>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">beamlines</span></code>: <code class="docutils literal notranslate"><span class="pre">Beamline</span></code> definitions (<a class="reference internal" href="#palsparserpy.SciBmadBeamline" title="palsparserpy.SciBmadBeamline"><code class="xref py py-class docutils literal notranslate"><span class="pre">SciBmadBeamline</span></code></a>).</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">lattices</span></code>: lattice lists (<a class="reference internal" href="#palsparserpy.SciBmadLatticeList" title="palsparserpy.SciBmadLatticeList"><code class="xref py py-class docutils literal notranslate"><span class="pre">SciBmadLatticeList</span></code></a>).</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>particle</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
-<li><p><strong>elements</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.SciBmadEle" title="palsparserpy.to_scibmad.SciBmadEle"><em>SciBmadEle</em></a><em>]</em>)</p></li>
-<li><p><strong>controllers</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.SciBmadController" title="palsparserpy.to_scibmad.SciBmadController"><em>SciBmadController</em></a><em>]</em>)</p></li>
-<li><p><strong>beamlines</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.SciBmadBeamline" title="palsparserpy.to_scibmad.SciBmadBeamline"><em>SciBmadBeamline</em></a><em>]</em>)</p></li>
-<li><p><strong>lattices</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference internal" href="#palsparserpy.SciBmadLatticeList" title="palsparserpy.to_scibmad.SciBmadLatticeList"><em>SciBmadLatticeList</em></a><em>]</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLattice.particle">
-<span class="sig-name descname"><span class="pre">particle</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadLattice.particle" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLattice.elements">
-<span class="sig-name descname"><span class="pre">elements</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.SciBmadEle" title="palsparserpy.to_scibmad.SciBmadEle"><span class="pre">SciBmadEle</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadLattice.elements" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLattice.controllers">
-<span class="sig-name descname"><span class="pre">controllers</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.SciBmadController" title="palsparserpy.to_scibmad.SciBmadController"><span class="pre">SciBmadController</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadLattice.controllers" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLattice.beamlines">
-<span class="sig-name descname"><span class="pre">beamlines</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.SciBmadBeamline" title="palsparserpy.to_scibmad.SciBmadBeamline"><span class="pre">SciBmadBeamline</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadLattice.beamlines" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLattice.lattices">
-<span class="sig-name descname"><span class="pre">lattices</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#palsparserpy.SciBmadLatticeList" title="palsparserpy.to_scibmad.SciBmadLatticeList"><span class="pre">SciBmadLatticeList</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadLattice.lattices" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadEle">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">SciBmadEle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attrs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_scibmad.html#SciBmadEle"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.SciBmadEle" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A single SciBmad <code class="docutils literal notranslate"><span class="pre">LineElement</span></code>: its <code class="docutils literal notranslate"><span class="pre">name</span></code> and the already-translated
-keyword-argument fragments (<code class="docutils literal notranslate"><span class="pre">attrs</span></code>, each a <code class="docutils literal notranslate"><span class="pre">&quot;keyword</span> <span class="pre">=</span> <span class="pre">value&quot;</span></code>
-string).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
-<li><p><strong>attrs</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadEle.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.SciBmadEle.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadEle.attrs">
-<span class="sig-name descname"><span class="pre">attrs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadEle.attrs" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadBeamline">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">SciBmadBeamline</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">members</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ref</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_scibmad.html#SciBmadBeamline"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.SciBmadBeamline" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A SciBmad <code class="docutils literal notranslate"><span class="pre">Beamline</span></code>: its <code class="docutils literal notranslate"><span class="pre">name</span></code>, the ordered member element
-<code class="docutils literal notranslate"><span class="pre">members</span></code> (by name), and the reference-parameter fragments <code class="docutils literal notranslate"><span class="pre">ref</span></code> taken
-from the line’s first entry.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
-<li><p><strong>members</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
-<li><p><strong>ref</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadBeamline.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.SciBmadBeamline.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadBeamline.members">
-<span class="sig-name descname"><span class="pre">members</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadBeamline.members" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadBeamline.ref">
-<span class="sig-name descname"><span class="pre">ref</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadBeamline.ref" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLatticeList">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">SciBmadLatticeList</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">branches</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_scibmad.html#SciBmadLatticeList"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.SciBmadLatticeList" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A SciBmad lattice list: its <code class="docutils literal notranslate"><span class="pre">name</span></code> and the ordered branch/beamline
-<code class="docutils literal notranslate"><span class="pre">branches</span></code> (by name).</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
-<li><p><strong>branches</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLatticeList.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.SciBmadLatticeList.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadLatticeList.branches">
-<span class="sig-name descname"><span class="pre">branches</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadLatticeList.branches" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py class">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadController">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">SciBmadController</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">slaves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">vars</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">&lt;factory&gt;</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_scibmad.html#SciBmadController"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.SciBmadController" title="Link to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
-<p>A SciBmad <code class="docutils literal notranslate"><span class="pre">Controller</span></code>: what a PALS <code class="docutils literal notranslate"><span class="pre">Controller</span></code> becomes.</p>
-<ul class="simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">name</span></code>: the controller name.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">slaves</span></code>: the controlled properties, each a
-<code class="docutils literal notranslate"><span class="pre">&quot;(ele,</span> <span class="pre">:prop)</span> <span class="pre">=&gt;</span> <span class="pre">(ele;</span> <span class="pre">vars...)</span> <span class="pre">-&gt;</span> <span class="pre">expr&quot;</span></code> pair-and-function string.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">vars</span></code>: the variables’ initial values, each a <code class="docutils literal notranslate"><span class="pre">&quot;name</span> <span class="pre">=</span> <span class="pre">value&quot;</span></code> string.</p></li>
-</ul>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a>)</p></li>
-<li><p><strong>slaves</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
-<li><p><strong>vars</strong> (<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><em>str</em></a><em>]</em>)</p></li>
-</ul>
-</dd>
-</dl>
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadController.name">
-<span class="sig-name descname"><span class="pre">name</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span><a class="headerlink" href="#palsparserpy.SciBmadController.name" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadController.slaves">
-<span class="sig-name descname"><span class="pre">slaves</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadController.slaves" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="palsparserpy.SciBmadController.vars">
-<span class="sig-name descname"><span class="pre">vars</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span><a class="headerlink" href="#palsparserpy.SciBmadController.vars" title="Link to this definition">¶</a></dt>
-<dd></dd></dl>
-
-</dd></dl>
-
-<dl class="py function">
 <dt class="sig sig-object py" id="palsparserpy.pals_to_xsuite">
 <span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">pals_to_xsuite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/to_xsuite.html#pals_to_xsuite"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.pals_to_xsuite" title="Link to this definition">¶</a></dt>
 <dd><p>Translate a parsed PALS lattice <code class="docutils literal notranslate"><span class="pre">yaml</span></code> (as returned by
@@ -2687,7 +2469,7 @@ controller’s <code class="docutils literal notranslate"><span class="pre">Meta
                   <span>Previous</span>
                 </div>
                 
-                <div class="title">Translating to SciBmad, Bmad, MAD-X and Xsuite</div>
+                <div class="title">Translating to Bmad, MAD-X and Xsuite</div>
                 
               </div>
             </a>
@@ -2906,38 +2688,6 @@ controller’s <code class="docutils literal notranslate"><span class="pre">Meta
 <li><a class="reference internal" href="#palsparserpy.MadxAlignment"><code class="docutils literal notranslate"><span class="pre">MadxAlignment</span></code></a><ul>
 <li><a class="reference internal" href="#palsparserpy.MadxAlignment.name"><code class="docutils literal notranslate"><span class="pre">MadxAlignment.name</span></code></a></li>
 <li><a class="reference internal" href="#palsparserpy.MadxAlignment.attrs"><code class="docutils literal notranslate"><span class="pre">MadxAlignment.attrs</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#palsparserpy.pals_to_scibmad"><code class="docutils literal notranslate"><span class="pre">pals_to_scibmad()</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.write_scibmad_file"><code class="docutils literal notranslate"><span class="pre">write_scibmad_file()</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLattice"><code class="docutils literal notranslate"><span class="pre">SciBmadLattice</span></code></a><ul>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLattice.particle"><code class="docutils literal notranslate"><span class="pre">SciBmadLattice.particle</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLattice.elements"><code class="docutils literal notranslate"><span class="pre">SciBmadLattice.elements</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLattice.controllers"><code class="docutils literal notranslate"><span class="pre">SciBmadLattice.controllers</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLattice.beamlines"><code class="docutils literal notranslate"><span class="pre">SciBmadLattice.beamlines</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLattice.lattices"><code class="docutils literal notranslate"><span class="pre">SciBmadLattice.lattices</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadEle"><code class="docutils literal notranslate"><span class="pre">SciBmadEle</span></code></a><ul>
-<li><a class="reference internal" href="#palsparserpy.SciBmadEle.name"><code class="docutils literal notranslate"><span class="pre">SciBmadEle.name</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadEle.attrs"><code class="docutils literal notranslate"><span class="pre">SciBmadEle.attrs</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadBeamline"><code class="docutils literal notranslate"><span class="pre">SciBmadBeamline</span></code></a><ul>
-<li><a class="reference internal" href="#palsparserpy.SciBmadBeamline.name"><code class="docutils literal notranslate"><span class="pre">SciBmadBeamline.name</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadBeamline.members"><code class="docutils literal notranslate"><span class="pre">SciBmadBeamline.members</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadBeamline.ref"><code class="docutils literal notranslate"><span class="pre">SciBmadBeamline.ref</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLatticeList"><code class="docutils literal notranslate"><span class="pre">SciBmadLatticeList</span></code></a><ul>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLatticeList.name"><code class="docutils literal notranslate"><span class="pre">SciBmadLatticeList.name</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadLatticeList.branches"><code class="docutils literal notranslate"><span class="pre">SciBmadLatticeList.branches</span></code></a></li>
-</ul>
-</li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadController"><code class="docutils literal notranslate"><span class="pre">SciBmadController</span></code></a><ul>
-<li><a class="reference internal" href="#palsparserpy.SciBmadController.name"><code class="docutils literal notranslate"><span class="pre">SciBmadController.name</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadController.slaves"><code class="docutils literal notranslate"><span class="pre">SciBmadController.slaves</span></code></a></li>
-<li><a class="reference internal" href="#palsparserpy.SciBmadController.vars"><code class="docutils literal notranslate"><span class="pre">SciBmadController.vars</span></code></a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#palsparserpy.pals_to_xsuite"><code class="docutils literal notranslate"><span class="pre">pals_to_xsuite()</span></code></a></li>
