@@ -1,13 +1,12 @@
-"""Tests of the three translators: PALS to Bmad, MAD-X and SciBmad."""
+"""Tests of the Bmad and MAD-X translators."""
 
 import re
 from textwrap import dedent
 
 import pytest
 
-from palsparserpy import (pals_to_bmad, pals_to_madx, pals_to_scibmad,
-                          parse_file, write_bmad_file, write_madx_file,
-                          write_scibmad_file)
+from palsparserpy import (pals_to_bmad, pals_to_madx, parse_file,
+                          write_bmad_file, write_madx_file)
 
 # A small but structurally complete PALS lattice. It exercises every branch of the
 # translator dispatch: a BeginningEle (reference / particle-start settings), a
@@ -661,10 +660,6 @@ def _madx_text(tmp_path, lat):
     return _written(write_madx_file, tmp_path, lat, "madx")
 
 
-def _scibmad_text(tmp_path, lat):
-    return _written(write_scibmad_file, tmp_path, lat, "jl")
-
-
 def test_pals_to_bmad_writes_a_bmad_lattice_file(tmp_path):
     out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, TRANSLATE_FIXTURE)))
 
@@ -739,30 +734,6 @@ def test_pals_to_madx_writes_a_madx_lattice_file(tmp_path):
     # rigidity that would normalize one is not defined.
     assert "pals_brho" not in out
 
-
-def test_pals_to_scibmad_writes_a_scibmad_lattice_file(tmp_path):
-    out = _scibmad_text(tmp_path,
-                        pals_to_scibmad(_parsed(tmp_path, TRANSLATE_FIXTURE)))
-
-    # @elements block with the ordinary elements.
-    assert "@elements begin" in out
-    assert "d1 = LineElement(" in out
-    assert "kind = Drift" in out
-
-    # SciBmad states a limit as an edge position, so the low-side ones stay as PALS
-    # wrote them -- where Bmad wants the distance from the axis.
-    assert "x1_limit = -0.03, x2_limit = 0.05" in out
-    assert "y1_limit = -0.01, y2_limit = 0.02" in out
-    assert "L = 100" in out
-    assert "q1 = LineElement(" in out
-
-    # BeginningEle -> particle coordinates and the phase-space vector.
-    assert "x = 1" in out
-    assert "v = [ x px y py z pz ]" in out
-
-    # Beamline and lattice list.
-    assert "ring = Beamline([" in out
-    assert "lat = [ring,]" in out
 
 
 def test_a_controller_becomes_a_bmad_overlay_or_group(tmp_path):
@@ -842,37 +813,6 @@ def test_a_controller_becomes_madx_variables_and_deferred_assignments(tmp_path):
     assert "ring: line = (q1, s1, m1);" in out
     assert "use, period = ring;" in out
 
-
-def test_a_controller_becomes_a_scibmad_controller(tmp_path):
-    out = _scibmad_text(tmp_path,
-                        pals_to_scibmad(_parsed(tmp_path, CONTROLLER_FIXTURE)))
-
-    # SciBmad keeps the PALS parameter names, so only the group prefix is dropped
-    # and nothing needs rescaling. Every control takes all of the controller's
-    # variables.
-    assert "knob = Controller(" in out
-    assert "(q1, :Kn1) => (ele; k) -> 2*k" in out
-    assert "vars = (; k = 0.3)" in out
-
-    # RELATIVE adds to the value the element already carries.
-    assert "bump = Controller(" in out
-    assert "(s1, :Ks2L) => (ele; dk) -> ele.Ks2L + (dk)" in out
-
-    # An aperture group that sets no limit bounds nothing, so q1 gets no aperture
-    # at all.
-    assert "q1 = LineElement(kind = Quadrupole, L = 0.5, Kn1 = 0.25)" in out
-
-    # s1's does bound something. SciBmad states each limit as an edge position, so
-    # the low-side ones are negative -- where Bmad wants a distance from the axis.
-    assert "x1_limit = -0.0625, x2_limit = 0.1875" in out
-    assert "y1_limit = -0.125, y2_limit = 0.375" in out
-    assert ("aperture_shape = ApertureShape.Elliptical, "
-            "aperture_at = ApertureAt.BothEnds") in out
-
-    # The line names its beginning element; its reference parameters still reach
-    # the beamline, and the branch given as a map still reaches the lattice list.
-    assert "species_ref = electron" in out
-    assert "lat = [ring,]" in out
 
 
 def test_an_elements_own_multipole_becomes_its_bmad_strength_attribute(tmp_path):
@@ -1194,23 +1134,22 @@ def test_controller_variables_are_scoped_into_madxs_one_namespace(tmp_path):
 
 def test_a_control_target_no_translator_can_express_is_reported(tmp_path):
     yaml = _parsed(tmp_path, PATTERN_FIXTURE)
-    for translate in (pals_to_bmad, pals_to_madx, pals_to_scibmad):
+    for translate in (pals_to_bmad, pals_to_madx):
         with pytest.raises(ValueError, match="selects slaves by pattern"):
             translate(yaml)
 
 
 def test_a_control_target_may_name_its_slaves_kind(tmp_path):
-    # `{kind}::{name}` narrows a name to one kind. All three formats give an
+    # `{kind}::{name}` narrows a name to one kind. Both formats give an
     # element the one name, so the qualifier is checked against the element found
     # and then dropped.
     yaml = _parsed(tmp_path, KIND_FIXTURE)
     assert "overlay = {q1[K1]: 2*k}" in _bmad_text(tmp_path, pals_to_bmad(yaml))
     assert "q1->k1 :=" in _madx_text(tmp_path, pals_to_madx(yaml))
-    assert "(q1, :Kn1)" in _scibmad_text(tmp_path, pals_to_scibmad(yaml))
 
     # A qualifier the element does not answer to is an error, not a silent miss.
     wrong = _parsed(tmp_path, WRONG_KIND_FIXTURE)
-    for translate in (pals_to_bmad, pals_to_madx, pals_to_scibmad):
+    for translate in (pals_to_bmad, pals_to_madx):
         with pytest.raises(ValueError,
                            match="asks for a Sextupole but q1 is a Quadrupole"):
             translate(wrong)
@@ -1219,10 +1158,10 @@ def test_a_control_target_may_name_its_slaves_kind(tmp_path):
 def test_a_control_target_reached_through_a_beamline_is_reported(tmp_path):
     # PALS's `>>` and `>>>` name the BeamLine or Lattice an element is reached
     # through, which lets one occurrence of a repeated element be driven on its
-    # own. None of the three formats has that, and `>>` splits into an empty field,
+    # own. Neither format has that, and `>>` splits into an empty field,
     # so it is caught before the split rather than reported as a malformed target.
     yaml = _parsed(tmp_path, BEAMLINE_QUALIFIED_FIXTURE)
-    for translate in (pals_to_bmad, pals_to_madx, pals_to_scibmad):
+    for translate in (pals_to_bmad, pals_to_madx):
         with pytest.raises(ValueError,
                            match="reaches its element through a BeamLine or Lattice"):
             translate(yaml)
@@ -1266,10 +1205,8 @@ def test_floorshift_fiducial_and_girders_become_their_bmad_counterparts(tmp_path
     assert "phi0_multipass = 0.07957747154594767" in out
 
 
-def test_the_rf_phase_is_carried_over_in_each_formats_own_units(tmp_path):
+def test_madx_has_no_floorshift(tmp_path):
     yaml = _parsed(tmp_path, PLACEMENT_FIXTURE.split("girders:")[0])
-    # SciBmad, like PALS, states the phase in radians.
-    assert "phi0 = pi/2" in _scibmad_text(tmp_path, pals_to_scibmad(yaml))
     with pytest.raises(ValueError, match="No FloorShift elements in MAD-X"):
         pals_to_madx(yaml)
 

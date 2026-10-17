@@ -40,9 +40,6 @@ from .to_bmad import (BmadBeamline, BmadController, BmadEleDef, BmadLattice,
                       pals_to_bmad, write_bmad_file)
 from .to_madx import (MadxAlignment, MadxBeamline, MadxController, MadxEleDef,
                       MadxLattice, pals_to_madx, write_madx_file)
-from .to_scibmad import (SciBmadBeamline, SciBmadController, SciBmadEle,
-                         SciBmadLattice, SciBmadLatticeList, pals_to_scibmad,
-                         write_scibmad_file)
 from .to_xsuite import (XsuiteBeamline, XsuiteController, XsuiteEle,
                         XsuiteLattice, pals_to_xsuite, write_xsuite_file)
 
@@ -69,9 +66,6 @@ __all__ = [
     "pals_to_madx", "write_madx_file",
     "MadxLattice", "MadxEleDef", "MadxBeamline", "MadxController",
     "MadxAlignment",
-    "pals_to_scibmad", "write_scibmad_file",
-    "SciBmadLattice", "SciBmadEle", "SciBmadBeamline", "SciBmadLatticeList",
-    "SciBmadController",
     "pals_to_xsuite", "write_xsuite_file",
     "XsuiteLattice", "XsuiteEle", "XsuiteBeamline", "XsuiteController",
 ]
