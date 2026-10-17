@@ -254,6 +254,7 @@
                       <span class="n">ctrl_variables</span><span class="p">,</span> <span class="n">facility_props</span><span class="p">,</span> <span class="n">fill_multipoles</span><span class="p">,</span> <span class="n">fmt</span><span class="p">,</span>
                       <span class="n">name_value_pairs</span><span class="p">,</span> <span class="n">tilt_rotation</span><span class="p">,</span> <span class="n">try_float</span><span class="p">,</span> <span class="n">value_text</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.node</span><span class="w"> </span><span class="kn">import</span> <span class="n">YAMLNode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.to_madx</span><span class="w"> </span><span class="kn">import</span> <span class="n">_madx_fold</span><span class="p">,</span> <span class="n">_madx_times</span>
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"BmadEleDef"</span><span class="p">,</span> <span class="s2">"BmadBeamline"</span><span class="p">,</span> <span class="s2">"BmadController"</span><span class="p">,</span> <span class="s2">"BmadLattice"</span><span class="p">,</span>
            <span class="s2">"pals_to_bmad"</span><span class="p">,</span> <span class="s2">"write_bmad_file"</span><span class="p">]</span>
@@ -1245,25 +1246,17 @@
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: BeamBeamP not translated yet"</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"BendP"</span><span class="p">:</span>
             <span class="n">bendP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"BendP"</span><span class="p">]</span>
-            <span class="n">has_e1</span> <span class="o">=</span> <span class="s2">"e1"</span> <span class="ow">in</span> <span class="n">bendP</span>
-            <span class="n">has_e1_rect</span> <span class="o">=</span> <span class="s2">"e1_rect"</span> <span class="ow">in</span> <span class="n">bendP</span>
-            <span class="n">has_e2</span> <span class="o">=</span> <span class="s2">"e2"</span> <span class="ow">in</span> <span class="n">bendP</span>
-            <span class="n">has_e2_rect</span> <span class="o">=</span> <span class="s2">"e2_rect"</span> <span class="ow">in</span> <span class="n">bendP</span>
-            <span class="k">if</span> <span class="p">(</span><span class="n">has_e1</span> <span class="ow">or</span> <span class="n">has_e2</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">has_e1_rect</span> <span class="ow">or</span> <span class="n">has_e2_rect</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: should not have both e1 and e1_rect, "</span>
-                                 <span class="s2">"nor both e2 and e2_rect"</span><span class="p">)</span>
-
             <span class="k">for</span> <span class="n">bkey</span> <span class="ow">in</span> <span class="n">bendP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="n">tmp</span> <span class="o">=</span> <span class="s2">""</span>
-                <span class="k">if</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">"radius_ref"</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">"angle_ref"</span><span class="p">:</span>
+                    <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"angle = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">'angle_ref'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">"radius_ref"</span><span class="p">:</span>
                     <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"rho = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">'radius_ref'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
                 <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">"Bn0_ref"</span><span class="p">:</span>
                     <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"B_field = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">'Bn0_ref'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
 
-                <span class="k">elif</span> <span class="n">bkey</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"e1"</span><span class="p">,</span> <span class="s2">"e1_rect"</span><span class="p">):</span>
-                    <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"e1 = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">'e1'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
-                <span class="k">elif</span> <span class="n">bkey</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"e2"</span><span class="p">,</span> <span class="s2">"e2_rect"</span><span class="p">):</span>
-                    <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"e2 = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="s1">'e2'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
+                <span class="k">elif</span> <span class="n">bkey</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"e1"</span><span class="p">,</span> <span class="s2">"e1_rect"</span><span class="p">,</span> <span class="s2">"e2"</span><span class="p">,</span> <span class="s2">"e2_rect"</span><span class="p">):</span>
+                    <span class="n">tmp</span> <span class="o">+=</span> <span class="n">_bmad_bend_face</span><span class="p">(</span><span class="n">props</span><span class="p">,</span> <span class="n">bkey</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="o">+</span> <span class="s2">","</span>
 
                 <span class="k">elif</span> <span class="n">bkey</span> <span class="o">==</span> <span class="s2">"edge1_int"</span><span class="p">:</span>
                     <span class="n">val</span> <span class="o">=</span> <span class="n">bendP</span><span class="p">[</span><span class="s2">"edge1_int"</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
@@ -1428,17 +1421,17 @@
                 <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"voltage"</span><span class="p">:</span>
                     <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"voltage = </span><span class="si">{</span><span class="n">rfP</span><span class="p">[</span><span class="s1">'voltage'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
 
+                <span class="c1"># Bmad's `gradient` is a dependent attribute, so the voltage is</span>
+                <span class="c1"># stated instead.</span>
                 <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"gradient"</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="s2">"L"</span> <span class="ow">in</span> <span class="n">props</span> <span class="ow">and</span> <span class="n">props</span><span class="p">[</span><span class="s2">"L"</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
-                        <span class="n">length</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"L"</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
-                        <span class="n">grad</span> <span class="o">=</span> <span class="n">rfP</span><span class="p">[</span><span class="s2">"gradient"</span><span class="p">]</span><span class="o">.</span><span class="n">as_float</span><span class="p">()</span>
-                        <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"voltage = </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">grad</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="si">}</span><span class="s2">,"</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: gradient not yet supported, replacing "</span>
-                              <span class="s2">"with voltage = gradient * length"</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="s2">"L_active"</span> <span class="ow">in</span> <span class="n">rfP</span><span class="p">:</span>
+                        <span class="n">length</span> <span class="o">=</span> <span class="n">rfP</span><span class="p">[</span><span class="s2">"L_active"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+                    <span class="k">elif</span> <span class="s2">"length"</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+                        <span class="n">length</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"length"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: `gradient` not yet supported &amp; `length` is "</span>
-                            <span class="s2">"undefined =&gt; voltage is undefined"</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: `gradient` needs a length to become "</span>
+                                         <span class="s2">"the voltage Bmad states"</span><span class="p">)</span>
+                    <span class="n">tmp</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"voltage = </span><span class="si">{</span><span class="n">_madx_times</span><span class="p">(</span><span class="n">rfP</span><span class="p">[</span><span class="s1">'gradient'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="n">length</span><span class="p">)</span><span class="si">}</span><span class="s2">,"</span>
 
                 <span class="c1"># PALS states RF phases in radians, Bmad in turns.</span>
                 <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"phase"</span><span class="p">:</span>
@@ -1783,6 +1776,83 @@
                         <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">bkey</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">text</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="n">out</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">BmadEleDef</span><span class="p">(</span><span class="n">gname</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"girder = </span><span class="si">{</span><span class="n">slaves</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">attrs</span><span class="p">))</span>
     <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_bmad_bend_angle</span><span class="p">(</span><span class="n">props</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The reference bend angle of a ``Bend`` as Bmad text, or ``None`` if the</span>
+<span class="sd">    element states too little to work it out.</span>
+
+<span class="sd">    PALS states the bend geometry with any two of a curvature (``g_ref``,</span>
+<span class="sd">    ``radius_ref``), a length (``length``, ``L_chord``, ``L_rectangle``) and the</span>
+<span class="sd">    angle (``angle_ref``). A curvature given as the field ``Bn0_ref`` needs the</span>
+<span class="sd">    reference rigidity and is not used here.</span>
+<span class="sd">    """</span>
+    <span class="n">bendP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"BendP"</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s2">"angle_ref"</span> <span class="ow">in</span> <span class="n">bendP</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">bendP</span><span class="p">[</span><span class="s2">"angle_ref"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">if</span> <span class="s2">"g_ref"</span> <span class="ow">in</span> <span class="n">bendP</span><span class="p">:</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">bendP</span><span class="p">[</span><span class="s2">"g_ref"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">elif</span> <span class="s2">"radius_ref"</span> <span class="ow">in</span> <span class="n">bendP</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">bendP</span><span class="p">[</span><span class="s2">"radius_ref"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">_madx_fold</span><span class="p">(</span><span class="sa">f</span><span class="s2">"1 / (</span><span class="si">{</span><span class="n">r</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">x</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">if</span> <span class="s2">"length"</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_madx_times</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">props</span><span class="p">[</span><span class="s2">"length"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"L_chord"</span> <span class="ow">in</span> <span class="n">bendP</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">bendP</span><span class="p">[</span><span class="s2">"L_chord"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">_madx_fold</span><span class="p">(</span><span class="sa">f</span><span class="s2">"2 * asin((</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">) * (</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">) / 2)"</span><span class="p">,</span>
+                          <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span> <span class="o">/</span> <span class="mi">2</span><span class="p">),</span> <span class="n">g</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s2">"L_rectangle"</span> <span class="ow">in</span> <span class="n">bendP</span><span class="p">:</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="n">bendP</span><span class="p">[</span><span class="s2">"L_rectangle"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">return</span> <span class="n">_madx_fold</span><span class="p">(</span><span class="sa">f</span><span class="s2">"asin((</span><span class="si">{</span><span class="n">g</span><span class="si">}</span><span class="s2">) * (</span><span class="si">{</span><span class="n">length</span><span class="si">}</span><span class="s2">))"</span><span class="p">,</span>
+                          <span class="k">lambda</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">math</span><span class="o">.</span><span class="n">asin</span><span class="p">(</span><span class="n">a</span> <span class="o">*</span> <span class="n">b</span><span class="p">),</span> <span class="n">g</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="k">return</span> <span class="kc">None</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_bmad_bend_face</span><span class="p">(</span><span class="n">props</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""The Bmad ``e1``/``e2`` fragment for the PALS pole-face parameter ``key``</span>
+<span class="sd">    of a ``Bend``.</span>
+
+<span class="sd">    A Bmad ``sbend`` measures its face angles against the sector geometry, as</span>
+<span class="sd">    PALS' own ``e1`` and ``e2`` are, so those come straight across. PALS'</span>
+<span class="sd">    ``e1_rect`` and ``e2_rect`` are measured against fiducial lines parallel to</span>
+<span class="sd">    each other, and the bend angle separates the two pairs by a share that</span>
+<span class="sd">    depends on ``ref_geometry`` (bend.md)::</span>
+
+<span class="sd">        ARC, CHORD        e1 = e1_rect + angle/2,   e2 = e2_rect + angle/2</span>
+<span class="sd">        ENTRANCE_COORDS   e1 = e1_rect,             e2 = e2_rect + angle</span>
+<span class="sd">        EXIT_COORDS       e1 = e1_rect + angle,     e2 = e2_rect</span>
+
+<span class="sd">    A face given both ways is contradictory, and one given the rectangular way on</span>
+<span class="sd">    a bend whose angle cannot be worked out cannot be converted; both raise an</span>
+<span class="sd">    error.</span>
+<span class="sd">    """</span>
+    <span class="n">bendP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"BendP"</span><span class="p">]</span>
+    <span class="n">face</span> <span class="o">=</span> <span class="n">key</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">bendP</span> <span class="ow">and</span> <span class="n">face</span> <span class="o">+</span> <span class="s2">"_rect"</span> <span class="ow">in</span> <span class="n">bendP</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: should not have both </span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2"> and </span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2">_rect"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">"_rect"</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">bendP</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span>
+
+    <span class="n">geometry</span> <span class="o">=</span> <span class="n">bendP</span><span class="p">[</span><span class="s2">"ref_geometry"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="s2">"ref_geometry"</span> <span class="ow">in</span> <span class="n">bendP</span> <span class="k">else</span> <span class="s2">"ARC"</span>
+    <span class="k">if</span> <span class="n">geometry</span> <span class="o">==</span> <span class="s2">"ENTRANCE_COORDS"</span><span class="p">:</span>
+        <span class="n">share</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="k">if</span> <span class="n">face</span> <span class="o">==</span> <span class="s2">"e1"</span> <span class="k">else</span> <span class="mf">1.0</span>
+    <span class="k">elif</span> <span class="n">geometry</span> <span class="o">==</span> <span class="s2">"EXIT_COORDS"</span><span class="p">:</span>
+        <span class="n">share</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="k">if</span> <span class="n">face</span> <span class="o">==</span> <span class="s2">"e1"</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">share</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">rect</span> <span class="o">=</span> <span class="n">bendP</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+    <span class="k">if</span> <span class="n">share</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2"> = </span><span class="si">{</span><span class="n">rect</span><span class="si">}</span><span class="s2">"</span>
+    <span class="n">angle</span> <span class="o">=</span> <span class="n">_bmad_bend_angle</span><span class="p">(</span><span class="n">props</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">angle</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> is measured against the bend angle, which "</span>
+                         <span class="s2">"is not given"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">face</span><span class="si">}</span><span class="s2"> = "</span> <span class="o">+</span> <span class="n">_madx_fold</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">rect</span><span class="si">}</span><span class="s2"> + </span><span class="si">{</span><span class="n">share</span><span class="si">}</span><span class="s2"> * (</span><span class="si">{</span><span class="n">angle</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+                                     <span class="k">lambda</span> <span class="n">r</span><span class="p">,</span> <span class="n">a</span><span class="p">:</span> <span class="n">r</span> <span class="o">+</span> <span class="n">share</span> <span class="o">*</span> <span class="n">a</span><span class="p">,</span> <span class="n">rect</span><span class="p">,</span> <span class="n">angle</span><span class="p">)</span>
 </pre></div>
         </article>
       </div>
