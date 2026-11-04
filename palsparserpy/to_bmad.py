@@ -355,9 +355,10 @@ def _ele_to_bmad_str(ele: YAMLNode) -> Tuple[List[str], List[str], List[str]]:
         if key == "TwissP":
             twissP = props["TwissP"]
             for k in twissP.keys():
-                # PALS and Bmad give these the same names, bar the coupling
-                # matrix's underscore.
+                # Bmad puts dpz before the plane/mode in chromatic derivatives.
                 attribute = "cmat_" + k[4:] if k.startswith("cmat") else k
+                attribute = re.sub(r"^(dbeta|dalpha|deta|detap)_([abxy])_dpz$",
+                                   r"\1_dpz_\2", attribute)
                 beginning.append(f"beginning[{attribute}] = {twissP[k].value}")
         elif key == "ReferenceP":
             referenceP = props["ReferenceP"]
