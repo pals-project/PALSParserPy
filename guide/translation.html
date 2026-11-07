@@ -5,7 +5,7 @@
     <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
 <link rel="index" title="Index" href="../genindex.html"><link rel="search" title="Search" href="../search.html"><link rel="next" title="API Reference" href="../api.html"><link rel="prev" title="Evaluating expressions" href="expressions.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>Translating to Bmad, MAD-X and Xsuite - PALSParserPy</title>
       <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../_static/styles/furo.css?v=7bdb33bb" />
@@ -837,6 +837,11 @@ about integration, and by the <code class="docutils literal notranslate"><span c
 driving a bend’s <code class="docutils literal notranslate"><span class="pre">DG</span></code> also has the reference bend subtracted, that attribute
 being measured from it rather than from zero; a <code class="docutils literal notranslate"><span class="pre">group</span></code>, which varies rather than
 sets, does not.</p></li>
+<li><p>A control driving an <code class="docutils literal notranslate"><span class="pre">An</span></code>/<code class="docutils literal notranslate"><span class="pre">Bn</span></code> gives its element <code class="docutils literal notranslate"><span class="pre">scale_multipoles</span> <span class="pre">=</span> <span class="pre">F</span></code>, and one
+driving a field (<code class="docutils literal notranslate"><span class="pre">Bn</span></code>, <code class="docutils literal notranslate"><span class="pre">Bs</span></code>) gives it <code class="docutils literal notranslate"><span class="pre">field_master</span> <span class="pre">=</span> <span class="pre">T</span></code>, as the element’s own
+multipoles would – also when the element states that multipole as zero, or not at
+all. The element’s multipoles and those its controllers drive must be all
+normalized or all fields.</p></li>
 </ul>
 </section>
 <section id="controllers-mad-x-variables-and-deferred-assignments">

@@ -532,6 +532,11 @@ and their Bmad, MAD-X and Xsuite equivalents.
   driving a bend's `DG` also has the reference bend subtracted, that attribute
   being measured from it rather than from zero; a `group`, which varies rather than
   sets, does not.
+- A control driving an `An`/`Bn` gives its element `scale_multipoles = F`, and one
+  driving a field (`Bn`, `Bs`) gives it `field_master = T`, as the element's own
+  multipoles would -- also when the element states that multipole as zero, or not at
+  all. The element's multipoles and those its controllers drive must be all
+  normalized or all fields.
 
 ### Controllers --> MAD-X variables and deferred assignments
 - variables --> `name = value;` (global MAD-X variables)

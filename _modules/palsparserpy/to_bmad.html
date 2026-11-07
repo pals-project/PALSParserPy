@@ -4,7 +4,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="color-scheme" content="light dark"><link rel="index" title="Index" href="../../genindex.html"><link rel="search" title="Search" href="../../search.html">
 
-    <!-- Generated with Sphinx 9.1.0 and Furo 2025.12.19 -->
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
         <title>palsparserpy.to_bmad - PALSParserPy</title>
       <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=d111a655" />
     <link rel="stylesheet" type="text/css" href="../../_static/styles/furo.css?v=7bdb33bb" />
@@ -388,6 +388,8 @@
                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"x"</span><span class="p">,</span> <span class="s2">"y"</span><span class="p">,</span> <span class="s2">"z"</span><span class="p">,</span> <span class="s2">"theta"</span><span class="p">,</span> <span class="s2">"phi"</span><span class="p">,</span> <span class="s2">"psi"</span><span class="p">)):</span>
                 <span class="n">beginning_at_origin</span> <span class="o">=</span> <span class="kc">False</span>
 
+    <span class="n">drives</span> <span class="o">=</span> <span class="n">_multipole_drives</span><span class="p">(</span><span class="n">facility</span><span class="p">)</span>
+
     <span class="n">placeholders</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
     <span class="n">n_lattices</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">facility</span><span class="p">:</span>
@@ -426,7 +428,8 @@
             <span class="n">placeholders</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">())</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">lat</span><span class="o">.</span><span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-                <span class="n">_make_bmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">,</span> <span class="n">beginning_at_origin</span><span class="o">=</span><span class="n">beginning_at_origin</span><span class="p">))</span>
+                <span class="n">_make_bmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">,</span> <span class="n">beginning_at_origin</span><span class="o">=</span><span class="n">beginning_at_origin</span><span class="p">,</span>
+                               <span class="n">drive</span><span class="o">=</span><span class="n">drives</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">())))</span>
     <span class="k">for</span> <span class="n">bl</span> <span class="ow">in</span> <span class="n">lat</span><span class="o">.</span><span class="n">beamlines</span><span class="p">:</span>
         <span class="n">bl</span><span class="o">.</span><span class="n">members</span><span class="p">[:]</span> <span class="o">=</span> <span class="p">[</span><span class="n">m</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">bl</span><span class="o">.</span><span class="n">members</span> <span class="k">if</span> <span class="n">m</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">placeholders</span><span class="p">]</span>
     <span class="k">if</span> <span class="s2">"girders"</span> <span class="ow">in</span> <span class="n">pals</span><span class="p">:</span>
@@ -807,6 +810,54 @@
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_MultipoleDrive</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""How the controllers of a lattice drive one element's multipoles.</span>
+
+<span class="sd">    - ``normalized``: the conventions the driven multipoles are stated in --</span>
+<span class="sd">      ``True`` for a normalized ``K`` parameter, ``False`` for a field ``B`` one.</span>
+<span class="sd">    - ``multipole``: whether any of them lands in a Bmad ``An``/``Bn`` attribute</span>
+<span class="sd">      rather than in the element's own strength attribute.</span>
+<span class="sd">    """</span>
+    <span class="n">normalized</span><span class="p">:</span> <span class="nb">set</span> <span class="o">=</span> <span class="n">field</span><span class="p">(</span><span class="n">default_factory</span><span class="o">=</span><span class="nb">set</span><span class="p">)</span>
+    <span class="n">multipole</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_multipole_drives</span><span class="p">(</span><span class="n">facility</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_MultipoleDrive</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The multipoles each element of ``facility`` has driven by a controller,</span>
+<span class="sd">    keyed by element name.</span>
+
+<span class="sd">    The element translation needs this as well as the element's own parameters:</span>
+<span class="sd">    which convention Bmad reads a multipole in (``field_master``) and whether it</span>
+<span class="sd">    reads one as a fraction of the element's strength (``scale_multipoles``) are</span>
+<span class="sd">    settings of the element, and a controller-driven multipole needs them right</span>
+<span class="sd">    whatever value, zero included, the element starts out with -- or whether it</span>
+<span class="sd">    states the multipole at all.</span>
+<span class="sd">    """</span>
+    <span class="n">drives</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">_MultipoleDrive</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">ele</span> <span class="ow">in</span> <span class="n">facility</span><span class="p">:</span>
+        <span class="n">props</span> <span class="o">=</span> <span class="n">ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">"kind"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">props</span> <span class="ow">or</span> <span class="n">props</span><span class="p">[</span><span class="s2">"kind"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="s2">"Controller"</span> <span class="ow">or</span> \
+                <span class="s2">"controls"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">cname</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">control</span> <span class="ow">in</span> <span class="n">props</span><span class="p">[</span><span class="s2">"controls"</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s2">"parameter"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">control</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">param</span> <span class="o">=</span> <span class="n">control</span><span class="p">[</span><span class="s2">"parameter"</span><span class="p">]</span><span class="o">.</span><span class="n">value</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">_MULTIPOLE_RE</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">param</span><span class="o">.</span><span class="n">rsplit</span><span class="p">(</span><span class="s2">"&gt;"</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">m</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">target</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">_bmad_control_target</span><span class="p">(</span><span class="n">cname</span><span class="p">,</span> <span class="n">param</span><span class="p">,</span> <span class="n">facility</span><span class="p">)</span>
+            <span class="n">slave</span><span class="p">,</span> <span class="n">attribute</span> <span class="o">=</span> <span class="n">target</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">"["</span><span class="p">)</span>
+            <span class="n">drive</span> <span class="o">=</span> <span class="n">drives</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="n">slave</span><span class="p">,</span> <span class="n">_MultipoleDrive</span><span class="p">())</span>
+            <span class="n">drive</span><span class="o">.</span><span class="n">normalized</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="s2">"K"</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[AB][0-9]+"</span><span class="p">,</span> <span class="n">attribute</span><span class="p">):</span>
+                <span class="n">drive</span><span class="o">.</span><span class="n">multipole</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">drives</span>
+
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">_make_bmad_controller</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span> <span class="n">facility</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BmadController</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Translate a ``Controller`` element into a :class:`BmadController`.</span>
 
@@ -1112,7 +1163,8 @@
 
 
 <span class="c1"># ---------------------------------------------------------------------------</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_make_bmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span> <span class="n">beginning_at_origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BmadEleDef</span><span class="p">:</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_make_bmad_ele</span><span class="p">(</span><span class="n">ele</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">,</span> <span class="n">beginning_at_origin</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+                   <span class="n">drive</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">_MultipoleDrive</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">BmadEleDef</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">"""Translate a single PALS element into a :class:`BmadEleDef`.</span>
 
 <span class="sd">    Dispatch on the element ``kind`` and its parameter groups (aperture, bend,</span>
@@ -1125,6 +1177,10 @@
 <span class="sd">    ``beginning_at_origin`` says whether the lattice leaves its beginning element</span>
 <span class="sd">    at the global origin, which is what a FloorShift placed from the global</span>
 <span class="sd">    origin is placed from in Bmad.</span>
+
+<span class="sd">    ``drive`` is how controllers drive the element's multipoles (see</span>
+<span class="sd">    :func:`_multipole_drives`), which decides the multipole settings along with</span>
+<span class="sd">    the element's own ``MagneticMultipoleP``.</span>
 <span class="sd">    """</span>
     <span class="n">props</span> <span class="o">=</span> <span class="n">ele</span><span class="o">.</span><span class="n">child</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">props</span><span class="o">.</span><span class="n">node_key</span><span class="p">()</span>
@@ -1144,6 +1200,33 @@
             <span class="n">text</span> <span class="o">=</span> <span class="n">text</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">rstrip</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">text</span><span class="p">:</span>
             <span class="n">attrs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+    <span class="c1"># Bmad reads all of an element's multipoles in the one convention, so the</span>
+    <span class="c1"># element's own and those its controllers drive have to agree.</span>
+    <span class="n">driven</span> <span class="o">=</span> <span class="n">drive</span><span class="o">.</span><span class="n">normalized</span> <span class="k">if</span> <span class="n">drive</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">push_field_master</span><span class="p">(</span><span class="n">normalized</span><span class="p">):</span>
+        <span class="n">conventions</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">normalized</span><span class="p">)</span> <span class="o">|</span> <span class="n">driven</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">conventions</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: the multipoles of an element, and those "</span>
+                             <span class="s2">"controllers drive, must be all normalized or all "</span>
+                             <span class="s2">"unnormalized"</span><span class="p">)</span>
+        <span class="c1"># field_master = F is the default.</span>
+        <span class="k">if</span> <span class="n">conventions</span> <span class="o">==</span> <span class="p">{</span><span class="kc">False</span><span class="p">}</span> <span class="ow">and</span> <span class="n">ele_kind</span> <span class="o">!=</span> <span class="s2">"RFCavity"</span><span class="p">:</span>
+            <span class="n">push_attr</span><span class="p">(</span><span class="s2">"field_master = T"</span><span class="p">)</span>
+
+    <span class="c1"># Bmad reads An/Bn on an ordinary element as fractions of that element's own</span>
+    <span class="c1"># strength, scaling them by K1*L for a quadrupole, K2*L for a sextupole, and so</span>
+    <span class="c1"># on. PALS multipoles are the field integrals themselves, so the scaling has to</span>
+    <span class="c1"># be turned off -- for one a controller drives as much as for one the element</span>
+    <span class="c1"># states, even when the element's own value is zero and so is not written. The</span>
+    <span class="c1"># kinds that hold nothing but multipoles do not scale, and have no such</span>
+    <span class="c1"># attribute to set.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">push_scale_multipoles</span><span class="p">(</span><span class="n">mp_attrs</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">any</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[AB][0-9]"</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">mp_attrs</span><span class="p">)</span> <span class="ow">or</span>
+                <span class="p">(</span><span class="n">drive</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">drive</span><span class="o">.</span><span class="n">multipole</span><span class="p">))</span> <span class="ow">and</span> \
+                <span class="n">ele_kind_bmad</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"AB_Multipole"</span><span class="p">,</span> <span class="s2">"Multipole"</span><span class="p">,</span> <span class="s2">"SAD_Mult"</span><span class="p">):</span>
+            <span class="n">push_attr</span><span class="p">(</span><span class="s2">"scale_multipoles = F"</span><span class="p">)</span>
 
     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">props</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"length"</span><span class="p">:</span>
@@ -1314,13 +1397,7 @@
 
             <span class="n">fill_multipoles</span><span class="p">(</span><span class="n">full</span><span class="p">,</span> <span class="n">mmP</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
 
-            <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">normalized</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
-                <span class="k">pass</span>                            <span class="c1"># push_attr("field_master = F") is the default</span>
-            <span class="k">elif</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">normalized</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="ow">and</span> <span class="n">ele_kind</span> <span class="o">!=</span> <span class="s2">"RFCavity"</span><span class="p">:</span>
-                <span class="n">push_attr</span><span class="p">(</span><span class="s2">"field_master = T"</span><span class="p">)</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: Multipoles of one element must be all "</span>
-                                 <span class="s2">"normalized or all unnormalized."</span><span class="p">)</span>
+            <span class="n">push_field_master</span><span class="p">(</span><span class="n">full</span><span class="o">.</span><span class="n">normalized</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 
             <span class="c1"># The multipoles that are the element's own strength become Bmad</span>
             <span class="c1"># strength attributes; the rest stay multipoles. A bend's order-0</span>
@@ -1334,16 +1411,7 @@
             <span class="n">rep</span> <span class="o">=</span> <span class="n">_kind_map</span><span class="p">(</span><span class="n">ele_kind</span><span class="p">)(</span><span class="n">full</span><span class="p">)</span>
             <span class="n">mp_attrs</span> <span class="o">=</span> <span class="n">_mp_key</span><span class="p">(</span><span class="n">rep</span><span class="p">)</span>
             <span class="n">attrs</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mp_attrs</span><span class="p">)</span>
-
-            <span class="c1"># Bmad reads An/Bn on an ordinary element as fractions of that</span>
-            <span class="c1"># element's own strength, scaling them by K1*L for a quadrupole, K2*L</span>
-            <span class="c1"># for a sextupole, and so on. PALS multipoles are the field integrals</span>
-            <span class="c1"># themselves, so the scaling has to be turned off. The kinds that hold</span>
-            <span class="c1"># nothing but multipoles do not scale, and have no such attribute to</span>
-            <span class="c1"># set.</span>
-            <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">"[AB][0-9]"</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">mp_attrs</span><span class="p">)</span> <span class="ow">and</span> \
-                    <span class="n">ele_kind_bmad</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">(</span><span class="s2">"AB_Multipole"</span><span class="p">,</span> <span class="s2">"Multipole"</span><span class="p">,</span> <span class="s2">"SAD_Mult"</span><span class="p">):</span>
-                <span class="n">push_attr</span><span class="p">(</span><span class="s2">"scale_multipoles = F"</span><span class="p">)</span>
+            <span class="n">push_scale_multipoles</span><span class="p">(</span><span class="n">mp_attrs</span><span class="p">)</span>
 
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"MetaP"</span><span class="p">:</span>
             <span class="n">metaP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"MetaP"</span><span class="p">]</span>
@@ -1514,6 +1582,12 @@
                 <span class="k">elif</span> <span class="n">rkey</span> <span class="o">==</span> <span class="s2">"species_ref"</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: changing species in-beamline is "</span>
                                      <span class="s2">"not supported by Bmad"</span><span class="p">)</span>
+
+    <span class="c1"># An element whose multipoles only its controllers state still needs them read</span>
+    <span class="c1"># the way the controllers mean them.</span>
+    <span class="k">if</span> <span class="s2">"MagneticMultipoleP"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">props</span><span class="p">:</span>
+        <span class="n">push_field_master</span><span class="p">(())</span>
+        <span class="n">push_scale_multipoles</span><span class="p">(())</span>
 
     <span class="k">return</span> <span class="n">BmadEleDef</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">ele_kind_bmad</span><span class="p">,</span> <span class="n">attrs</span><span class="p">)</span>
 
