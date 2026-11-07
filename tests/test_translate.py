@@ -1241,3 +1241,57 @@ def test_an_rf_gradient_becomes_bmads_voltage(tmp_path):
                                                              "gradient: 2E6")
     out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, fixture)))
     assert "rf1: RFCavity,\n\tL = 1.3,\n\tvoltage = 2600000.0" in out
+
+
+# A kicker whose field only its controller sets: one starts at zero, one does not
+# state the field at all.
+DRIVEN_FIXTURE = dedent("""
+  PALS:
+    facility:
+      - beg:
+          kind: BeginningEle
+          ReferenceP:
+            species_ref: electron
+            pc_ref: 18e9
+      - c1:
+          kind: Kicker
+          length: 0.2
+          MagneticMultipoleP:
+            Bn0: 0.0
+      - c2:
+          kind: Kicker
+          length: 0.2
+      - steer:
+          kind: Controller
+          variables:
+            current: 0.0
+          controls:
+            - parameter: c1>MagneticMultipoleP.Bn0
+              expression: -1e-4 * current
+            - parameter: c2>MagneticMultipoleP.Bs0
+              expression: 1e-4 * current
+      - line1:
+          kind: BeamLine
+          line: [beg, c1, c2]
+      - lat:
+          kind: Lattice
+          branches: [line1]
+  """)
+
+
+def test_a_controller_driven_multipole_sets_its_elements_multipole_flags(tmp_path):
+    out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, DRIVEN_FIXTURE)))
+
+    # A zero field is not written, but the controller still drives B0 -- a field,
+    # not a fraction of the kicker's own strength, which is zero. An element that
+    # leaves the field to its controller altogether needs the same.
+    assert "c1: Kicker,\n\tL = 0.2,\n\tfield_master = T,\n\tscale_multipoles = F\n" in out
+    assert "c2: Kicker,\n\tL = 0.2,\n\tfield_master = T,\n\tscale_multipoles = F\n" in out
+    assert "c1[B0]: 0.2*(-1e-4 * current)" in out
+    assert "c2[A0]: 0.2*(1e-4 * current)" in out
+
+
+def test_an_element_and_its_controller_must_agree_on_normalization(tmp_path):
+    text = DRIVEN_FIXTURE.replace("Bn0: 0.0", "Kn0: 0.0")
+    with pytest.raises(ValueError, match="c1: the multipoles of an element"):
+        pals_to_bmad(_parsed(tmp_path, text))
