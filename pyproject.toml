@@ -7,7 +7,7 @@ name = "palsparserpy"
 version = "0.1.0"
 description = "Python interface for Particle Accelerator Language Standard (PALS) files"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 license = { text = "MIT" }
 authors = [
     { name = "David Sagan", email = "david.sagan@gmail.com" },
