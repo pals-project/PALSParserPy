@@ -499,7 +499,7 @@
 <span class="sd">    Example:</span>
 <span class="sd">        &gt;&gt;&gt; lat = parse_and_expand_pals("lattice.pals.yaml")</span>
 <span class="sd">        &gt;&gt;&gt; corr = node_correspondence(lat)</span>
-<span class="sd">        &gt;&gt;&gt; a_const = lat.combined["PALS"]["facility"][0]["constants"]["a_const"]</span>
+<span class="sd">        &gt;&gt;&gt; a_const = lat.combined["PALS"]["facility"][0]["constants"][0]["a_const"]</span>
 <span class="sd">        &gt;&gt;&gt; corr[a_const].original        # the same constant in the original tree</span>
 <span class="sd">        &gt;&gt;&gt; corr[a_const].adjunct         # constants are not part of the lattice</span>
 <span class="sd">        &gt;&gt;&gt; corr[a_const].full_expanded   # empty unless the lattice referenced it</span>
