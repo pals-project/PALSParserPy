@@ -250,7 +250,7 @@ def node_correspondence(lat: Lattices) -> Dict[YAMLNode, NodeCorrespondence]:
     Example:
         >>> lat = parse_and_expand_pals("lattice.pals.yaml")
         >>> corr = node_correspondence(lat)
-        >>> a_const = lat.combined["PALS"]["facility"][0]["constants"]["a_const"]
+        >>> a_const = lat.combined["PALS"]["facility"][0]["constants"][0]["a_const"]
         >>> corr[a_const].original        # the same constant in the original tree
         >>> corr[a_const].adjunct         # constants are not part of the lattice
         >>> corr[a_const].full_expanded   # empty unless the lattice referenced it
