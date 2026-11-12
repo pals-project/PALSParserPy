@@ -5,7 +5,7 @@ Python Interface for Particle Accelerator Language Standard (PALS) files.
 ## Introduction
 
 `PALSParserPy` is a parser for the Particle Accelerator Language Standard
-([PALS](https://github.com/campa-consortium/pals)) for the Python language.
+([PALS](https://github.com/pals-project/pals)) for the Python language.
 
 In addition, `PALSParserPy` provides translation functions:
 
@@ -57,7 +57,7 @@ lat = pp.parse_and_expand_pals("lattice_files/ex.pals.yaml")
 print(lat.full_expanded)                       # the expanded lattice, as YAML
 
 pp.parameter_value(lat, "Q1a>length")          # one parameter's value
-pp.match_names(lat.full_expanded, "B1.*>BendP.e1")   # the nodes a name selects
+pp.match_names(lat.full_expanded, "DH.*>BendP.e1")   # the nodes a name selects
 
 pp.write_bmad_file(pp.pals_to_bmad(pp.parse_file("lattice_files/bta.pals.yaml")),
                    "bta.bmad")
