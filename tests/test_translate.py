@@ -599,7 +599,7 @@ PLACEMENT_FIXTURE = dedent("""
             length: 1.3
             RFP:
               voltage: 1E6
-              harmon: 10
+              harmonic_number: 10
               phase: pi/2
               multipass_phase: 0.5
               zero_phase: BELOW_TRANSITION

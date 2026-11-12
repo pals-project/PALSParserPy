@@ -1989,8 +1989,8 @@ def _xsuite_rf(rfP: YAMLNode, name: str, xsuite_kind: str,
     Xsuite's own, which is reported.
     """
     attrs: List[Tuple[str, str]] = []
-    if "frequency" in rfP and "harmon" in rfP:
-        raise ValueError(f"{name}: can only define `frequency` or `harmon` but "
+    if "frequency" in rfP and "harmonic_number" in rfP:
+        raise ValueError(f"{name}: can only define `frequency` or `harmonic_number` but "
                          "not both")
     if "voltage" in rfP and "gradient" in rfP:
         raise ValueError(f"{name}: can only define `voltage` or `gradient` but "
@@ -2009,7 +2009,7 @@ def _xsuite_rf(rfP: YAMLNode, name: str, xsuite_kind: str,
         val = rfP[rfkey].value
         if rfkey == "frequency":
             attrs.append(("frequency", _xsuite_value(name, val)))
-        elif rfkey == "harmon":
+        elif rfkey == "harmonic_number":
             if crab:
                 print(f"{name}: an Xsuite CrabCavity takes a frequency, not a "
                       "harmonic number, not translated")

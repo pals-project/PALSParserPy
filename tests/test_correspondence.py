@@ -13,7 +13,7 @@ CORR_LATTICE = """
 PALS:
   facility:
     - constants:
-        a_const: 0.3 * r_electron
+        - a_const: 0.3 * r_electron
     - d1:
         kind: Drift
         length: 2.0
@@ -43,7 +43,7 @@ def corr(tmp_path_factory):
 
 
 def _a_const(lat):
-    return lat.combined["PALS"]["facility"][0]["constants"]["a_const"]
+    return lat.combined["PALS"]["facility"][0]["constants"][0]["a_const"]
 
 
 def test_returns_a_dict_keyed_by_node(corr):

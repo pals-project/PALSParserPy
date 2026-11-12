@@ -31,7 +31,7 @@ print(f"Built a correspondence over {len(corr)} nodes.\n")
 # 'a_const' is defined at the top level of the facility and the lattice never
 # refers to it, so expansion leaves it behind: it appears once in `original`, once
 # in `combined` and once in `adjunct`, and not at all in `full_expanded`.
-a_const = lat.combined["PALS"]["facility"][0]["constants"]["a_const"]
+a_const = lat.combined["PALS"]["facility"][0]["constants"][0]["a_const"]
 entry = corr[a_const]
 
 print("Correspondence of the 'a_const' node:")

@@ -163,7 +163,7 @@ ELEMENT_FIXTURE = dedent("""
       - rf2:
           kind: RFCavity
           RFP:
-            harmon: 100
+            harmonic_number: 100
             voltage: 1E6
             num_cells: 5
       - sol:

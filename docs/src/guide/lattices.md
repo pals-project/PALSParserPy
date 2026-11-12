@@ -194,7 +194,7 @@ tuple whose fields — `original`, `combined`, `full_expanded`, `adjunct` — ar
 each a list of `YAMLNode` listing the corresponding nodes in that view:
 
 ```python
-a_const = lat.combined["PALS"]["facility"][0]["constants"]["a_const"]
+a_const = lat.combined["PALS"]["facility"][0]["constants"][0]["a_const"]
 
 corr[a_const].original        # [ the a_const node in the original tree ]
 corr[a_const].adjunct         # [ the a_const node in the adjunct tree ]

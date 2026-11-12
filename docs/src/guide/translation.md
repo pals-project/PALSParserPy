@@ -456,7 +456,7 @@ and their Bmad, MAD-X and Xsuite equivalents.
   change it in mid-line, so the whole group is an error.
 
 ### RFP
-- Note (MAD-X): frequency --> `freq` in MHz, harmon --> `harmon`,
+- Note (MAD-X): frequency --> `freq` in MHz, harmonic_number --> `harmon`,
   voltage --> `volt` in MV, gradient --> `volt = gradient * L_active`.
 - Note (Bmad): gradient --> `voltage = gradient * L_active` (`L_active` defaulting to the
   element length), Bmad's `gradient` being a dependent attribute.
