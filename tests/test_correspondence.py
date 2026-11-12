@@ -4,7 +4,7 @@ derivation-chain trees."""
 import pytest
 
 from palsparserpy import (evaluate_pals_expression, node_correspondence,
-                          parse_and_expand_pals, parse_string)
+                          original_node, parse_and_expand_pals, parse_string)
 
 # A self-contained lattice: `a_const` sits outside the expanded lattice (so it is
 # left over rather than expanded), while `repeat: 3` exercises the one-to-many
@@ -132,3 +132,67 @@ def test_unmapped_nodes_are_absent_from_the_dict(corr):
     # A freshly built, unrelated tree shares no nodes with the correspondence.
     _, mapping = corr
     assert parse_string("stray: node") not in mapping
+
+
+# ─── original_node ──────────────────────────────────────────────────────────
+
+SOURCE_LATTICE = """
+PALS:
+  facility:
+    - q1:
+        kind: Quadrupole
+        MagneticMultipoleP:
+          Kn1: 0.5
+    - q2:
+        kind: Quadrupole
+        MagneticMultipoleP:
+          Kn1: expr(2 * q1>MagneticMultipoleP.Kn1)
+    - q3:
+        kind: Quadrupole
+        MagneticMultipoleP:
+          Kn1: 0.1
+    - set:
+        parameter: q3>MagneticMultipoleP.Kn1
+        value: expr(3 * q1>MagneticMultipoleP.Kn1)
+    - ln:
+        kind: BeamLine
+        line:
+          - begin:
+              kind: BeginningEle
+              ReferenceP: {species_ref: electron, E_tot_ref: 1.0e9}
+          - q1
+          - q2
+          - q3
+    - lat1:
+        kind: Lattice
+        branches:
+          - ln
+    - use: lat1
+"""
+
+
+@pytest.fixture
+def source_lat(tmp_path):
+    path = tmp_path / "source.pals.yaml"
+    path.write_text(SOURCE_LATTICE)
+    return parse_and_expand_pals(str(path))
+
+
+@pytest.mark.parametrize("view", ["expanded", "full_expanded"])
+def test_original_node_leads_to_the_text_a_value_came_from(source_lat, view):
+    line = getattr(source_lat, view)["lat1"]["branches"][0]["ln"]["line"]
+
+    def source(i, name):
+        node = line[i][name]["MagneticMultipoleP"]["Kn1"]
+        return original_node(source_lat, node)
+
+    assert source(1, "q1").value == "0.5"
+    assert source(2, "q2").value == "expr(2 * q1>MagneticMultipoleP.Kn1)"
+    # Written by a set: the set's value, not the 0.1 it replaced.
+    assert source(3, "q3").value == "expr(3 * q1>MagneticMultipoleP.Kn1)"
+    assert source(1, "q1").tree is source_lat.original.tree
+
+
+def test_original_node_is_none_for_a_computed_value(source_lat):
+    line = source_lat.full_expanded["lat1"]["branches"][0]["ln"]["line"]
+    assert original_node(source_lat, line[1]["q1"]["FloorP"]["z"]) is None

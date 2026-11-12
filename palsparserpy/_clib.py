@@ -102,6 +102,7 @@ _PROTOTYPES = {
     "build_correspondence_map":    (CorrespondenceMapC,
                                     [c_void_p, c_void_p, c_void_p, c_void_p]),
     "free_correspondence_map":     (None, [CorrespondenceMapC]),
+    "original_node":               (c_size_t, [c_void_p, c_void_p, c_size_t]),
     "match_names":                 (NameMatchesC, [c_void_p, c_char_p]),
     "free_name_matches":           (None, [NameMatchesC]),
     "get_parameter_value":         (ParamValueC, [c_void_p, c_char_p]),

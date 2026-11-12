@@ -9,7 +9,7 @@ from __future__ import annotations
 import ctypes
 import os
 import sys
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Union
 
 from ._clib import (PARAM_VALUE_NUMBER, PARAM_VALUE_STRING, ParamValueC,
                     ProblemListC, encode, libparser, take_string, YAML_NULL_ID)
@@ -320,6 +320,36 @@ def node_correspondence(lat: Lattices) -> Dict[YAMLNode, NodeCorrespondence]:
         for key in members:
             result[node_of(key)] = entry
     return result
+
+
+def original_node(lat: Lattices, node: YAMLNode) -> Optional[YAMLNode]:
+    """The node of ``lat.original`` that ``node`` came from: the text it was
+    written as. ``node`` may be in ``lat.expanded``, ``lat.full_expanded``,
+    ``lat.adjunct`` or ``lat.combined``.
+
+    Every value in the expanded trees is a number. This leads back to the
+    expression it was evaluated from, so a program can tell, for instance,
+    whether it was delayed (``expr(...)``). A parameter written by a ``set``
+    leads to that set's ``value``, the text that gave it its value, not to the
+    value it replaced.
+
+    Returns ``None`` for a value the parser computed (a ``FloorP`` coordinate,
+    say), and for one an ABSOLUTE controller drives: that value is the
+    controllers' (several may sum), not any one text's.
+
+    Unlike :func:`node_correspondence`, this answers for one node and also
+    takes the ``expanded`` tree.
+
+    Example:
+        >>> lat = parse_and_expand_pals("lattice.pals.yaml")
+        >>> kn1 = lat.expanded["lat1"]["branches"][0]["ln"]["line"][1]["q2"]["MagneticMultipoleP"]["Kn1"]
+        >>> original_node(lat, kn1).value.startswith("expr(")   # was it delayed?
+    """
+    node_id = libparser().original_node(lat.combined.tree.handle,
+                                        node.tree.handle, node.id)
+    if node_id == YAML_NULL_ID:
+        return None
+    return YAMLNode(lat.original.tree, node_id)
 
 
 # ─── name matching ───────────────────────────────────────────────────────────
