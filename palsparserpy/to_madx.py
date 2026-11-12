@@ -1616,9 +1616,9 @@ def _make_madx_ele(ele: YAMLNode) -> Tuple[MadxEleDef, MadxAlignment]:
                              "only to first order in the angles.")
         elif key == "RFP":
             rfP = props["RFP"]
-            if "frequency" in rfP and "harmon" in rfP:
+            if "frequency" in rfP and "harmonic_number" in rfP:
                 raise ValueError(f"{name}: can only define `frequency` or "
-                                 "`harmon` but not both")
+                                 "`harmonic_number` but not both")
             # MAD-X's zero phase is the zero crossing half a period away from the
             # one PALS calls the stable point above transition, whichever of the
             # three PALS is measuring from.
@@ -1639,8 +1639,8 @@ def _make_madx_ele(ele: YAMLNode) -> Tuple[MadxEleDef, MadxAlignment]:
                 # in MHz and MV.
                 if rfkey == "frequency":
                     tmp = f"freq = {_madx_scale(rfP['frequency'].value, 1e-6)},"
-                elif rfkey == "harmon":
-                    tmp = f"harmon = {rfP['harmon'].value},"
+                elif rfkey == "harmonic_number":
+                    tmp = f"harmon = {rfP['harmonic_number'].value},"
                 elif rfkey == "voltage":
                     tmp = f"volt = {_madx_scale(rfP['voltage'].value, 1e-6)},"
                 elif rfkey == "gradient":

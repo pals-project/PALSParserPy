@@ -116,7 +116,7 @@ BROKEN_LATTICE = """
 PALS:
   facility:
     - constants:
-        a_const: 0.3 * undefined_thing
+        - a_const: 0.3 * undefined_thing
     - thingB:
         kind: Sextupole
         MagneticMultipoleP:
@@ -147,8 +147,8 @@ SPECIES_CONST_LATTICE = """
 PALS:
   facility:
     - constants:
-        species: "#3He"
-        b_const: 0.45 * mass_of(species)
+        - species: "#3He"
+        - b_const: 0.45 * mass_of(species)
     - DH1A:
         kind: Bend
         ReferenceP:
@@ -267,13 +267,13 @@ class TestWholeLatticeEvaluation:
         dh1a = _inlined(lat, "lat1", "main_line", "DH1A")
 
         # mass_of(species) resolves the `species: "#3He"` constant by name.
-        assert consts["b_const"].as_float() == pytest.approx(0.45 * m_3he)
+        assert consts[1]["b_const"].as_float() == pytest.approx(0.45 * m_3he)
         assert dh1a["BendP"]["h1"].as_float() == pytest.approx(1.1 * m_3he)
         # A bare identifier naming the species constant (species_ref: species) is
         # replaced by its species-name string in the expanded tree.
         assert dh1a["ReferenceP"]["species_ref"].value == "#3He"
         # The species constant itself keeps its string species name.
-        assert consts["species"].value == "#3He"
+        assert consts[0]["species"].value == "#3He"
 
     def test_evaluates_controllers(self, tmp_path):
         lat = parse_and_expand_pals(

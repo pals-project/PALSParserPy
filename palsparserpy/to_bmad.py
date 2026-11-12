@@ -1223,8 +1223,8 @@ def _make_bmad_ele(ele: YAMLNode, beginning_at_origin: bool = True,
                     tmp += f"rf_frequency = {rfP['frequency'].value}, "
                     tmp += "harmon_master = false,"
 
-                elif rfkey == "harmon":
-                    tmp += f"harmon = {rfP['harmon'].value}, "
+                elif rfkey == "harmonic_number":
+                    tmp += f"harmon = {rfP['harmonic_number'].value}, "
                     tmp += "harmon_master = true,"
 
                 elif rfkey == "voltage":
@@ -1275,9 +1275,9 @@ def _make_bmad_ele(ele: YAMLNode, beginning_at_origin: bool = True,
                     raise ValueError(f"{name}: needs translation to LCavity for "
                                      "`dE_ref`")
                 push_attr(tmp)
-            if "frequency" in rfP and "harmon" in rfP:
+            if "frequency" in rfP and "harmonic_number" in rfP:
                 raise ValueError(f"{name}: can only define `frequency` or "
-                                 "`harmon` but not both")
+                                 "`harmonic_number` but not both")
         elif key == "SolenoidP":
             solP = props["SolenoidP"]
             if solP.keys():
