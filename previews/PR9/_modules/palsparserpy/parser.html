@@ -605,6 +605,38 @@
 
 
 
+<div class="viewcode-block" id="controller_expressions">
+<a class="viewcode-back" href="../../api.html#palsparserpy.controller_expressions">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">controller_expressions</span><span class="p">(</span><span class="n">lat</span><span class="p">:</span> <span class="n">Lattices</span><span class="p">,</span> <span class="n">node</span><span class="p">:</span> <span class="n">YAMLNode</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">YAMLNode</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">"""The controllers driving a parameter.</span>
+
+<span class="sd">    ``node`` is a parameter's value node in ``lat.expanded`` or</span>
+<span class="sd">    ``lat.full_expanded``. For each ``controls`` entry reaching it, ABSOLUTE or</span>
+<span class="sd">    RELATIVE, the result holds that entry's ``expression`` node in</span>
+<span class="sd">    ``lat.original``, in the order the controllers were evaluated. Several</span>
+<span class="sd">    controllers may drive one parameter (ABSOLUTE ones sum), which is why this</span>
+<span class="sd">    is a list. It is empty when no controller drives ``node``.</span>
+
+<span class="sd">    The controller itself is three :func:`get_parent` steps up from an</span>
+<span class="sd">    expression: the ``controls`` entry, the ``controls`` list, then the</span>
+<span class="sd">    controller.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; for e in controller_expressions(lat, kn1):</span>
+<span class="sd">        ...     ctrl = get_parent(get_parent(get_parent(e)))</span>
+<span class="sd">        ...     print(node_key(ctrl), ":", e.value)      # e.g. "ps1 : 2 * cur"</span>
+<span class="sd">    """</span>
+    <span class="n">lib</span> <span class="o">=</span> <span class="n">libparser</span><span class="p">()</span>
+    <span class="n">nodes</span> <span class="o">=</span> <span class="n">lib</span><span class="o">.</span><span class="n">controller_expressions</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">combined</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span>
+                                       <span class="n">node</span><span class="o">.</span><span class="n">tree</span><span class="o">.</span><span class="n">handle</span><span class="p">,</span> <span class="n">node</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">ids</span> <span class="o">=</span> <span class="p">[</span><span class="n">nodes</span><span class="o">.</span><span class="n">nodes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">count</span><span class="p">)]</span>
+    <span class="k">finally</span><span class="p">:</span>
+        <span class="n">lib</span><span class="o">.</span><span class="n">free_node_list</span><span class="p">(</span><span class="n">nodes</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">YAMLNode</span><span class="p">(</span><span class="n">lat</span><span class="o">.</span><span class="n">original</span><span class="o">.</span><span class="n">tree</span><span class="p">,</span> <span class="n">node_id</span><span class="p">)</span> <span class="k">for</span> <span class="n">node_id</span> <span class="ow">in</span> <span class="n">ids</span><span class="p">]</span></div>
+
+
+
 <span class="c1"># ─── name matching ───────────────────────────────────────────────────────────</span>
 
 <div class="viewcode-block" id="match_names">
