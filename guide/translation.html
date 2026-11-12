@@ -450,7 +450,7 @@ are reported.</p></li>
 <p>The following is the element-by-element mapping between PALS parameter groups
 and their Bmad, MAD-X and Xsuite equivalents.</p>
 <section id="element-kinds-mad-x-keywords">
-<h3>Element kinds –&gt; MAD-X keywords<a class="headerlink" href="#element-kinds-mad-x-keywords" title="Link to this heading">¶</a></h3>
+<span id="element-kinds----mad-x-keywords"></span><h3>Element kinds –&gt; MAD-X keywords<a class="headerlink" href="#element-kinds-mad-x-keywords" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Bend –&gt; sbend (PALS has the one bend, whose reference geometry is a sector)</p></li>
 <li><p>CrabCavity –&gt; crabcavity</p></li>
@@ -475,7 +475,7 @@ format</p></li>
 </ul>
 </section>
 <section id="element-kinds-xsuite-classes">
-<h3>Element kinds –&gt; Xsuite classes<a class="headerlink" href="#element-kinds-xsuite-classes" title="Link to this heading">¶</a></h3>
+<span id="element-kinds----xsuite-classes"></span><h3>Element kinds –&gt; Xsuite classes<a class="headerlink" href="#element-kinds-xsuite-classes" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Bend –&gt; <code class="docutils literal notranslate"><span class="pre">Bend</span></code> (sector bend; <code class="docutils literal notranslate"><span class="pre">ref_geometry</span></code> other than <code class="docutils literal notranslate"><span class="pre">ARC</span></code> is reported)</p></li>
 <li><p>Quadrupole, Sextupole, Octupole –&gt; <code class="docutils literal notranslate"><span class="pre">Quadrupole</span></code>, <code class="docutils literal notranslate"><span class="pre">Sextupole</span></code>, <code class="docutils literal notranslate"><span class="pre">Octupole</span></code>; a
@@ -496,7 +496,7 @@ Feedback –&gt; not translated (an error)</p></li>
 </ul>
 </section>
 <section id="parameter-groups-xsuite">
-<h3>Parameter groups –&gt; Xsuite<a class="headerlink" href="#parameter-groups-xsuite" title="Link to this heading">¶</a></h3>
+<span id="parameter-groups----xsuite"></span><h3>Parameter groups –&gt; Xsuite<a class="headerlink" href="#parameter-groups-xsuite" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>ReferenceP –&gt; <code class="docutils literal notranslate"><span class="pre">xt.Particles(species,</span> <span class="pre">p0c=pc_ref</span> <span class="pre">|</span> <span class="pre">energy0=E_tot_ref)</span></code>, set as
 <code class="docutils literal notranslate"><span class="pre">env.particle_ref</span></code>; a line whose own BeginningEle states a different one gets it
@@ -743,7 +743,7 @@ change it in mid-line, so the whole group is an error.</p></li>
 <section id="rfp">
 <h3>RFP<a class="headerlink" href="#rfp" title="Link to this heading">¶</a></h3>
 <ul class="simple">
-<li><p>Note (MAD-X): frequency –&gt; <code class="docutils literal notranslate"><span class="pre">freq</span></code> in MHz, harmon –&gt; <code class="docutils literal notranslate"><span class="pre">harmon</span></code>,
+<li><p>Note (MAD-X): frequency –&gt; <code class="docutils literal notranslate"><span class="pre">freq</span></code> in MHz, harmonic_number –&gt; <code class="docutils literal notranslate"><span class="pre">harmon</span></code>,
 voltage –&gt; <code class="docutils literal notranslate"><span class="pre">volt</span></code> in MV, gradient –&gt; <code class="docutils literal notranslate"><span class="pre">volt</span> <span class="pre">=</span> <span class="pre">gradient</span> <span class="pre">*</span> <span class="pre">L_active</span></code>.</p></li>
 <li><p>Note (Bmad): gradient –&gt; <code class="docutils literal notranslate"><span class="pre">voltage</span> <span class="pre">=</span> <span class="pre">gradient</span> <span class="pre">*</span> <span class="pre">L_active</span></code> (<code class="docutils literal notranslate"><span class="pre">L_active</span></code> defaulting to the
 element length), Bmad’s <code class="docutils literal notranslate"><span class="pre">gradient</span></code> being a dependent attribute.</p></li>
@@ -773,7 +773,7 @@ length also needs MAD-X’s integrated <code class="docutils literal notranslate
 </ul>
 </section>
 <section id="twissp-initial-conditions">
-<h3>TwissP –&gt; initial conditions<a class="headerlink" href="#twissp-initial-conditions" title="Link to this heading">¶</a></h3>
+<span id="twissp----initial-conditions"></span><h3>TwissP –&gt; initial conditions<a class="headerlink" href="#twissp-initial-conditions" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>Note (Bmad): the group becomes <code class="docutils literal notranslate"><span class="pre">beginning[...]</span></code> settings, which PALS and Bmad
 name alike bar the coupling matrix’s underscore (<code class="docutils literal notranslate"><span class="pre">cmat11</span></code> –&gt; <code class="docutils literal notranslate"><span class="pre">cmat_11</span></code>).</p></li>
@@ -801,7 +801,7 @@ used — so <code class="docutils literal notranslate"><span class="pre">periodi
 </ul>
 </section>
 <section id="constants-and-variables-bmad-name-value-definitions">
-<h3>Constants and variables –&gt; Bmad <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">value</span></code> definitions<a class="headerlink" href="#constants-and-variables-bmad-name-value-definitions" title="Link to this heading">¶</a></h3>
+<span id="constants-and-variables----bmad-name--value-definitions"></span><h3>Constants and variables –&gt; Bmad <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">value</span></code> definitions<a class="headerlink" href="#constants-and-variables-bmad-name-value-definitions" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">constants:</span></code> / <code class="docutils literal notranslate"><span class="pre">variables:</span></code> list entry –&gt; <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">value</span></code></p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">constant</span></code> / <code class="docutils literal notranslate"><span class="pre">kind:</span> <span class="pre">variable</span></code> definition –&gt; <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">value</span></code></p></li>
@@ -826,7 +826,7 @@ MAD-X does not have, and the predefined constants MAD-X spells differently
 </ul>
 </section>
 <section id="controllers-bmad-overlays-and-groups">
-<h3>Controllers –&gt; Bmad overlays and groups<a class="headerlink" href="#controllers-bmad-overlays-and-groups" title="Link to this heading">¶</a></h3>
+<span id="controllers----bmad-overlays-and-groups"></span><h3>Controllers –&gt; Bmad overlays and groups<a class="headerlink" href="#controllers-bmad-overlays-and-groups" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">control_type:</span> <span class="pre">ABSOLUTE</span></code> –&gt; an <code class="docutils literal notranslate"><span class="pre">overlay</span></code>, which sets its slaves’ attributes.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">control_type:</span> <span class="pre">RELATIVE</span></code> –&gt; a <code class="docutils literal notranslate"><span class="pre">group</span></code>, which adds to them.</p></li>
@@ -845,7 +845,7 @@ normalized or all fields.</p></li>
 </ul>
 </section>
 <section id="controllers-mad-x-variables-and-deferred-assignments">
-<h3>Controllers –&gt; MAD-X variables and deferred assignments<a class="headerlink" href="#controllers-mad-x-variables-and-deferred-assignments" title="Link to this heading">¶</a></h3>
+<span id="controllers----mad-x-variables-and-deferred-assignments"></span><h3>Controllers –&gt; MAD-X variables and deferred assignments<a class="headerlink" href="#controllers-mad-x-variables-and-deferred-assignments" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>variables –&gt; <code class="docutils literal notranslate"><span class="pre">name</span> <span class="pre">=</span> <span class="pre">value;</span></code> (global MAD-X variables)</p></li>
 <li><p>controls –&gt; <code class="docutils literal notranslate"><span class="pre">ele-&gt;attribute</span> <span class="pre">:=</span> <span class="pre">expression;</span></code></p></li>
@@ -875,7 +875,7 @@ multipole or selecting its slaves by pattern.</p></li>
 </ul>
 </section>
 <section id="controllers-xsuite-variables-and-deferred-expressions">
-<h3>Controllers –&gt; Xsuite variables and deferred expressions<a class="headerlink" href="#controllers-xsuite-variables-and-deferred-expressions" title="Link to this heading">¶</a></h3>
+<span id="controllers----xsuite-variables-and-deferred-expressions"></span><h3>Controllers –&gt; Xsuite variables and deferred expressions<a class="headerlink" href="#controllers-xsuite-variables-and-deferred-expressions" title="Link to this heading">¶</a></h3>
 <ul class="simple">
 <li><p>variables –&gt; <code class="docutils literal notranslate"><span class="pre">env['name']</span> <span class="pre">=</span> <span class="pre">value</span></code> (global Xsuite variables)</p></li>
 <li><p>controls –&gt; <code class="docutils literal notranslate"><span class="pre">env['ele'].attribute</span> <span class="pre">=</span> <span class="pre">'expression'</span></code>, or

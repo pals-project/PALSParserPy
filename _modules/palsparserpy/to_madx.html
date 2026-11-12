@@ -1878,9 +1878,9 @@
                              <span class="s2">"only to first order in the angles."</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"RFP"</span><span class="p">:</span>
             <span class="n">rfP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"RFP"</span><span class="p">]</span>
-            <span class="k">if</span> <span class="s2">"frequency"</span> <span class="ow">in</span> <span class="n">rfP</span> <span class="ow">and</span> <span class="s2">"harmon"</span> <span class="ow">in</span> <span class="n">rfP</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"frequency"</span> <span class="ow">in</span> <span class="n">rfP</span> <span class="ow">and</span> <span class="s2">"harmonic_number"</span> <span class="ow">in</span> <span class="n">rfP</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: can only define `frequency` or "</span>
-                                 <span class="s2">"`harmon` but not both"</span><span class="p">)</span>
+                                 <span class="s2">"`harmonic_number` but not both"</span><span class="p">)</span>
             <span class="c1"># MAD-X's zero phase is the zero crossing half a period away from the</span>
             <span class="c1"># one PALS calls the stable point above transition, whichever of the</span>
             <span class="c1"># three PALS is measuring from.</span>
@@ -1901,8 +1901,8 @@
                 <span class="c1"># in MHz and MV.</span>
                 <span class="k">if</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"frequency"</span><span class="p">:</span>
                     <span class="n">tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"freq = </span><span class="si">{</span><span class="n">_madx_scale</span><span class="p">(</span><span class="n">rfP</span><span class="p">[</span><span class="s1">'frequency'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">)</span><span class="si">}</span><span class="s2">,"</span>
-                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"harmon"</span><span class="p">:</span>
-                    <span class="n">tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"harmon = </span><span class="si">{</span><span class="n">rfP</span><span class="p">[</span><span class="s1">'harmon'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
+                <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"harmonic_number"</span><span class="p">:</span>
+                    <span class="n">tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"harmon = </span><span class="si">{</span><span class="n">rfP</span><span class="p">[</span><span class="s1">'harmonic_number'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">,"</span>
                 <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"voltage"</span><span class="p">:</span>
                     <span class="n">tmp</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"volt = </span><span class="si">{</span><span class="n">_madx_scale</span><span class="p">(</span><span class="n">rfP</span><span class="p">[</span><span class="s1">'voltage'</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="p">,</span><span class="w"> </span><span class="mf">1e-6</span><span class="p">)</span><span class="si">}</span><span class="s2">,"</span>
                 <span class="k">elif</span> <span class="n">rfkey</span> <span class="o">==</span> <span class="s2">"gradient"</span><span class="p">:</span>
