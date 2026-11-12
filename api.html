@@ -1247,6 +1247,73 @@ only in <code class="docutils literal notranslate"><span class="pre">adjunct</sp
 </dd></dl>
 
 <dl class="py function">
+<dt class="sig sig-object py" id="palsparserpy.original_node">
+<span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">original_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/parser.html#original_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.original_node" title="Link to this definition">¶</a></dt>
+<dd><p>The node of <code class="docutils literal notranslate"><span class="pre">lat.original</span></code> that <code class="docutils literal notranslate"><span class="pre">node</span></code> came from: the text it was
+written as. <code class="docutils literal notranslate"><span class="pre">node</span></code> may be in <code class="docutils literal notranslate"><span class="pre">lat.expanded</span></code>, <code class="docutils literal notranslate"><span class="pre">lat.full_expanded</span></code>,
+<code class="docutils literal notranslate"><span class="pre">lat.adjunct</span></code> or <code class="docutils literal notranslate"><span class="pre">lat.combined</span></code>.</p>
+<p>Every value in the expanded trees is a number. This leads back to the
+expression it was evaluated from, so a program can tell, for instance,
+whether it was delayed (<code class="docutils literal notranslate"><span class="pre">expr(...)</span></code>). A parameter written by a <code class="docutils literal notranslate"><span class="pre">set</span></code>
+leads to that set’s <code class="docutils literal notranslate"><span class="pre">value</span></code>, the text that gave it its value, not to the
+value it replaced.</p>
+<p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code> for a value the parser computed (a <code class="docutils literal notranslate"><span class="pre">FloorP</span></code> coordinate,
+say), and for one an ABSOLUTE controller drives: that value is the
+controllers’ (several may sum), not any one text’s.</p>
+<p>Unlike <a class="reference internal" href="#palsparserpy.node_correspondence" title="palsparserpy.node_correspondence"><code class="xref py py-func docutils literal notranslate"><span class="pre">node_correspondence()</span></code></a>, this answers for one node and also
+takes the <code class="docutils literal notranslate"><span class="pre">expanded</span></code> tree.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">lat</span> <span class="o">=</span> <span class="n">parse_and_expand_pals</span><span class="p">(</span><span class="s2">"lattice.pals.yaml"</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">kn1</span> <span class="o">=</span> <span class="n">lat</span><span class="o">.</span><span class="n">expanded</span><span class="p">[</span><span class="s2">"lat1"</span><span class="p">][</span><span class="s2">"branches"</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">"ln"</span><span class="p">][</span><span class="s2">"line"</span><span class="p">][</span><span class="mi">1</span><span class="p">][</span><span class="s2">"q2"</span><span class="p">][</span><span class="s2">"MagneticMultipoleP"</span><span class="p">][</span><span class="s2">"Kn1"</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">original_node</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">kn1</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"expr("</span><span class="p">)</span>   <span class="c1"># was it delayed?</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<a class="reference internal" href="#palsparserpy.Lattices" title="palsparserpy.structs.Lattices"><em>Lattices</em></a>)</p></li>
+<li><p><strong>node</strong> (<a class="reference internal" href="#palsparserpy.YAMLNode" title="palsparserpy.node.YAMLNode"><em>YAMLNode</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="#palsparserpy.YAMLNode" title="palsparserpy.node.YAMLNode"><em>YAMLNode</em></a> | None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="palsparserpy.controller_expressions">
+<span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">controller_expressions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/parser.html#controller_expressions"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.controller_expressions" title="Link to this definition">¶</a></dt>
+<dd><p>The controllers driving a parameter.</p>
+<p><code class="docutils literal notranslate"><span class="pre">node</span></code> is a parameter’s value node in <code class="docutils literal notranslate"><span class="pre">lat.expanded</span></code> or
+<code class="docutils literal notranslate"><span class="pre">lat.full_expanded</span></code>. For each <code class="docutils literal notranslate"><span class="pre">controls</span></code> entry reaching it, ABSOLUTE or
+RELATIVE, the result holds that entry’s <code class="docutils literal notranslate"><span class="pre">expression</span></code> node in
+<code class="docutils literal notranslate"><span class="pre">lat.original</span></code>, in the order the controllers were evaluated. Several
+controllers may drive one parameter (ABSOLUTE ones sum), which is why this
+is a list. It is empty when no controller drives <code class="docutils literal notranslate"><span class="pre">node</span></code>.</p>
+<p>The controller itself is three <a class="reference internal" href="#palsparserpy.get_parent" title="palsparserpy.get_parent"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_parent()</span></code></a> steps up from an
+expression: the <code class="docutils literal notranslate"><span class="pre">controls</span></code> entry, the <code class="docutils literal notranslate"><span class="pre">controls</span></code> list, then the
+controller.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="n">controller_expressions</span><span class="p">(</span><span class="n">lat</span><span class="p">,</span> <span class="n">kn1</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">ctrl</span> <span class="o">=</span> <span class="n">get_parent</span><span class="p">(</span><span class="n">get_parent</span><span class="p">(</span><span class="n">get_parent</span><span class="p">(</span><span class="n">e</span><span class="p">)))</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="n">node_key</span><span class="p">(</span><span class="n">ctrl</span><span class="p">),</span> <span class="s2">":"</span><span class="p">,</span> <span class="n">e</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>      <span class="c1"># e.g. "ps1 : 2 * cur"</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<a class="reference internal" href="#palsparserpy.Lattices" title="palsparserpy.structs.Lattices"><em>Lattices</em></a>)</p></li>
+<li><p><strong>node</strong> (<a class="reference internal" href="#palsparserpy.YAMLNode" title="palsparserpy.node.YAMLNode"><em>YAMLNode</em></a>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.15)"><em>List</em></a>[<a class="reference internal" href="#palsparserpy.YAMLNode" title="palsparserpy.node.YAMLNode"><em>YAMLNode</em></a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
 <dt class="sig sig-object py" id="palsparserpy.match_names">
 <span class="sig-prename descclassname"><span class="pre">palsparserpy.</span></span><span class="sig-name descname"><span class="pre">match_names</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">match_string</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/palsparserpy/parser.html#match_names"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#palsparserpy.match_names" title="Link to this definition">¶</a></dt>
 <dd><p>Every named construct in <code class="docutils literal notranslate"><span class="pre">node</span></code>’s tree that is matched by
@@ -2577,6 +2644,8 @@ controller’s <code class="docutils literal notranslate"><span class="pre">Meta
 <li><a class="reference internal" href="#palsparserpy.parse_and_expand_pals"><code class="docutils literal notranslate"><span class="pre">parse_and_expand_pals()</span></code></a></li>
 <li><a class="reference internal" href="#palsparserpy.evaluate_pals_expression"><code class="docutils literal notranslate"><span class="pre">evaluate_pals_expression()</span></code></a></li>
 <li><a class="reference internal" href="#palsparserpy.node_correspondence"><code class="docutils literal notranslate"><span class="pre">node_correspondence()</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.original_node"><code class="docutils literal notranslate"><span class="pre">original_node()</span></code></a></li>
+<li><a class="reference internal" href="#palsparserpy.controller_expressions"><code class="docutils literal notranslate"><span class="pre">controller_expressions()</span></code></a></li>
 <li><a class="reference internal" href="#palsparserpy.match_names"><code class="docutils literal notranslate"><span class="pre">match_names()</span></code></a></li>
 <li><a class="reference internal" href="#palsparserpy.parameter_value"><code class="docutils literal notranslate"><span class="pre">parameter_value()</span></code></a></li>
 </ul>

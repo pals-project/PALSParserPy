@@ -252,6 +252,34 @@ merged, or renamed during expansion.
 
 A runnable version of these examples is in `examples/node_correspondence.py`.
 
+### The expression behind a value
+
+Every value in the expanded trees is a number. `original_node(lat, node)`
+returns the node of `original` that one node came from: the text it was written
+as. It takes a node of `expanded` as well as `full_expanded`, `adjunct` and
+`combined`, and answers for that one node without building the whole map.
+
+```python
+src = pp.original_node(lat, kn1)        # kn1: a value node in lat.expanded
+src.value.startswith("expr(")           # was the value delayed?
+```
+
+A value written by a `set` leads to that set's `value`, not to the value it
+replaced. `None` comes back for a value the parser computed, and for one an
+ABSOLUTE controller drives, whose value is the controllers' rather than any one
+text's.
+
+For a controlled parameter, `controller_expressions(lat, node)` lists every
+controller driving it, ABSOLUTE or RELATIVE: each `controls` entry's
+`expression` node in `original`, in evaluation order. Three `get_parent` steps
+from an expression reach its controller.
+
+```python
+for e in pp.controller_expressions(lat, kn1):
+    ctrl = pp.get_parent(pp.get_parent(pp.get_parent(e)))
+    print(pp.node_key(ctrl), ":", e.value)
+```
+
 ## Matching constructs by name
 
 Once a lattice is expanded, `match_names` finds every named construct that a
