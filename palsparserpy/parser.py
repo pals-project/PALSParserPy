@@ -352,6 +352,35 @@ def original_node(lat: Lattices, node: YAMLNode) -> Optional[YAMLNode]:
     return YAMLNode(lat.original.tree, node_id)
 
 
+def controller_expressions(lat: Lattices, node: YAMLNode) -> List[YAMLNode]:
+    """The controllers driving a parameter.
+
+    ``node`` is a parameter's value node in ``lat.expanded`` or
+    ``lat.full_expanded``. For each ``controls`` entry reaching it, ABSOLUTE or
+    RELATIVE, the result holds that entry's ``expression`` node in
+    ``lat.original``, in the order the controllers were evaluated. Several
+    controllers may drive one parameter (ABSOLUTE ones sum), which is why this
+    is a list. It is empty when no controller drives ``node``.
+
+    The controller itself is three :func:`get_parent` steps up from an
+    expression: the ``controls`` entry, the ``controls`` list, then the
+    controller.
+
+    Example:
+        >>> for e in controller_expressions(lat, kn1):
+        ...     ctrl = get_parent(get_parent(get_parent(e)))
+        ...     print(node_key(ctrl), ":", e.value)      # e.g. "ps1 : 2 * cur"
+    """
+    lib = libparser()
+    nodes = lib.controller_expressions(lat.combined.tree.handle,
+                                       node.tree.handle, node.id)
+    try:
+        ids = [nodes.nodes[i] for i in range(nodes.count)]
+    finally:
+        lib.free_node_list(nodes)
+    return [YAMLNode(lat.original.tree, node_id) for node_id in ids]
+
+
 # ─── name matching ───────────────────────────────────────────────────────────
 
 def match_names(node: YAMLNode, match_string: str) -> List[YAMLNode]:

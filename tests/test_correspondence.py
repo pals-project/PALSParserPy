@@ -3,7 +3,8 @@ derivation-chain trees."""
 
 import pytest
 
-from palsparserpy import (evaluate_pals_expression, node_correspondence,
+from palsparserpy import (controller_expressions, evaluate_pals_expression,
+                          get_parent, node_correspondence, node_key,
                           original_node, parse_and_expand_pals, parse_string)
 
 # A self-contained lattice: `a_const` sits outside the expanded lattice (so it is
@@ -196,3 +197,86 @@ def test_original_node_leads_to_the_text_a_value_came_from(source_lat, view):
 def test_original_node_is_none_for_a_computed_value(source_lat):
     line = source_lat.full_expanded["lat1"]["branches"][0]["ln"]["line"]
     assert original_node(source_lat, line[1]["q1"]["FloorP"]["z"]) is None
+
+
+# ─── controller_expressions ─────────────────────────────────────────────────
+
+CONTROLLED_LATTICE = """
+PALS:
+  facility:
+    - q1:
+        kind: Quadrupole
+    - q2:
+        kind: Quadrupole
+        MagneticMultipoleP:
+          Kn1: 0.3
+    - q3:
+        kind: Quadrupole
+        MagneticMultipoleP:
+          Kn1: 0.2
+    - ps1:
+        kind: Controller
+        variables:
+          cur: 0.25
+        controls:
+          - parameter: q1>MagneticMultipoleP.Kn1
+            expression: 2 * cur
+    - ps2:
+        kind: Controller
+        variables:
+          cur: 0.1
+        controls:
+          - parameter: q1>MagneticMultipoleP.Kn1
+            expression: cur
+    - knob:
+        kind: Controller
+        control_type: RELATIVE
+        variables:
+          k: 0.0
+        controls:
+          - parameter: q2>MagneticMultipoleP.Kn1
+            expression: 3 * k
+    - ln:
+        kind: BeamLine
+        line:
+          - begin:
+              kind: BeginningEle
+              ReferenceP: {species_ref: electron, E_tot_ref: 1.0e9}
+          - q1
+          - q2
+          - q3
+    - lat1:
+        kind: Lattice
+        branches:
+          - ln
+    - use: lat1
+"""
+
+
+@pytest.fixture
+def controlled_lat(tmp_path):
+    path = tmp_path / "controlled.pals.yaml"
+    path.write_text(CONTROLLED_LATTICE)
+    return parse_and_expand_pals(str(path))
+
+
+@pytest.mark.parametrize("view", ["expanded", "full_expanded"])
+def test_controller_expressions_lists_every_driving_controller(controlled_lat,
+                                                               view):
+    line = getattr(controlled_lat, view)["lat1"]["branches"][0]["ln"]["line"]
+
+    def kn1(i, name):
+        return line[i][name]["MagneticMultipoleP"]["Kn1"]
+
+    def described(i, name):
+        return [f"{node_key(get_parent(get_parent(get_parent(e))))}: {e.value}"
+                for e in controller_expressions(controlled_lat, kn1(i, name))]
+
+    # Two ABSOLUTE controllers sum into q1, in evaluation order.
+    assert described(1, "q1") == ["ps1: 2 * cur", "ps2: cur"]
+    assert described(2, "q2") == ["knob: 3 * k"]
+    assert controller_expressions(controlled_lat, kn1(3, "q3")) == []
+    assert all(e.tree is controlled_lat.original.tree
+               for e in controller_expressions(controlled_lat, kn1(1, "q1")))
+    # A controller-driven value has no single source text.
+    assert original_node(controlled_lat, kn1(1, "q1")) is None

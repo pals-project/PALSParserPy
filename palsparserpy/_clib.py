@@ -69,6 +69,12 @@ class CorrespondenceMapC(Structure):
                 ("count", c_size_t)]
 
 
+class NodeListC(Structure):
+    """Mirrors ``struct node_list``: a flat array of node ids."""
+    _fields_ = [("nodes", POINTER(c_size_t)),
+                ("count", c_size_t)]
+
+
 class NameMatchesC(Structure):
     """Mirrors ``struct name_matches``: a flat array of matched node ids."""
     _fields_ = [("nodes", POINTER(c_size_t)),
@@ -103,6 +109,8 @@ _PROTOTYPES = {
                                     [c_void_p, c_void_p, c_void_p, c_void_p]),
     "free_correspondence_map":     (None, [CorrespondenceMapC]),
     "original_node":               (c_size_t, [c_void_p, c_void_p, c_size_t]),
+    "controller_expressions":      (NodeListC, [c_void_p, c_void_p, c_size_t]),
+    "free_node_list":              (None, [NodeListC]),
     "match_names":                 (NameMatchesC, [c_void_p, c_char_p]),
     "free_name_matches":           (None, [NameMatchesC]),
     "get_parameter_value":         (ParamValueC, [c_void_p, c_char_p]),
