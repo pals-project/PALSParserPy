@@ -30,7 +30,8 @@ from .node import (PALSParseError, YAMLNode, YAMLTree, add_map, add_scalar,
                    deep_copy_node, get_parent, is_map, is_scalar, is_sequence,
                    node_key, parse_file, parse_string, remove, set_key,
                    set_scalar, to_yaml_string, write_yaml)
-from .parser import (evaluate_pals_expression, match_names, node_correspondence,
+from .parser import (controller_expressions, evaluate_pals_expression,
+                     match_names, node_correspondence, original_node,
                      parameter_value, parse_and_expand_pals)
 from .structs import (PROBLEM_ERROR, PROBLEM_INPUT, PROBLEM_UNSPECIFIED,
                       PROBLEM_UNSUPPORTED, PROBLEM_WARNING, Lattices,
@@ -54,6 +55,7 @@ __all__ = [
     "deep_copy_node", "deep_copy_children", "to_yaml_string", "write_yaml",
     # lattice-level API
     "parse_and_expand_pals", "evaluate_pals_expression", "node_correspondence",
+    "original_node", "controller_expressions",
     "match_names", "parameter_value",
     # what it hands back
     "Lattices", "Problem", "NodeCorrespondence",

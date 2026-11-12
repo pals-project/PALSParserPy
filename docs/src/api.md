@@ -52,6 +52,8 @@ Each of these is the free-function spelling of the like-named
 .. autofunction:: palsparserpy.parse_and_expand_pals
 .. autofunction:: palsparserpy.evaluate_pals_expression
 .. autofunction:: palsparserpy.node_correspondence
+.. autofunction:: palsparserpy.original_node
+.. autofunction:: palsparserpy.controller_expressions
 .. autofunction:: palsparserpy.match_names
 .. autofunction:: palsparserpy.parameter_value
 ```
