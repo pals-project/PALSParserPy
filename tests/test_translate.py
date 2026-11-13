@@ -660,6 +660,23 @@ def _madx_text(tmp_path, lat):
     return _written(write_madx_file, tmp_path, lat, "madx")
 
 
+@pytest.mark.parametrize("pals_name, bmad_name", [
+    ("dbeta_a_dpz", "dbeta_dpz_a"),
+    ("dbeta_b_dpz", "dbeta_dpz_b"),
+    ("dalpha_a_dpz", "dalpha_dpz_a"),
+    ("dalpha_b_dpz", "dalpha_dpz_b"),
+    ("deta_x_dpz", "deta_dpz_x"),
+    ("deta_y_dpz", "deta_dpz_y"),
+    ("detap_x_dpz", "detap_dpz_x"),
+    ("detap_y_dpz", "detap_dpz_y"),
+])
+def test_bmad_initial_chromatic_twiss_names(tmp_path, pals_name, bmad_name):
+    fixture = TRANSLATE_FIXTURE.replace("beta_a: 10", f"{pals_name}: 1.25")
+    out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, fixture)))
+    assert f"beginning[{bmad_name}] = 1.25" in out
+    assert f"beginning[{pals_name}]" not in out
+
+
 def test_pals_to_bmad_writes_a_bmad_lattice_file(tmp_path):
     out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, TRANSLATE_FIXTURE)))
 
