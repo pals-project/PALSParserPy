@@ -669,8 +669,10 @@ def _madx_text(tmp_path, lat):
     ("deta_y_dpz", "deta_dpz_y"),
     ("detap_x_dpz", "detap_dpz_x"),
     ("detap_y_dpz", "detap_dpz_y"),
+    ("deta_x_ds", "deta_ds_x"),
+    ("deta_y_ds", "deta_ds_y"),
 ])
-def test_bmad_initial_chromatic_twiss_names(tmp_path, pals_name, bmad_name):
+def test_bmad_initial_twiss_derivative_names(tmp_path, pals_name, bmad_name):
     fixture = TRANSLATE_FIXTURE.replace("beta_a: 10", f"{pals_name}: 1.25")
     out = _bmad_text(tmp_path, pals_to_bmad(_parsed(tmp_path, fixture)))
     assert f"beginning[{bmad_name}] = 1.25" in out
@@ -688,11 +690,12 @@ def test_pals_to_bmad_writes_a_bmad_lattice_file(tmp_path):
     assert "particle_start[spin_x] = 1" in out
 
     # TwissP -> the beginning element. Bmad and PALS agree on these names except
-    # for the coupling matrix, where Bmad has an underscore.
+    # for the coupling matrix, where Bmad has an underscore, and the derivatives,
+    # where Bmad puts dpz or ds before the plane or mode.
     assert "beginning[beta_a] = 10" in out
     assert "beginning[alpha_a] = 0.5" in out
     assert "beginning[cmat_11] = 0.1" in out
-    assert "beginning[deta_x_ds] = 0.2" in out
+    assert "beginning[deta_ds_x] = 0.2" in out
 
     # Ordinary element definitions.
     assert "d1: Drift" in out
