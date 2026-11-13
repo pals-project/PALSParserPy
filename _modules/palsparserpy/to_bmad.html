@@ -617,10 +617,13 @@
         <span class="k">if</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"TwissP"</span><span class="p">:</span>
             <span class="n">twissP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"TwissP"</span><span class="p">]</span>
             <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">twissP</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="c1"># Bmad puts dpz before the plane/mode in chromatic derivatives.</span>
+                <span class="c1"># PALS and Bmad give these the same names, bar the coupling</span>
+                <span class="c1"># matrix's underscore and the derivatives, where Bmad puts dpz</span>
+                <span class="c1"># or ds before the plane or mode (PALS `dbeta_a_dpz` is Bmad</span>
+                <span class="c1"># `dbeta_dpz_a`, and `deta_x_ds` is `deta_ds_x`).</span>
                 <span class="n">attribute</span> <span class="o">=</span> <span class="s2">"cmat_"</span> <span class="o">+</span> <span class="n">k</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span> <span class="k">if</span> <span class="n">k</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"cmat"</span><span class="p">)</span> <span class="k">else</span> <span class="n">k</span>
-                <span class="n">attribute</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^(dbeta|dalpha|deta|detap)_([abxy])_dpz$"</span><span class="p">,</span>
-                                   <span class="sa">r</span><span class="s2">"\1_dpz_\2"</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
+                <span class="n">attribute</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">sub</span><span class="p">(</span><span class="sa">r</span><span class="s2">"^(dbeta|dalpha|deta|detap)_([abxy])_(dpz|ds)$"</span><span class="p">,</span>
+                                   <span class="sa">r</span><span class="s2">"\1_\3_\2"</span><span class="p">,</span> <span class="n">attribute</span><span class="p">)</span>
                 <span class="n">beginning</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"beginning[</span><span class="si">{</span><span class="n">attribute</span><span class="si">}</span><span class="s2">] = </span><span class="si">{</span><span class="n">twissP</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">.</span><span class="n">value</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">key</span> <span class="o">==</span> <span class="s2">"ReferenceP"</span><span class="p">:</span>
             <span class="n">referenceP</span> <span class="o">=</span> <span class="n">props</span><span class="p">[</span><span class="s2">"ReferenceP"</span><span class="p">]</span>
