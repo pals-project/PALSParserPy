@@ -141,9 +141,11 @@ def parse_and_expand_pals(filename, root_lattice: str = "", *,
     Every mathematical expression is evaluated to a number across the expanded
     views and ``adjunct`` (see :func:`evaluate_pals_expression`;
     ``random()``/``random_gauss()`` are left as text). ``Controller`` elements are
-    evaluated against their own scoped variable tables, with each control
-    ``expression`` computed and stored back in its control entry; controllers are
-    facility-level, so they are found in ``adjunct``.
+    evaluated against their own scoped variable tables. Each control
+    ``expression`` keeps its text as written, with the number it evaluates to
+    beside it as ``value``; a deferred expression, or one that cannot be
+    evaluated, gets no ``value``. Controllers are facility-level, so they are
+    found in ``adjunct``.
 
     Each view is backed by its own tree; all five are freed independently when
     their nodes are garbage collected.

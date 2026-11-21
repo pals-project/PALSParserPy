@@ -290,22 +290,29 @@ class TestWholeLatticeEvaluation:
         # user constants, never a variable (rejecting a variable reference is
         # PALSParserCpp's business and is tested there).
         assert ps27["variables"]["cur2"].as_float() == pytest.approx(cur2)
-        # Each control expression is computed and stored back in the entry.
-        assert ps27["controls"][0]["expression"].as_float() == \
+        # Each control entry keeps its expression as written, with the number it
+        # evaluates to beside it as `value`.
+        c0 = ps27["controls"][0]
+        assert c0["expression"].value == "0.075*sin(cur1) + 0.3*cur2"
+        assert c0["value"].as_float() == \
             pytest.approx(0.075 * math.sin(cur1) + 0.3 * cur2)
         # Control expressions may reference lattice constants (my_const = 2).
-        assert ps27["controls"][1]["expression"].as_float() == \
-            pytest.approx(cur1 * 2.0)
-        # random_gauss() stays deferred.
-        assert ps27["controls"][2]["expression"].value == "0.01 + random_gauss()"
+        c1 = ps27["controls"][1]
+        assert c1["expression"].value == "cur1 * my_const"
+        assert c1["value"].as_float() == pytest.approx(cur1 * 2.0)
+        # random_gauss() stays deferred, so the entry gets no value.
+        c2 = ps27["controls"][2]
+        assert c2["expression"].value == "0.01 + random_gauss()"
+        assert "value" not in c2
         # The parameter target spec is a name, left untouched.
-        assert ps27["controls"][0]["parameter"].value == \
-            "Qa.*>MagneticMultipoleP.Ks2L"
+        assert c0["parameter"].value == "Qa.*>MagneticMultipoleP.Ks2L"
 
         # A second controller, with a symbol table of its own.
         chrom = fac[2]["chrom_a"]
         assert chrom["variables"]["derived"].as_float() == pytest.approx(0.8)
-        assert chrom["controls"][0]["expression"].as_float() == \
+        cc0 = chrom["controls"][0]
+        assert cc0["expression"].value == "5.62 * command + 0.02 * command^2"
+        assert cc0["value"].as_float() == \
             pytest.approx(5.62 * 0.4 + 0.02 * 0.4 ** 2)
 
         # The combined tree keeps the original controller expression text.
