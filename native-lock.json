@@ -1,0 +1,21 @@
+{
+  "version": "0.0.4",
+  "commit": "f1f69dff8a4561a781305ebc72d75cad6805a2c9",
+  "dependencies": {
+    "rapidyaml": {
+      "url": "https://github.com/biojppm/rapidyaml.git",
+      "tag": "v0.15.0",
+      "commit": "e80ab40670a16fd70a3972cb77e59f280670f581"
+    },
+    "pcre2": {
+      "url": "https://github.com/PCRE2Project/pcre2.git",
+      "tag": "pcre2-10.44",
+      "commit": "6ae58beca071f13ccfed31d03b3f479ab520639b"
+    },
+    "apc": {
+      "url": "https://github.com/pals-project/AtomicAndPhysicalConstantsCLib.git",
+      "tag": "v0.12.0",
+      "commit": "3fc87cf582acec19e0a021fc1c69655d9fdbd6aa"
+    }
+  }
+}

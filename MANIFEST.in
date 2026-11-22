@@ -1,0 +1,7 @@
+include native-lock.json setup.py
+recursive-include tools *.py
+recursive-include native *
+recursive-include vendor *
+recursive-include tests *.py *.yaml *.txt
+recursive-include lattice_files *
+prune vendor/.git

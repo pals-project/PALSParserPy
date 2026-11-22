@@ -28,25 +28,29 @@ A translator from `SciBmad` to `PALS` is planned.
 
 ## Installation
 
-PALSParserPy is a thin Python wrapper around the C library built by
-[PALSParserCpp](https://github.com/pals-project/PALSParserCpp), so both
-repositories must be cloned side by side and the C library must be built first:
+Published PyPI wheels include the native parser and its dependencies:
 
 ```console
-git clone https://github.com/pals-project/PALSParserCpp.git
-git clone https://github.com/pals-project/PALSParserPy.git
-
-cd PALSParserCpp && cmake -S . -B build && cmake --build build && cd ..
-
-cd PALSParserPy && pip install -e .
+pip install palsparserpy
+# Or, in a uv project:
+uv add palsparserpy
 ```
 
-`pip install -e .` installs nothing but the package itself — PALSParserPy has no
-Python dependencies. If PALSParserCpp lives somewhere other than beside this
-checkout, point at it with `PALS_PARSER_CPP_DIR` or `PALS_PARSER_CPP_LIB`.
+Wheels target Linux x86-64 (glibc 2.28+), macOS Intel/Apple silicon (11+), and
+Windows x86-64, with Python 3.10 or later. These installation commands require
+a release containing the new wheels; this branch does not publish one itself.
+Other platforms can build from the source distribution with CMake and a C++17
+compiler (GCC 9+). The source distribution includes the pinned native sources.
 
-**See the [Installation guide](https://pals-project.github.io/PALSParserPy/guide/installation.html)
-for full step-by-step instructions.**
+Conda packages use the environment's separately packaged native library.
+Explicit `PALS_PARSER_CPP_LIB` and `PALS_PARSER_CPP_DIR` overrides remain
+available for development. For an external-library-only installation, set
+`PALS_BUNDLE_NATIVE=0` when building; conda-build selects this automatically.
+
+See [release automation](docs/src/guide/releases.md) for native version updates,
+wheel checks, and initial PyPI configuration. See the
+[installation guide](https://pals-project.github.io/PALSParserPy/guide/installation.html)
+for checkout development instructions.
 
 ## Quick start
 

@@ -1,0 +1,41 @@
+name: Propose native release update
+on:
+  schedule:
+    - cron: '23 8 * * 1'
+  workflow_dispatch:
+permissions:
+  contents: write
+  pull-requests: write
+  actions: write
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - run: python tools/update_native.py
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - uses: peter-evans/create-pull-request@v7
+        id: pr
+        with:
+          branch: automation/native-release
+          commit-message: Update pinned PALSParserCpp release
+          title: Update pinned PALSParserCpp release
+          body: |
+            Updates the native release and immutable dependency pins from upstream.
+            The supported version range is widened only when the public C header is unchanged.
+            Review ABI and behavior compatibility, then check wheel tests before merging.
+            A Python version bump and release remain maintainer decisions.
+            Prepared by automated tooling with AI-assisted implementation.
+          add-paths: |
+            native-lock.json
+            palsparserpy/_clib.py
+      # PRs created with GITHUB_TOKEN do not trigger pull_request workflows.
+      - name: Start wheel checks for the bot branch
+        if: steps.pr.outputs.pull-request-number != ''
+        run: gh workflow run wheels.yml --ref automation/native-release
+        env:
+          GH_TOKEN: ${{ github.token }}

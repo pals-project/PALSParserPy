@@ -162,15 +162,16 @@ def _dlext() -> str:
 def _candidates() -> list[str]:
     """Every place the library might be.
 
-    The library is built by PALSParserCpp and is not shipped with this package,
-    so it has to be searched for. In order:
+    PyPI wheels bundle the library; conda and source checkouts can supply it
+    externally. Explicit development overrides take priority.
 
       1. ``$PALS_PARSER_CPP_LIB`` -- full path to the shared library itself
       2. ``$PALS_PARSER_CPP_DIR`` -- a PALSParserCpp checkout; its build
          directory is searched
-      3. a PALSParserCpp checkout beside this one, and the checkout this one sits
+      3. the private native library bundled in a PyPI wheel
+      4. a PALSParserCpp checkout beside this one, and the checkout this one sits
          inside (both layouts the installation guide describes)
-      4. the library directory of the Python environment itself,
+      5. the library directory of the Python environment itself,
          ``<sys.prefix>/lib`` (``<sys.prefix>\\Library\\bin`` on Windows), where
          a conda package installs it
 
@@ -191,6 +192,13 @@ def _candidates() -> list[str]:
     roots = []
     if os.environ.get("PALS_PARSER_CPP_DIR"):
         roots.append(os.environ["PALS_PARSER_CPP_DIR"])
+    # Explicit checkout override precedes the wheel's private library.
+    for root in roots:
+        for sub in subdirs:
+            for name in names:
+                out.append(os.path.normpath(os.path.join(root, "build", sub, name)))
+    roots = []
+    out.extend(os.path.join(here, "_native", name) for name in names)
     roots.append(os.path.normpath(os.path.join(here, "..", "..", "PALSParserCpp")))
     roots.append(os.path.normpath(os.path.join(here, "..", "..")))
 

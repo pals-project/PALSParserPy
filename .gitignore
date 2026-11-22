@@ -223,3 +223,6 @@ gh-pages/
 # Translator output written by the examples
 lattice_files/*.pals_out.*
 lattice_files/expand.pals.yaml
+
+# Native sources are pinned and included in sdists, not committed.
+vendor/
