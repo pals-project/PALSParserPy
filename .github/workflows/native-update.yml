@@ -9,6 +9,7 @@ permissions:
   actions: write
 jobs:
   update:
+    if: github.repository == 'pals-project/PALSParserPy'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
