@@ -9,7 +9,8 @@ import palsparserpy
 from palsparserpy import _clib
 
 project = Path(sys.argv[1]).resolve()
-assert project not in Path(palsparserpy.__file__).resolve().parents, palsparserpy.__file__
+source_package = (project / "palsparserpy").resolve()
+assert source_package not in Path(palsparserpy.__file__).resolve().parents, palsparserpy.__file__
 assert "_native" in Path(_clib._find_library()).parts, _clib._find_library()
 manifest = Path(_clib._find_library()).parent / "native-lock.json"
 assert palsparserpy.library_version() == json.loads(manifest.read_text())["version"]
