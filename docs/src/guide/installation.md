@@ -1,17 +1,30 @@
 # Installation
 
-PALSParserPy is a Python wrapper around the C library built by
-[PALSParserCpp](https://github.com/pals-project/PALSParserCpp). That library is
-compiled from that repository rather than shipped with this package, so
-PALSParserPy has to be told where it is. By default it looks for a PALSParserCpp
-checkout beside its own, which is the layout below; if you keep PALSParserCpp
-somewhere else, see [Pointing at a PALSParserCpp
-elsewhere](#pointing-at-a-palsparsercpp-elsewhere) instead.
+## Published wheels (pip and uv)
 
-macOS, Linux, and Windows are all supported — the correct library extension for
-the platform (`.dylib`, `.so`, `.dll`) is worked out at load time. Python 3.8 or
-newer is required, and the interpreter must be built for the same architecture as
-the library (an x86-64 Python cannot load an arm64 `.dylib`).
+After a release containing the binary wheels is published, install with:
+
+```console
+pip install palsparserpy
+# Or in a uv-managed project:
+uv add palsparserpy
+```
+
+Supported wheels include PALSParserCpp and its native dependencies; no separate
+C++ checkout is required. Initial wheel targets are Linux x86-64 (glibc 2.28+),
+macOS Intel/ARM (11+), and Windows x86-64. Python 3.10 or newer is required.
+See [Binary wheels and release automation](releases.md) for build and release
+configuration. Other platforms can compile the complete source distribution.
+
+## Development with an external library
+
+The steps below use a separately built PALSParserCpp checkout. Explicit
+`PALS_PARSER_CPP_LIB` or `PALS_PARSER_CPP_DIR` overrides take precedence over
+bundled wheel libraries. Without an explicit override, a bundled library takes
+precedence over automatically discovered sibling checkouts.
+
+The interpreter must match the library's architecture: an x86-64 Python cannot
+load an arm64 `.dylib`.
 
 ## 1. Clone the repositories
 
@@ -56,11 +69,13 @@ the PALSParserCpp `README` for more detail.
 From the `PALSParserPy` directory:
 
 ```console
-pip install -e .
+# macOS/Linux: keep the external-library development workflow
+PALS_BUNDLE_NATIVE=0 python -m pip install -e .
 ```
 
-PALSParserPy has no Python dependencies — the C library is all it binds — so this
-installs nothing but the package itself. The `-e` (editable) install means edits
+On PowerShell, first set `$env:PALS_BUNDLE_NATIVE = "0"`, then run
+`python -m pip install -e .`. This mode installs the Python wrapper without
+building a bundled native library. The `-e` (editable) install means edits
 to the checkout take effect without reinstalling.
 
 Installing is optional if you only want to run the bundled scripts: the examples
