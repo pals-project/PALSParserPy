@@ -39,7 +39,7 @@ def build(destination, build_dir):
     run("cmake", "-S", ROOT / "native", "-B", build_dir,
         "-DCMAKE_BUILD_TYPE=Release", "-DCMAKE_POSITION_INDEPENDENT_CODE=ON",
         "-DCMAKE_INSTALL_PREFIX=" + str(destination.resolve()))
-    run("cmake", "--build", build_dir, "--config", "Release", "--parallel", os.environ.get("CMAKE_BUILD_PARALLEL_LEVEL", "2"))
+    run("cmake", "--build", build_dir, "--config", "Release", "--target", "PALSParserCpp", "--parallel", os.environ.get("CMAKE_BUILD_PARALLEL_LEVEL", "2"))
     run("cmake", "--install", build_dir, "--config", "Release", "--component", "PythonWheel")
 
 if __name__ == "__main__":
