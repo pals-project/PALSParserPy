@@ -238,7 +238,7 @@ def _find_library() -> str:
 # structs by layout, so a library outside this range may not match them, and
 # libparser() refuses it. Widen the range only after checking PALSParserCpp.h
 # against the bindings here.
-SUPPORTED_LIBRARY_VERSIONS = ((0, 0, 3), (0, 0, 3))
+SUPPORTED_LIBRARY_VERSIONS = ((0, 0, 3), (0, 0, 4))
 
 
 def _supported_text() -> str:
