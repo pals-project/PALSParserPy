@@ -1,8 +1,16 @@
 name: Propose native release update
 on:
-  schedule:
-    - cron: '23 8 * * 1'
   workflow_dispatch:
+    inputs:
+      version:
+        description: PALSParserCpp version selected by the conda recipe
+        required: true
+      rapidyaml_tag:
+        description: Optional rapidyaml tag selected for the conda baseline
+        default: ''
+      pcre2_tag:
+        description: Optional PCRE2 tag selected for the conda baseline
+        default: ''
 permissions:
   contents: write
   pull-requests: write
@@ -16,9 +24,12 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
-      - run: python tools/update_native.py
+      - run: python tools/update_native.py --version "$NATIVE_VERSION" --rapidyaml-tag "$RAPIDYAML_TAG" --pcre2-tag "$PCRE2_TAG"
         env:
           GH_TOKEN: ${{ github.token }}
+          NATIVE_VERSION: ${{ inputs.version }}
+          RAPIDYAML_TAG: ${{ inputs.rapidyaml_tag }}
+          PCRE2_TAG: ${{ inputs.pcre2_tag }}
       - uses: peter-evans/create-pull-request@v7
         id: pr
         with:
@@ -26,7 +37,7 @@ jobs:
           commit-message: Update pinned PALSParserCpp release
           title: Update pinned PALSParserCpp release
           body: |
-            Updates the native release and immutable dependency pins from upstream.
+            Updates the native release and immutable dependency pins selected for the conda baseline.
             The supported version range is widened only when the public C header is unchanged.
             Review ABI and behavior compatibility, then check wheel tests before merging.
             A Python version bump and release remain maintainer decisions.

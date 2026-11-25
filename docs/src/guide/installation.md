@@ -2,7 +2,7 @@
 
 ## Published wheels (pip and uv)
 
-After a release containing the binary wheels is published, install with:
+Install a release with binary wheels (0.0.2 or later) using:
 
 ```console
 pip install palsparserpy
@@ -13,7 +13,7 @@ uv add palsparserpy
 Supported wheels include PALSParserCpp and its native dependencies; no separate
 C++ checkout is required. Initial wheel targets are Linux x86-64 (glibc 2.28+),
 macOS Intel/ARM (11+), and Windows x86-64. Python 3.10 or newer is required.
-See [Binary wheels and release automation](releases.md) for build and release
+See [Binary wheels and release automation](../maintainer/releases.md) for build and release
 configuration. Other platforms can compile the complete source distribution.
 
 ## Development with an external library

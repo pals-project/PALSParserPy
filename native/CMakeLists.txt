@@ -9,7 +9,6 @@ get_filename_component(VENDOR "${CMAKE_CURRENT_LIST_DIR}/../vendor" ABSOLUTE)
 set(FETCHCONTENT_SOURCE_DIR_RAPIDYAML "${VENDOR}/rapidyaml" CACHE PATH "" FORCE)
 set(FETCHCONTENT_SOURCE_DIR_PCRE2 "${VENDOR}/pcre2" CACHE PATH "" FORCE)
 set(FETCHCONTENT_SOURCE_DIR_APC "${VENDOR}/apc" CACHE PATH "" FORCE)
-# Upstream uses CMAKE_SOURCE_DIR for its lattice fixture copy.
 add_subdirectory("${VENDOR}/PALSParserCpp" pals)
 install(TARGETS PALSParserCpp
     LIBRARY DESTINATION palsparserpy/_native COMPONENT PythonWheel

@@ -1,5 +1,6 @@
 """Pinned native sources, shared by wheel and source-distribution builds."""
 import json
+import hashlib
 import os
 from pathlib import Path
 import shutil
@@ -11,11 +12,18 @@ ROOT = Path(__file__).resolve().parents[1]
 def run(*args, **kw):
     subprocess.run(list(map(str, args)), check=True, **kw)
 
+def bundle_enabled():
+    return os.environ.get("PALS_BUNDLE_NATIVE", "1" if (ROOT / "vendor").is_dir() else "0") == "1"
+
 def prepare():
     lock = json.loads((ROOT / "native-lock.json").read_text())
     vendor = ROOT / "vendor"
     marker = vendor / "native-lock.json"
-    if marker.exists() and json.loads(marker.read_text()) == lock:
+    patches = sorted((ROOT / "native" / "patches").glob("*.patch"))
+    digest = hashlib.sha256(b"".join(p.read_bytes() for p in patches)).hexdigest()
+    patch_marker = vendor / "patches.sha256"
+    if (marker.exists() and json.loads(marker.read_text()) == lock
+            and patch_marker.exists() and patch_marker.read_text() == digest):
         return vendor
     if vendor.exists():
         shutil.rmtree(vendor)
@@ -31,6 +39,9 @@ def prepare():
                 raise RuntimeError(f"Moved source tag for {name}: {actual}")
             run("git", "-C", checkout, "submodule", "update", "--init", "--recursive", "--depth", "1")
             shutil.copytree(checkout, vendor / name, ignore=shutil.ignore_patterns(".git"))
+    for patch in patches:
+        run("git", "apply", "--unsafe-paths", "--directory=" + str((vendor / "PALSParserCpp").resolve()), patch.resolve())
+    patch_marker.write_text(digest)
     shutil.copyfile(ROOT / "native-lock.json", marker)
     return vendor
 

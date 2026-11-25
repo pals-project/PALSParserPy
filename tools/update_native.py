@@ -1,4 +1,5 @@
-"""Propose the latest stable native release; never auto-merge or publish."""
+"""Propose a maintainer-selected conda-aligned release; never publish."""
+import argparse
 import json
 from pathlib import Path
 import re
@@ -17,14 +18,18 @@ def resolve(url, tag):
     return peeled[0] if peeled else entries[0][0]
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--version", required=True, help="Native version selected by the conda recipe")
+    parser.add_argument("--rapidyaml-tag", default="")
+    parser.add_argument("--pcre2-tag", default="")
+    args = parser.parse_args()
     path = ROOT / "native-lock.json"
     lock = json.loads(path.read_text())
-    release = json.loads(output("gh", "api", "repos/pals-project/PALSParserCpp/releases/latest"))
-    tag = release["tag_name"]
+    tag = "v" + args.version.removeprefix("v")
     if not re.fullmatch(r"v\d+\.\d+\.\d+", tag):
         raise ValueError(f"Expected stable release tag, got {tag!r}")
-    if tuple(map(int, tag[1:].split('.'))) <= tuple(map(int, lock['version'].split('.'))):
-        return
+    if tuple(map(int, tag[1:].split('.'))) < tuple(map(int, lock['version'].split('.'))):
+        raise ValueError('Refusing to downgrade the native source pin')
     url = "https://github.com/pals-project/PALSParserCpp.git"
     commit = resolve(url, tag)
     with tempfile.TemporaryDirectory() as tmp:
@@ -36,7 +41,7 @@ def main():
         match = re.search(r"FetchContent_Declare\(\s*" + name + r"\s+GIT_REPOSITORY\s+(\S+)\s+GIT_TAG\s+(\S+)", cmake)
         if not match or match[1] != source['url']:
             raise ValueError(f"Review changed dependency declaration for {name}")
-        source['tag'] = match[2]
+        source['tag'] = (args.rapidyaml_tag or source['tag']) if name == 'rapidyaml' else ((args.pcre2_tag or source['tag']) if name == 'pcre2' else match[2])
         source['commit'] = resolve(source['url'], source['tag'])
     if header == old_header:
         loader = ROOT / 'palsparserpy/_clib.py'

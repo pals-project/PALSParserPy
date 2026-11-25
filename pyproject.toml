@@ -1,10 +1,11 @@
 [build-system]
-requires = ["setuptools>=77", "wheel", "cmake>=3.18"]
-build-backend = "setuptools.build_meta"
+requires = ["setuptools>=77"]
+build-backend = "build_backend"
+backend-path = ["."]
 
 [project]
 name = "palsparserpy"
-version = "0.0.1"
+version = "0.0.2"
 description = "Python interface for Particle Accelerator Language Standard (PALS) files"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -47,3 +48,6 @@ manylinux-x86_64-image = "manylinux_2_28"
 
 [tool.cibuildwheel.macos]
 environment = { MACOSX_DEPLOYMENT_TARGET = "11.0" }
+
+[tool.cibuildwheel.windows]
+repair-wheel-command = "delvewheel repair --analyze-existing -w {dest_dir} {wheel}"

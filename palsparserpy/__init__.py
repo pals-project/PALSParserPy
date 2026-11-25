@@ -44,7 +44,7 @@ from .to_madx import (MadxAlignment, MadxBeamline, MadxController, MadxEleDef,
 from .to_xsuite import (XsuiteBeamline, XsuiteController, XsuiteEle,
                         XsuiteLattice, pals_to_xsuite, write_xsuite_file)
 
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 
 __all__ = [
     # the C library underneath

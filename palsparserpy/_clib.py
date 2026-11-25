@@ -229,7 +229,8 @@ def _find_library() -> str:
     raise FileNotFoundError(
         f"PALSParserPy could not find the PALSParserCpp shared library "
         f"(libPALSParserCpp.{_dlext()}).\n\n"
-        "Install it into this environment (conda install palsparsercpp), or\n"
+        "Install a bundled PyPI wheel (pip install --upgrade palsparserpy),\n"
+        "install the conda native package (conda install palsparsercpp), or\n"
         "build it from a PALSParserCpp checkout:\n"
         "    cmake -S . -B build && cmake --build build\n\n"
         "Then either clone PALSParserCpp next to PALSParserPy, or point\n"

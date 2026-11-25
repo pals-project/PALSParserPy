@@ -18,7 +18,6 @@ a tree of `YAMLNode` values that you index and mutate with familiar Python idiom
 :caption: User Guide
 
 guide/installation
-guide/releases
 guide/parsing
 guide/lattices
 guide/expressions
@@ -30,6 +29,13 @@ guide/translation
 :caption: Reference
 
 api
+```
+
+```{toctree}
+:hidden:
+:caption: Maintainers
+
+maintainer/releases
 ```
 
 ## What it does

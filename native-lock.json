@@ -9,8 +9,8 @@
     },
     "pcre2": {
       "url": "https://github.com/PCRE2Project/pcre2.git",
-      "tag": "pcre2-10.44",
-      "commit": "6ae58beca071f13ccfed31d03b3f479ab520639b"
+      "tag": "pcre2-10.49",
+      "commit": "6f9d7c1373262c541324a16a358785b33ef116cf"
     },
     "apc": {
       "url": "https://github.com/pals-project/AtomicAndPhysicalConstantsCLib.git",

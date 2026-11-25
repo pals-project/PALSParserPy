@@ -1,4 +1,4 @@
-include native-lock.json setup.py requirements-wheels.txt
+include native-lock.json setup.py build_backend.py requirements-wheels.txt
 recursive-include tools *.py
 recursive-include native *
 recursive-include vendor *

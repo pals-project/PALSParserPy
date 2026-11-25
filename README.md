@@ -38,16 +38,16 @@ uv add palsparserpy
 
 Wheels target Linux x86-64 (glibc 2.28+), macOS Intel/Apple silicon (11+), and
 Windows x86-64, with Python 3.10 or later. These installation commands require
-a release containing the new wheels; this branch does not publish one itself.
+a release containing binary wheels (0.0.2 or later).
 Other platforms can build from the source distribution with CMake and a C++17
 compiler (GCC 9+). The source distribution includes the pinned native sources.
 
 Conda packages use the environment's separately packaged native library.
 Explicit `PALS_PARSER_CPP_LIB` and `PALS_PARSER_CPP_DIR` overrides remain
 available for development. For an external-library-only installation, set
-`PALS_BUNDLE_NATIVE=0` when building; conda-build selects this automatically.
+`PALS_BUNDLE_NATIVE=0` when building. Checkouts without a `vendor/` directory default to that mode.
 
-See [release automation](docs/src/guide/releases.md) for native version updates,
+See [release automation](docs/src/maintainer/releases.md) for native version updates,
 wheel checks, and initial PyPI configuration. See the
 [installation guide](https://pals-project.github.io/PALSParserPy/guide/installation.html)
 for checkout development instructions.

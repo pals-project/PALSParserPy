@@ -9,11 +9,22 @@ bundle compiler runtime libraries. Notices are retained under
 
 ## Native release updates
 
-`native-lock.json` is the authoritative wheel source pin. Every Monday, or on
-manual dispatch, `native-update.yml` checks the latest stable PALSParserCpp
-release and opens or updates `automation/native-release`. It resolves tags to
-commits and follows the dependency tags in the upstream CMake file. Changed
-source repositories or declarations stop automation for review.
+The conda recipe's PALSParserCpp version is the reference; `native-lock.json`
+records that version and the immutable wheel source pins. `native-update.yml`
+is manual-only: supply the conda-selected native version and optionally the
+rapidyaml and PCRE2 tags selected for the conda baseline. It opens or updates
+`automation/native-release`; it never independently follows the latest release.
+APC follows the selected native release because its constants affect tests.
+rapidyaml and PCRE2 retain their reviewed pins unless explicitly changed.
+The current baseline is PALSParserCpp 0.0.4, rapidyaml 0.15.0, PCRE2 10.49,
+and APC 0.12.0, matching the conda recipe/review's tested versions. The conda
+recipe itself leaves rapidyaml/PCRE2 resolution to conda-forge.
+Changed source repositories or declarations stop automation for review.
+
+The wheel source currently carries the small CMake correction from
+[PALSParserCpp #122](https://github.com/pals-project/PALSParserCpp/pull/122).
+Remove `native/patches/subdirectory-fixtures.patch` when the conda-selected
+native release includes it; do not move the lock to an unreleased branch.
 
 If the public C header is byte-for-byte unchanged, the update also extends the
 wrapper's supported version range. Otherwise a maintainer must inspect the
@@ -39,7 +50,7 @@ the suite. Pull requests, main pushes, and manual dispatch run without publishin
    `pypi`. Use a pending publisher if the PyPI project does not exist yet.
 2. Create the GitHub `pypi` environment and initially require a maintainer's
    approval. No PyPI API-token secret is required.
-3. Check that the Python version is unused on PyPI, and update both
+3. Use 0.0.2 or later (v0.0.1 already exists). Check that the Python version is unused on PyPI, and update both
    `pyproject.toml` and `palsparserpy/__init__.py`. Native and Python versions
    need not match. Publish a GitHub release tagged `v<python-version>`.
 
@@ -55,13 +66,16 @@ python -m pip install build
 python -m build
 ```
 
-A checkout build needs Git/network to prepare pinned native sources. An sdist
+Creating an sdist or explicitly bundled checkout wheel needs Git/network to prepare pinned native sources. An sdist
 already contains them and can rebuild without downloading native sources.
 Python build tools still need to be available. `PALS_BUNDLE_NATIVE=0` produces
-the existing pure Python wrapper for externally managed libraries; conda-build
-selects that default when `CONDA_BUILD` is set. This mode retains setuptools
-and does not need to build or load bundled native code.
+the existing pure Python wrapper for externally managed libraries. Without an
+override, builds bundle only if `vendor/` exists (as in the complete sdist).
+A clean checkout or GitHub tag archive therefore builds only Python by default,
+independently of `CONDA_BUILD`. Set `PALS_BUNDLE_NATIVE=0` explicitly in conda
+recipes. CMake is requested dynamically only for bundled wheels/editable builds;
+pure builds need only setuptools.
 
 Dependency/tool updates are proposed monthly by Dependabot. Native dependency
 changes shipped without a new PALSParserCpp release need a reviewed pin update
-and new Python release; the scheduled updater does not silently change them.
+and new Python release; the manual updater does not silently change them.

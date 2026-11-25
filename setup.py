@@ -6,10 +6,10 @@ from setuptools import setup, Distribution
 from setuptools.command.build_py import build_py
 from setuptools.command.sdist import sdist
 from setuptools.command.bdist_wheel import bdist_wheel
-sys.path.insert(0, str(Path(__file__).resolve().parent / "tools"))
-from native import build, prepare
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tools.native import build, prepare, bundle_enabled
 
-BUNDLE = os.environ.get("PALS_BUNDLE_NATIVE", "0" if os.environ.get("CONDA_BUILD") else "1") == "1"
+BUNDLE = bundle_enabled()
 
 class BinaryDistribution(Distribution):
     def has_ext_modules(self):
