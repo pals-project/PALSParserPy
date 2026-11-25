@@ -1,7 +1,9 @@
-# Translating to Bmad, MAD-X and Xsuite
+# Translating to Bmad, MAD-X, Xsuite and COSY INFINITY
 
-PALSParserPy can translate a PALS-format lattice into three accelerator formats:
+PALSParserPy can translate a PALS-format lattice into four accelerator formats:
 
+- **`palsparserpy/to_cosy.py`** — emits a [COSY INFINITY](https://www.bmtdynamics.org/)
+  programme from a fully expanded branch.
 - **`palsparserpy/to_bmad.py`** — emits a classic [Bmad](https://www.classe.cornell.edu/bmad/)
   lattice.
 - **`palsparserpy/to_madx.py`** — emits a [MAD-X](https://mad.web.cern.ch/mad/) lattice.
@@ -11,9 +13,120 @@ PALSParserPy can translate a PALS-format lattice into three accelerator formats:
 A [SciBmad](https://github.com/bmad-sim/SciBmad.jl) translator is in the Julia package
 [PALSParserJ](https://github.com/pals-project/PALSParserJ.jl) (`pals_to_scibmad`).
 
-All three translators take a lattice already parsed by `parse_file`,
+The Bmad, MAD-X and Xsuite translators take a lattice already parsed by `parse_file`,
 walk the element list, and map each PALS element and its parameters
 onto the corresponding target-format element.
+
+## COSY INFINITY
+
+`pals_to_cosy` takes the **`Lattices` result of `parse_and_expand_pals`** and
+returns programme text. It reads the selected branch of `full_expanded`: the
+native parser owns file loading, includes, sets, inheritance, line expansion,
+expression evaluation and reference book-keeping.
+
+```python
+import palsparserpy as pp
+
+lat = pp.parse_and_expand_pals("lattice.pals.yaml", problems="none")
+program = pp.pals_to_cosy(lat, branch_name="main", computation_order=3)
+pp.write_cosy_file(program, "lattice.fox")
+```
+
+Omit `branch_name` only when the expanded lattice has one branch. Names are
+matched exactly; missing or ambiguous choices list the available branches.
+Repeated elements remain in their expanded order. Multipass indices appear in
+comments. Construction `Placeholder` elements are removed by native expansion;
+markers still present in `full_expanded` retain their names as comments. The
+parser's final `branch_end` has no length and adds no optics.
+
+Boolean field controls (`is_on`, `Kn0_from_g_ref`) accept `true`/`false` in
+any case. Other spellings such as `yes`/`no` or numeric flags are rejected.
+Generated lines must fit COSY's 512-column limit. Excessively long names raise
+an error; shorten the names or disable element comments with `comments=False`.
+
+Any native expansion error stops translation, including errors in another
+branch. Native warnings and approximations in the COSY model use
+`CosyConversionWarning`. To require a warning-free translation:
+
+```python
+import warnings
+
+with warnings.catch_warnings():
+    warnings.simplefilter("error", pp.CosyConversionWarning)
+    program = pp.pals_to_cosy(lat)
+# Translation finishes before opening the output file.
+pp.write_cosy_file(program, "lattice.fox")
+```
+
+The checkout example accepts the same input/output paths, `--branch`, `--order`,
+`--fr`, and `--strict`:
+
+```console
+python examples/pals_to_cosy.py lattice.pals.yaml lattice.fox --branch main --strict
+```
+
+The output requires an existing COSY INFINITY installation and its `COSY`
+library. This package neither bundles nor installs COSY. The example adds no
+packaging entry point. The separate `pals2cosy` package and its non-PALS
+`beamline:` input format are unchanged by this translator.
+
+### COSY model and limits
+
+- Reference masses, charges and available anomalous moments come from the same
+  APC library as the native parser. Normalised strengths use each element's
+  **entrance** `ReferenceP` and signed rigidity. Equivalent derived `BnN`,
+  `KnN`, `BnNL` and `KnNL` are checked and counted once. Deferred numeric
+  expressions such as `random()` are rejected, not evaluated again.
+- Thick normal/skew multipoles through order 10 use COSY's pole-tip-field
+  convention, including the PALS factorial and multipole tilt. A zero-length
+  integrated multipole uses a 1 micrometre slice between two negative half-slice
+  drifts: this is a thin-kick approximation with zero total length. Longitudinal
+  multipole taper is rejected. Order-zero kicks and orders above 10 are reported
+  as unrepresented rather than silently treated as supported.
+- Bends use the expanded reference geometry and face angles. Negative and tilted
+  bends use COSY frame operations. Actual-field departures and combined-function
+  multipoles are reported as unrepresented. A switched-off bend is an
+  error. With fringes enabled, the mean face integral sets a common COSY half-gap;
+  unequal face integrals and missing aperture data produce model warnings. If
+  the face integrals are absent, the vertical aperture width is used as the full
+  pole gap; it therefore affects the fringe model when FR is nonzero.
+- RF is a thin kick at the cavity centre, with the PALS phase convention
+  converted to COSY's charge-dependent sine convention. Native `dE_ref` is never
+  applied a second time. Harmonic frequency uses the native branch's end-to-end
+  reference time, following the [PALS RFP definition](https://github.com/pals-project/pals/blob/00c80656a0d5cf0ebcb76c3c01cff2c22e223919/source/parameters/rf.md). Native 0.0.4 does not resolve frequency from the harmonic, so this
+  conversion is performed here. A discrepancy between `dE_ref` and the COSY gain is reported:
+  COSY's downstream maps then use its own reference energy. Multipass phase and
+  non-standing-wave cavity details are reported as approximations/omissions.
+  Nonzero energy changes or explicit energy/species replacements in
+  `ReferenceChange` elements and unexplained reference jumps are rejected.
+  Explicit zero `dE_ref`/`dpc_ref` changes are accepted as no-ops.
+- Solenoids use COSY's soft-edge `CMS` model. Its default fringe length is the
+  bore radius; for hard-edge input the focusing difference is reported when
+  significant. `solenoid_fringe` can shorten that length, at increased integration
+  cost. Body misalignments, electric multipoles, nonzero patches and other
+  unrepresented features retain warnings or explicit unsupported-feature errors.
+  The old `pals2cosy` `WigglerP` extension is outside this interface; a standard
+  Wiggler without a supported COSY model is reported and replaced by a drift.
+- `quad_aperture=0.027` is a bore **diameter** in metres, not a radius.
+  `fringe_field_order` selects FR 0--3; FR 1/2 also need `SYSCA.DAT` in the
+  COSY working directory. `dimensions` defaults to 3, or 2 with
+  `twiss=True`; three-dimensional Twiss extraction also needs longitudinal RF
+  focusing. Twiss output assumes a stable periodic map and is not a stability
+  check. Running the generated Twiss programme writes `result.txt` in its working
+  directory.
+
+Native parser 0.0.4 has a known limitation: a literal positively charged species
+such as `"#12C+6"` can be mistaken for an arithmetic expression and reported as
+an error. The COSY translator preserves that error. It can translate ions when
+the native parser supplies a valid, error-free expanded reference (for example
+`"#12C-1"`); it does not promise to repair native parsing problems.
+
+The emitter and physical element models are adapted from Eremey Valetov's
+`pals2cosy`; the MIT attribution is retained in `palsparserpy/COSY_COPYING.txt`.
+Tests exercise the real native parser. Optional COSY execution tests compare
+transfer-map coefficients against independent analytic expectations; set
+`PALS_COSY_BIN`, `PALS_COSY_LIBRARY` and, for FR 1/2, `PALS_COSY_SYSCA` to the
+installed files.
 
 ## Running the translators
 

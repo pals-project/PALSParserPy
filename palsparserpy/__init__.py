@@ -43,6 +43,8 @@ from .to_madx import (MadxAlignment, MadxBeamline, MadxController, MadxEleDef,
                       MadxLattice, pals_to_madx, write_madx_file)
 from .to_xsuite import (XsuiteBeamline, XsuiteController, XsuiteEle,
                         XsuiteLattice, pals_to_xsuite, write_xsuite_file)
+from .to_cosy import (CosyConversionWarning, CosyUnsupportedError,
+                      pals_to_cosy, write_cosy_file)
 
 __version__ = "0.0.2"
 
@@ -72,4 +74,5 @@ __all__ = [
     "MadxAlignment",
     "pals_to_xsuite", "write_xsuite_file",
     "XsuiteLattice", "XsuiteEle", "XsuiteBeamline", "XsuiteController",
+    "pals_to_cosy", "write_cosy_file", "CosyConversionWarning", "CosyUnsupportedError",
 ]

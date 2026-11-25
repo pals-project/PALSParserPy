@@ -34,6 +34,9 @@ Homepage = "https://github.com/pals-project/PALSParserPy"
 [tool.setuptools]
 packages = ["palsparserpy"]
 
+[tool.setuptools.package-data]
+palsparserpy = ["COSY_COPYING.txt"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 

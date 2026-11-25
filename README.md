@@ -14,6 +14,9 @@ In addition, `PALSParserPy` provides translation functions:
 - From `PALS` files to Python scripts that build an
   [`Xsuite`](https://github.com/xsuite/xsuite) (`xtrack`) lattice.
 
+- From an expanded `PALS` branch to COSY INFINITY programme text with
+  `pals_to_cosy` (see the [translation guide](docs/src/guide/translation.md#cosy-infinity)).
+
 For a translator from `PALS` to [`SciBmad`](https://github.com/bmad-sim/SciBmad.jl),
 use `pals_to_scibmad` in [PALSParserJ](https://github.com/pals-project/PALSParserJ.jl).
 
