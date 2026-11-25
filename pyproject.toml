@@ -40,7 +40,7 @@ testpaths = ["tests"]
 [tool.cibuildwheel]
 build = "cp310-*"
 skip = ["*-musllinux_*", "*-manylinux_i686", "*-win32"]
-test-requires = ["pytest"]
+test-requires = ["pytest", "pefile; sys_platform == 'win32'"]
 test-command = "python {project}/tools/test_installed.py {project}"
 
 [tool.cibuildwheel.linux]

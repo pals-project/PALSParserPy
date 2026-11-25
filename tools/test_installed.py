@@ -14,6 +14,11 @@ assert source_package not in Path(palsparserpy.__file__).resolve().parents, pals
 assert "_native" in Path(_clib._find_library()).parts, _clib._find_library()
 manifest = Path(_clib._find_library()).parent / "native-lock.json"
 assert palsparserpy.library_version() == json.loads(manifest.read_text())["version"]
+if sys.platform == "win32":
+    import pefile
+    with pefile.PE(_clib._find_library()) as image:
+        imports = [entry.dll.decode("ascii").lower() for entry in image.DIRECTORY_ENTRY_IMPORT]
+    assert not any(name.startswith(("msvcp", "vcruntime")) for name in imports), imports
 with tempfile.TemporaryDirectory() as tmp:
     root = Path(tmp)
     shutil.copytree(project / "tests", root / "tests")
