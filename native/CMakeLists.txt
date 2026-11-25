@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.18)
 project(PALSParserPyWheel LANGUAGES C CXX)
+# Wheel DLLs must also load on hosts without the Visual Studio redistributable.
+# Keep this private to wheels; conda controls its own compiler/runtime policy.
+if(MSVC)
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>" CACHE STRING "" FORCE)
+endif()
 set(BUILD_TESTING OFF CACHE BOOL "" FORCE)
 set(PALS_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)

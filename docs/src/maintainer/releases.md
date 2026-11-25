@@ -3,8 +3,9 @@
 The existing Python package and C API bindings are shared by conda and PyPI.
 PyPI wheels bundle PALSParserCpp and statically link rapidyaml, PCRE2, and APC.
 The complete pinned native sources, including submodules and license files,
-are shipped in the source distribution. Wheel repair tools may additionally
-bundle compiler runtime libraries. Notices are retained under
+are shipped in the source distribution. Windows wheel builds statically link the MSVC runtime so no separately installed
+VC++ redistributable is required. DLL analysis remains enabled during repair.
+Wheel repair tools may additionally bundle other non-system libraries. Notices are retained under
 `palsparserpy/_native/licenses`.
 
 ## Native release updates

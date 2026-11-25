@@ -34,6 +34,19 @@ jobs:
           assert declared == [version], declared
           PYCODE
       - run: python -m pip install -r requirements-wheels.txt
+      - name: Verify clean tag archives build pure Python without native sources
+        run: |
+          mkdir "$RUNNER_TEMP/pure-python"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/pure-python"
+          python -m build --wheel "$RUNNER_TEMP/pure-python" --outdir "$RUNNER_TEMP/pure-wheel"
+          python - <<'PYCODE'
+          import os, pathlib, zipfile
+          wheel = next((pathlib.Path(os.environ['RUNNER_TEMP']) / 'pure-wheel').glob('*.whl'))
+          assert wheel.name.endswith('-py3-none-any.whl'), wheel
+          with zipfile.ZipFile(wheel) as archive:
+              assert not any(n.endswith(('.dll', '.so', '.dylib')) for n in archive.namelist())
+          assert not (pathlib.Path(os.environ['RUNNER_TEMP']) / 'pure-python' / 'vendor').exists()
+          PYCODE
       - run: python -m build --sdist
       - run: python -m twine check dist/*
       - uses: actions/upload-artifact@v4
